@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{tutors.css}">
+    <title>Campus Tutors</title>
+</head>
+<body>
+
+<h3>View All Tutors</h3>
+<table class = "tutor-table">
+  <tr>
+    <th>Name</th>
+    <th>Tutor Type</th>
+    <th>Profile</th>
+  </tr>
+  <tbody>
+    <tr th:each = "tutor: ${tutors}">
+      <td th:text="${tutor.firstName + ' ' + tutor.lastName}"></td>
+      <td th:text = "${tutor.type}"></td>
+      <td><a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">View Profile</a></td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor Profile</title>
+    <link rel="stylesheet" th:href="@{/profile.css}">
+</head>
+<body>
+
+<div class="profile-container">
+
+    <div class="profile-left">
+        <h1 th:text="${tutor.firstName + ' ' + tutor.lastName}"></h1>
+        <h3 class="tutor-type" th:text="${tutor.type}"></h3>
+    </div>
+
+    <div class="profile-right">
+        <section class="course-section">
+            <h2>Courses Offered</h2>
+            <div class="course-card" th:each="course : ${tutor.coursesOffered}">
+                <div class="course-info">
+                    <span th:text="${course.courseID.courseSubject}"></span>
+                    <span th:text="${course.courseID.courseNumber}"></span>
+                </div>
+                <div class="course-title"
+                     th:text="${course.courseTitle}"></div>
+            </div>
+        </section>
+        <section class="schedule-section">
+            <h2>Schedule</h2>
+            <p>Schedule coming soon...</p>
+        </section>
+
+    </div>
+</div>
+</body>
+</html>
