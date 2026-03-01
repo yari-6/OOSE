@@ -16,8 +16,29 @@ body {
     width: 30%;
     background: #860037;
     color: white;
+    padding: 40px 40px;
     text-align: center;
-    padding: 40px 20px;
+}
+
+.rating {
+    direction: rtl;
+}
+.rating label {
+    display: inline-block;
+    cursor: pointer;
+    color: white;
+    font-size: 36px;
+    background: none;
+    border: none;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #FED356
+}
+
+.rating-radio {
+    display: none;
 }
 
 .profile-right {
