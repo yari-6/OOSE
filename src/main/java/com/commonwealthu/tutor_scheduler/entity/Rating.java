@@ -18,10 +18,25 @@ public class Rating {
     @Column (name = "rating_val", nullable = false)
     private int value;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Tutor tutor;
+
     protected Rating() {}
 
     public Rating(String tutorID, int value) {
         this.tutorID = tutorID;
+        this.value = value;
+    }
+
+    public String getTutorID() {
+        return tutorID;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
         this.value = value;
     }
 }

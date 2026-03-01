@@ -2,7 +2,9 @@ package com.commonwealthu.tutor_scheduler.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity // Must have a primary key and default constructor
@@ -32,6 +34,9 @@ public class Tutor {
             }
     )
     private Set<Course> coursesOffered = new HashSet<>();
+
+    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
+    private List<Rating> ratings = new ArrayList<>();
 
     // Add as soon as Grace has finished the scheduling and session tasks
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
@@ -78,5 +83,13 @@ public class Tutor {
 
     public Set<Course> getCoursesOffered() {
         return coursesOffered;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void addRating(Rating rating) {
+        ratings.add(rating);
     }
 }
