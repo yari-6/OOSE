@@ -35,6 +35,7 @@ public class Tutor {
     )
     private Set<Course> coursesOffered = new HashSet<>();
 
+    // Mapped by the Tutor object within the Rating entity
     @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
     private List<Rating> ratings = new ArrayList<>();
 

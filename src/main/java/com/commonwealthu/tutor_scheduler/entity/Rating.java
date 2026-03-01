@@ -3,7 +3,7 @@ package com.commonwealthu.tutor_scheduler.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name = "ratings")
+@Table (name = "Ratings")
 public class Rating {
 
     // Have Hibernate automatically generate the rating id
