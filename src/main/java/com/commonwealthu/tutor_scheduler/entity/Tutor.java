@@ -22,8 +22,7 @@ public class Tutor {
     @Column(name = "TutorType", nullable = false, length = 10)
     private String type;
 
-    // fetch is eager temporarily, may be changed
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "Tutor_Courses",
             joinColumns = @JoinColumn(name = "TutorID"),

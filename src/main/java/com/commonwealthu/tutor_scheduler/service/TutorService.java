@@ -3,8 +3,6 @@ package com.commonwealthu.tutor_scheduler.service;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.repository.TutorRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import java.util.List;
 
 @Service
@@ -20,8 +18,10 @@ public class TutorService {
         return tutorRepo.findAll();
     }
 
-    // Should change to either unwrapping Optional, or handle the null, works for now
+    // Updated to use the default Optional<Tutor> return of the TutorRepository
+    // The use of RuntimeException is temporary, error handling will be done in another sprint
     public Tutor findTutorByID(String id) {
-        return tutorRepo.findByTutorID(id);
+        return tutorRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tutor not found"));
     }
 }
