@@ -17,6 +17,7 @@ public class Course {
 
     @ManyToMany (mappedBy = "coursesOffered")
     private Set<Tutor> tutors = new HashSet<Tutor>();
+
     // Required and only used by Hibernate
     protected Course() {}
 
@@ -26,6 +27,10 @@ public class Course {
 
     public String getCourseTitle() {
         return courseTitle;
+    }
+
+    public Set<Tutor> getTutors() {
+        return tutors;
     }
 
     // Possibly add equals and hashcode, unsure if needed

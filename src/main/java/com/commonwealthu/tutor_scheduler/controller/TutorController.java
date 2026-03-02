@@ -1,6 +1,5 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
-import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

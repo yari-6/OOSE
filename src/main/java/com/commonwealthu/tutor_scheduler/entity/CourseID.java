@@ -18,6 +18,11 @@ public class CourseID implements Serializable {
     // Required and only used by Hibernate
     protected CourseID() {}
 
+    public CourseID(String courseSubject, int courseNumber) {
+        this.courseSubject = courseSubject;
+        this.courseNumber = courseNumber;
+    }
+
     public String getCourseSubject() {
         return courseSubject;
     }

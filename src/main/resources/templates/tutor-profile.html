@@ -8,10 +8,23 @@
 <body>
 
 <div class="profile-container">
-
     <div class="profile-left">
         <h1 th:text="${tutor.firstName + ' ' + tutor.lastName}"></h1>
         <h3 class="tutor-type" th:text="${tutor.type}"></h3>
+        <h3>Anonymously rate this tutor: </h3>
+        <div class = "rating">
+            <input type = "radio" name = "rating" id = "star-1" class = "rating-radio" value = "1">
+            <label for = "star-1">★</label>
+            <input type = "radio" name = "rating" id = "star-2" class = "rating-radio" value = "2">
+            <label for = "star-2">★</label>
+            <input type = "radio" name = "rating" id = "star-3" class = "rating-radio" value = "3">
+            <label for = "star-3">★</label>
+            <input type = "radio" name = "rating" id = "star-4" class = "rating-radio" value = "4">
+            <label for = "star-4">★</label>
+            <input type = "radio" name = "rating" id = "star-5" class = "rating-radio" value = "5">
+            <label for = "star-5">★</label>
+        </div>
+        <h3>Average rating: (Will need to call RatingService to get this when done)</h3>
     </div>
 
     <div class="profile-right">
