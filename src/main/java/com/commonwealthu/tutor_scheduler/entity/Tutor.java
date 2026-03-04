@@ -39,6 +39,9 @@ public class Tutor {
     @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
     private List<Rating> ratings = new ArrayList<>();
 
+    @Column(name = "Pass", length = 15)
+    private String pass;
+
     // Add as soon as Grace has finished the scheduling and session tasks
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
     // private Set<Session> schedule = new HashSet<Session>();
