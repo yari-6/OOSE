@@ -9,10 +9,12 @@ public class Rating {
     // Have Hibernate automatically generate the rating id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "rating_id", nullable = false, unique = true)
+    @Column (name = "RatingID", nullable = false, unique = true)
     private Long id;
 
     // All categories must be submitted for a rating to be complete
+    // If this is not how the ratings are intended to function, could be changed to
+    // submit categories individually
     @Column (name = "Communication", nullable = false)
     private int communication;
 

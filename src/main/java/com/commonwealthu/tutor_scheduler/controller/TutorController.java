@@ -26,6 +26,7 @@ public class TutorController {
         return "tutors-list";
     }
 
+    // Need to add the rating service usage, could be worthwhile to use a method to return all ratings?
     @GetMapping("/tutors/{id}")
     public String tutorProfile(Model model, @PathVariable String id) {
         model.addAttribute("tutor", tutorService.findTutorByID(id));
