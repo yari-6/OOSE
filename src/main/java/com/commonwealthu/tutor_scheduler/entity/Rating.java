@@ -56,4 +56,8 @@ public class Rating {
     public int getHelpfulness() {
         return helpfulness;
     }
+
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
+    }
 }

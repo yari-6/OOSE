@@ -5,25 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface RatingRepository extends JpaRepository<Rating, Long> {
-
-    @Query("SELECT AVG(r.communication) FROM Rating r where r.tutor.tutorID = :tutorID")
-    Double findAvgComm(@Param("tutorID") String tutorID);
-
-    @Query("SELECT AVG(r.approach) FROM Rating r where r.tutor.tutorID = :tutorID")
-    Double findAvgApproach(@Param("tutorID") String tutorID);
-
-    @Query("SELECT AVG(r.effLearn) FROM Rating r where r.tutor.tutorID = :tutorID")
-    Double findAvgEffLearn(@Param("tutorID") String tutorID);
-
-    @Query("SELECT AVG(r.helpfulness) FROM Rating r where r.tutor.tutorID = :tutorID")
-    Double findAvgHelp(@Param("tutorID") String tutorID);
-
-    @Query("SELECT ((r.communication + r.approach + r.effLearn + r.helpfulness) / 4) " +
-            "FROM Rating r WHERE r.tutor.tutorID = :tutorID")
-    Double findAvgOverall(@Param("tutorID") String tutorID);
-
-
-
+    // Returns a list of every rating for a tutor, accounts for multiple ratings (past methods didn't do that,
+    // not sure how I didn't realize they would need to be lists)
+    @Query("SELECT r FROM Rating r WHERE r.tutor.tutorID = :tutorID")
+    List<Rating> findAllRatings(@Param("tutorID") String tutorID);
 
 }

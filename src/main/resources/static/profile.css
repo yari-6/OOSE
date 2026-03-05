@@ -20,9 +20,6 @@ body {
     text-align: center;
 }
 
-.rating {
-    direction: rtl;
-}
 .rating label {
     display: inline-block;
     cursor: pointer;
@@ -34,11 +31,18 @@ body {
 
 .rating label:hover,
 .rating label:hover ~ label {
-    color: #FED356
+    color: #FED356;
 }
 
-.rating-radio {
+.rating {
+    direction: rtl;
+}
+.rating input[type="radio"] {
     display: none;
+}
+
+.rating input[type="radio"]:checked ~ label {
+    color: #FED356;
 }
 
 .profile-right {
