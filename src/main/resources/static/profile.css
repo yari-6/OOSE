@@ -107,6 +107,15 @@ body {
     padding: 0;
 }
 
+.profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Makes the image round */
+    cursor: pointer; /* Indicates it's clickable */
+    object-fit: cover;
+}
+
+
 .profile-container {
     display: flex;
     width: 85%;
@@ -154,6 +163,14 @@ body {
 
 .rating-radio {
     display: none;
+}
+
+.rating input[type="radio"] {
+    display: none;
+}
+
+.rating input[type="radio"]:checked ~ label {
+    color: #FED356;
 }
 
 .profile-right {
