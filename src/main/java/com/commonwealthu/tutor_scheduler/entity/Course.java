@@ -12,7 +12,7 @@ public class Course {
     @EmbeddedId
     private CourseID courseID;
 
-    @Column(name = "CourseTitle", length = 50)
+    @Column(name = "CourseTitle", length = 200)
     private String courseTitle;
 
     @ManyToMany (mappedBy = "coursesOffered")

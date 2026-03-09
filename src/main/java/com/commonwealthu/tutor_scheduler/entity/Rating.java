@@ -9,34 +9,55 @@ public class Rating {
     // Have Hibernate automatically generate the rating id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "rating_id", nullable = false, unique = true)
+    @Column (name = "RatingID", nullable = false, unique = true)
     private Long id;
 
-    @Column (name = "tutor_id", nullable = false)
-    private String tutorID;
+    // All categories must be submitted for a rating to be complete
+    // If this is not how the ratings are intended to function, could be changed to
+    // submit categories individually
+    @Column (name = "Communication", nullable = false)
+    private int communication;
 
-    @Column (name = "rating_val", nullable = false)
-    private int value;
+    @Column (name = "Approachability", nullable = false)
+    private int approach;
+
+    // EffLearn = Effective Learning Strategies
+    @Column (name = "EffLearn", nullable = false)
+    private int effLearn;
+
+    @Column (name = "Helpfulness", nullable = false)
+    private int helpfulness;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TutorID", nullable = false)
     private Tutor tutor;
 
     protected Rating() {}
 
-    public Rating(String tutorID, int value) {
-        this.tutorID = tutorID;
-        this.value = value;
+    public Rating (int communication, int approach, int effLearn, int helpfulness) {
+        this.communication = communication;
+        this.approach = approach;
+        this.effLearn = effLearn;
+        this.helpfulness = helpfulness;
     }
 
-    public String getTutorID() {
-        return tutorID;
+    public int getCommunication() {
+        return communication;
     }
 
-    public int getValue() {
-        return value;
+    public int getApproach() {
+        return approach;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public int getEffLearn() {
+        return effLearn;
+    }
+
+    public int getHelpfulness() {
+        return helpfulness;
+    }
+
+    public void setTutor(Tutor tutor) {
+        this.tutor = tutor;
     }
 }
