@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     // Updated to bring old methods back, I thought they were all incorrect because of an error saying multiple
     // numbers returned, but it was really just the overall because there was not an avg function on the outside

@@ -19,7 +19,6 @@ public class RatingService {
         this.tutorRepo = tutorRepo;
     }
 
-
     public void saveRating(Rating rating, String tutorID) {
         Tutor tutor = tutorRepo.findById(tutorID).orElseThrow();
         rating.setTutor(tutor);

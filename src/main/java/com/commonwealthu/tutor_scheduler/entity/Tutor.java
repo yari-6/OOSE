@@ -41,7 +41,7 @@ public class Tutor {
     // private Set<Session> schedule = new HashSet<Session>();
 
     // Required and only used by Hibernate
-    protected Tutor() {}
+    public Tutor() {}
 
     public Tutor(String tutorID, String firstName, String lastName, String type) {
         this.tutorID = tutorID;
@@ -81,6 +81,14 @@ public class Tutor {
 
     public Set<Course> getCoursesOffered() {
         return coursesOffered;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
 }

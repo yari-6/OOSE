@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>BloomTutors</title>
-    <link rel="stylesheet" href="Style.css">
+    <link rel="stylesheet" th:href="@{/Style.css}">
 </head>
 
 <body >
@@ -16,7 +16,7 @@
 
     <div class="signin-container">
         <div class="signin-text">Are you a tutor?</div>
-        <a href="SignIn.html" class="signin-btn">Sign In</a>
+        <a th:href="@{/sign-in}" class="signin-btn">Sign In</a>
     </div>
 </header>
 
@@ -53,7 +53,7 @@
 
         <div class="hero_content box">
             <p>Click here to search for a tutor →
-                <a href="tutors-list.html" class="link-btn">🔍</a>
+                <a th:href="@{/tutors}" class="link-btn">🔍</a>
             </p>
         </div>
     </div>
@@ -71,7 +71,6 @@
             <p>Email: support@bloomtutors.com</p>
             <p>Phone: (123) 456-7890</p>
         </div>
-
     </div>
 </footer>
 </body>

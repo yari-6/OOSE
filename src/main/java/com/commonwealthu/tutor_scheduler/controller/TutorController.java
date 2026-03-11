@@ -1,6 +1,7 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Rating;
+import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,7 @@ public class TutorController {
 
     @GetMapping("/")
     public String home() {
-        return "index";
+        return "FrontPage";
     }
 
     @GetMapping("/tutors")
@@ -45,6 +46,20 @@ public class TutorController {
     public String submitRating(@ModelAttribute("rating") Rating rating, @PathVariable String id) {
         ratingService.saveRating(rating, id);
         return "redirect:/tutors/" + id;
+    }
+
+    // Send the empty tutor object for it to be bind with the form data, then check in the service
+    // Adding the attribute is only needed if the form references a th:object of tutor type, so update
+    @GetMapping("/sign-in")
+    public String signIn(Model model) {
+        model.addAttribute("tutor", new Tutor());
+        return "SignIn";
+    }
+
+    @PostMapping("/sign-in")
+    public String handleSignIn() {
+
+        return "redirect:/";
     }
 
 }
