@@ -2,10 +2,13 @@ package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Rating;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
+import com.commonwealthu.tutor_scheduler.entity.TutorLogin;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +27,7 @@ public class TutorController {
 
     @GetMapping("/")
     public String home() {
-        return "FrontPage";
+        return "front-page";
     }
 
     @GetMapping("/tutors")
@@ -48,16 +51,24 @@ public class TutorController {
         return "redirect:/tutors/" + id;
     }
 
+    // TODO: check tutorID exists, check passwords match if second login, figure out how to store hashed
     // Send the empty tutor object for it to be bind with the form data, then check in the service
-    // Adding the attribute is only needed if the form references a th:object of tutor type, so update
     @GetMapping("/sign-in")
     public String signIn(Model model) {
-        model.addAttribute("tutor", new Tutor());
-        return "SignIn";
+        model.addAttribute("loginTutor", new TutorLogin());
+        return "sign-in";
     }
 
+    // ModelAttribute users the empty TutorLogin and binds the form data to it
     @PostMapping("/sign-in")
-    public String handleSignIn() {
+    public String handleSignIn(@Valid @ModelAttribute("loginTutor") TutorLogin loginTutor,
+                               BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) { // Checks the form data
+            return "sign-in";
+        }
+
+        // Once here, the user has entered their id and password to meet requirements, but now must be authenticated
 
         return "redirect:/";
     }

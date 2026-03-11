@@ -55,6 +55,10 @@ public class Tutor {
         return tutorID;
     }
 
+    public void setTutorID(String tutorID) {
+        this.tutorID = tutorID;
+    }
+
     public String getFirstName() {
         return firstName;
     }
