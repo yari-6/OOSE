@@ -33,7 +33,7 @@ public class Tutor {
     )
     private Set<Course> coursesOffered = new HashSet<>();
 
-    @Column(name = "Pass", length = 15)
+    @Column(name = "Pass", length = 65)
     private String pass;
 
     // Add as soon as Grace has finished the scheduling and session tasks

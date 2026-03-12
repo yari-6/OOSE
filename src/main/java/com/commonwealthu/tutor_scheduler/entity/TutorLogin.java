@@ -18,12 +18,11 @@ public class TutorLogin {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String pass;
 
-    public TutorLogin() {}
+    private String newPass;
 
-    public TutorLogin(String tutorID, String pass) {
-        this.tutorID = tutorID;
-        this.pass = pass;
-    }
+    private String confirmPass;
+
+    public TutorLogin() {}
 
     public String getTutorID() {
         return tutorID;
@@ -39,5 +38,21 @@ public class TutorLogin {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getNewPass() {
+        return newPass;
+    }
+
+    public void setNewPass(String newPass) {
+        this.newPass = newPass;
+    }
+
+    public String getConfirmPass() {
+        return confirmPass;
+    }
+
+    public void setConfirmPass(String confirmPass) {
+        this.confirmPass = confirmPass;
     }
 }

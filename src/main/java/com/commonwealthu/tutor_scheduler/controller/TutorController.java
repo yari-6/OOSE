@@ -1,7 +1,6 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Rating;
-import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.entity.TutorLogin;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
@@ -51,7 +50,6 @@ public class TutorController {
         return "redirect:/tutors/" + id;
     }
 
-    // TODO: check tutorID exists, check passwords match if second login, figure out how to store hashed
     // Send the empty tutor object for it to be bind with the form data, then check in the service
     @GetMapping("/sign-in")
     public String signIn(Model model) {
@@ -63,14 +61,28 @@ public class TutorController {
     @PostMapping("/sign-in")
     public String handleSignIn(@Valid @ModelAttribute("loginTutor") TutorLogin loginTutor,
                                BindingResult bindingResult, Model model) {
-
-        if (bindingResult.hasErrors()) { // Checks the form data
+        // Checks the form data
+        if (bindingResult.hasErrors() ||
+                !tutorService.checkLogin(loginTutor.getTutorID(), loginTutor.getPass())) {
             return "sign-in";
         }
 
-        // Once here, the user has entered their id and password to meet requirements, but now must be authenticated
+        // Does not redirect to a new page so that the tutorID is kept across pages
+        if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
+            return "set-new-password"; // No get mapping needed because it is returned within the sign-in
+        }
 
         return "redirect:/";
     }
 
+    @PostMapping("/set-new-password")
+    public String handleNewPassword(@ModelAttribute("loginTutor") TutorLogin loginTutor) {
+        if (!loginTutor.getNewPass().equals(loginTutor.getConfirmPass())) {
+            return "set-new-password";
+        }
+
+        tutorService.updatePassword(loginTutor.getTutorID(), loginTutor.getNewPass());
+
+        return "redirect:/sign-in";
+    }
 }
