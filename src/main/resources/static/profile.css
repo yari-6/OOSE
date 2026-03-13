@@ -14,27 +14,27 @@
  }
 
 .logo {
-      position: absolute;
-       left: 30px;
-       top: 50%;
-       transform: translateY(-50%);
-       height: 150px;
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 150px;
  }
 
 .accent-line {
-  width: 95px;
-  height: 4px;
-  background-color: #f3d03e;
-  border: none;
-  left: 10 px;
+    width: 95px;
+    height: 4px;
+    background-color: #f3d03e;
+    border: none;
+    left: 10 px;
 }
 
- .stripe-container {
-     position: relative;
-     width: 100%;
-     display: flex;
-     justify-content: center;
-  }
+.stripe-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
 
  .stripe {
      width: 100%;
@@ -107,14 +107,85 @@ body {
     padding: 0;
 }
 
+.profile {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0px;
+}
+
 .profile img {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* Makes the image round */
-    cursor: pointer; /* Indicates it's clickable */
+    border-radius: 50%;
     object-fit: cover;
+    border: 5px solid  #f3d03e;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(111, 38, 61, 0.7);
+    padding: 0;
+    border-radius: 8px;
+}
+
+.modal-content{
+    background:white;
+    width:400px;
+    margin:10% auto;
+    padding:25px;
+    border-radius:8px;
+    text-align:center;
+}
+
+.close{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+    color: black;
+}
+
+.avatar-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:20px;
+}
+
+.avatar-grid img{  ////
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    cursor:pointer;
+    object-fit: cover;
+    border: 3px solid  #f3d03e;
+
+}
+
+.avatar-grid img:hover{
+    border:3px solid #f3d03e;
+}
+
+.change-btn{
+    margin-top:15px;
+    padding:8px 16px;
+    border:none;
+    background:#f3d03e;
+    font-weight:bold;
+    cursor:pointer;
+    border-radius:4px;
+}
+
+.change-btn:hover{
+    background: linear-gradient(to right, #6f263d, #8a1538);
+    color: white;
+}
 
 .profile-container {
     display: flex;
@@ -124,6 +195,7 @@ body {
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     overflow: hidden;
+
 }
 
 .profile-left {
@@ -147,18 +219,47 @@ body {
 .rating {
     direction: rtl;
     margin-top: 15px;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.rating input {
+    display: none;
 }
 
 .rating label {
     cursor: pointer;
     color: white;
     font-size: 36px;
-    transition: 0.2s ease;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.2s ease;
 }
 
 .rating label:hover,
 .rating label:hover ~ label {
     color: #f3d03e;
+}
+
+@keyframes spinStar {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    animation: spinStar 0.6s linear;
+}
+
+.rating input:checked ~ label {
+    color: #f3d03e;
+}
+
+.rating:hover input:checked ~ label {
+    animation: spinStar 1.0s linear;
 }
 
 .rating-radio {
@@ -170,7 +271,24 @@ body {
 }
 
 .rating input[type="radio"]:checked ~ label {
-    color: #FED356;
+    color: #f3d03e;
+}
+
+.submit {
+    text-decoration: none;
+    padding: 10px 18px;
+    background-color: #f3d03e;
+    color: black;
+    border-radius: 2px;
+    font-family: sans-serif;
+    font-weight: bold;
+    transition: all 0.2s ease;
+
+}
+
+.submit:hover{
+    background: linear-gradient(to right, #6f263d, #8a1538);
+    color: white;
 }
 
 .profile-right {

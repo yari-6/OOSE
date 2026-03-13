@@ -11,7 +11,7 @@
 <header class="header">
     <a th:href="@{/}">
 
-        <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
+        <img src="Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
 
     </a>
 
@@ -21,13 +21,13 @@
     <div class="signin-container">
 
         <div class="signin-text">Are you a tutor?</div>
-        <a th:href="@{/sign-in}" class="signin-btn">Sign In</a>
+        <a href="SignIn.html" class="signin-btn">Sign In</a>
 
     </div>
 </header>
 <div class="stripe-container">
 
-    <img src="/fadedstripe.svg" alt="Stripe" class="stripe">
+    <img src="fadedstripe.svg" alt="Stripe" class="stripe">
 
     <div class="stripe-text">
         <h3>Tutor Info</h3>
@@ -40,7 +40,23 @@
 <div class="profile-container">
     <div class="profile-left">
         <div class="profile">
-            <img src="/graypfp.png" alt="Profile Picture" id="profileImage">
+            <!-- Profile image -->
+            <img src="HelloKittypfp.png" alt="Profile Picture" id="profileImage">
+
+            <button class="change-btn" id="changePfpBtn">Change PFP</button>
+        </div>
+
+        <div id="avatarModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <h2>Select an Avatar</h2>
+                <div class="avatar-grid">
+                    <img src="pochacco.jpeg" onclick="selectAvatar('pochacco.jpeg')">
+                    <img src="myMelody.jpeg" onclick="selectAvatar('myMelody.jpeg')">
+                    <img src="kurropi.jpeg" onclick="selectAvatar('kurropi.jpeg')">
+                    <img src="HelloKittypfp.png" onclick="selectAvatar('HelloKittypfp.png')">
+                </div>
+            </div>
         </div>
 
         <h1 th:text="${tutor.firstName + ' ' + tutor.lastName}"></h1>
@@ -126,7 +142,7 @@
                 </div>
             </div>
 
-            <button type="submit">Submit Rating</button>
+            <button type="submit" class="submit">Submit Rating</button>
         </form>
         <h3 th:text = "'Average Communication: ' + ${ratings['comm']}"></h3>
         <h3 th:text = "'Average Approachability: ' + ${ratings['approach']}"></h3>
@@ -154,5 +170,6 @@
 
     </div>
 </div>
+<script src="pfpCode.js"></script>
 </body>
 </html>
