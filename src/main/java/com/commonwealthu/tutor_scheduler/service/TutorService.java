@@ -61,4 +61,12 @@ public class TutorService {
         }
     }
 
+    public List<Tutor> getTutorsForCourse(String courseSearch) {
+        // Split search into subject and course number
+        String[] searchParts = courseSearch.split(" ");
+        String courseSubject = searchParts[0];
+        int courseNumber = Integer.parseInt(searchParts[1]);
+        return tutorRepo.findTutorsByCourse(courseSubject, courseNumber);
+    }
+
 }

@@ -1,4 +1,3 @@
-
 body {
     font-family: Arial;
     background-color: #f5f7fa;
@@ -115,36 +114,30 @@ h1 {
     color: white;
 }
 
- form {
-    display: flex; /* Aligns input and button horizontally */
-    align-items: center; /* Centers them vertically */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: fit-content; /* Makes the container fit its content's width */
+.search-container {
+    padding: 20px;
+}
 
-  }
-
-  #search-input {
+#search-input {
     padding: 10px;
     border: none; /* Removes individual border */
     border-radius: 5px 0 0 5px; /* Rounds left corners */
     outline: none; /* Removes outline on focus */
-  }
+}
 
-  button[type="submit"] {
+button[type="submit"] {
     background-color: #f3d03e; /* Button color */
     color: black;
     padding: 10px 15px;
     border: none; /* Removes individual border */
     border-radius: 0 5px 5px 0; /* Rounds right corners */
     cursor: pointer; /* Changes cursor to a pointer on hover */
-  }
+}
 
-  button[type="submit"]:hover {
+button[type="submit"]:hover {
     background: linear-gradient(to right, #6f263d, #8a1538); /* Darker color on hover */
     color: white;
-  }
-</style>
+}
 
 h3 {
     margin-bottom: 20px;
@@ -155,6 +148,10 @@ h3 {
     width: 100%;
     border-collapse: collapse;
      background: white;
+}
+
+.tutor-table-header-row {
+    background: linear-gradient(to right, #6f263d, #8a1538);
 }
 
 .tutor-table th {

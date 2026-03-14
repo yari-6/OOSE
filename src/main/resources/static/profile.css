@@ -283,7 +283,7 @@ body {
     font-family: sans-serif;
     font-weight: bold;
     transition: all 0.2s ease;
-
+    cursor:pointer;
 }
 
 .submit:hover{

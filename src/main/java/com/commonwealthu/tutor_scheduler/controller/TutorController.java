@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class TutorController {
@@ -29,14 +26,23 @@ public class TutorController {
         return "front-page";
     }
 
+    // All tutors will display if no search has been made
     @GetMapping("/tutors")
-    public String tutorList(Model model) {
-        model.addAttribute("tutors", tutorService.getAllTutors());
+    public String tutorList(Model model, @RequestParam(required = false) String courseSearch) {
+        // Basically if params are null, do service get all, if params are not call service get tutor courses
+        if (courseSearch == null) {
+            model.addAttribute("tutors", tutorService.getAllTutors());
+        }
+        else {
+            model.addAttribute("tutors", tutorService.getTutorsForCourse(courseSearch));
+        }
+
         return "tutors-list";
     }
 
     // Uses getAllRatings because rating information is never displayed in individual categories, all categories
     // will be displayed at once every time
+    // Possibly update to be a query parameter rather than embedded in the url
     @GetMapping("/tutors/{id}")
     public String tutorProfile(Model model, @PathVariable String id) {
         model.addAttribute("tutor", tutorService.findTutorByID(id));
@@ -60,7 +66,7 @@ public class TutorController {
     // ModelAttribute users the empty TutorLogin and binds the form data to it
     @PostMapping("/sign-in")
     public String handleSignIn(@Valid @ModelAttribute("loginTutor") TutorLogin loginTutor,
-                               BindingResult bindingResult, Model model) {
+                               BindingResult bindingResult) {
         // Checks the form data
         if (bindingResult.hasErrors() ||
                 !tutorService.checkLogin(loginTutor.getTutorID(), loginTutor.getPass())) {
