@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" th:href="@{/schedule-view.css}"/>
+</head>
+<body>
+
+<!--for each entry in the row (except the header (time)), iterate through sessions list and if one matches, change bg color-->
+
+
+<table class = "schedule-view-table" th:fragment="scheduleView(tutor)">
+    <tr>
+        <th>Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+    </tr>
+    <tbody>
+        <tr>
+            <th>9:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==9"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==9"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==9"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==9"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==9"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>9:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==9.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==9.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==9.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==9.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==9.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>10:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==10"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==10"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==10"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==10"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==10"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>10:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==10.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==10.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==10.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==10.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==10.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>11:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==11"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==11"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==11"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==11"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==11"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>11:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==11.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}=11.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==11.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==11.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==11.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>12:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==12"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==12"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==12"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==12"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==12"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>12:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==12.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==12.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==12.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==12.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==12.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>1:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==13"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==13"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==13"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==13"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==13"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>1:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==13.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==13.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==13.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==13.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==13.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>2:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==14"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==14"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==14"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==14"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==14"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>2:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==14.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==14.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==14.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==14.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==14.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>3:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==15"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==15"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==15"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==15"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==15"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>3:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==15.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==15.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==15.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==15.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==15.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>4:00</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==16"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==16"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==16"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==16"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==16"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+
+        <tr>
+            <th>4:30</th>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='M' && ${session.time}==16.5"
+                bgcolor= "#FED356"
+                <!--got this color from one of the css pages-->
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='T' && ${session.time}==16.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='W' && ${session.time}==16.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='R' && ${session.time}==16.5"
+                bgcolor= "#FED356"
+            </td>
+            <td>
+                th:each="session: ${tutor.schedule}"
+                th:if="${session.day}=='F' && ${session.time}==16.5"
+                bgcolor= "#FED356"
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!--https://stackoverflow.com/questions/53242576/pass-array-as-argument-in-thymeleaf-fragment-->
+<!--may be helpful for passing arguments to this code-->
+
+</body>
+</html>
