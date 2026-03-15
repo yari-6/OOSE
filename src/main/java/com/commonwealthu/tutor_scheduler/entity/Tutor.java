@@ -2,9 +2,7 @@ package com.commonwealthu.tutor_scheduler.entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity // Must have a primary key and default constructor
@@ -35,16 +33,15 @@ public class Tutor {
     )
     private Set<Course> coursesOffered = new HashSet<>();
 
-    // Mapped by the Tutor object within the Rating entity
-    @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL)
-    private List<Rating> ratings = new ArrayList<>();
+    @Column(name = "Pass", length = 65)
+    private String pass;
 
     // Add as soon as Grace has finished the scheduling and session tasks
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
     // private Set<Session> schedule = new HashSet<Session>();
 
     // Required and only used by Hibernate
-    protected Tutor() {}
+    public Tutor() {}
 
     public Tutor(String tutorID, String firstName, String lastName, String type) {
         this.tutorID = tutorID;
@@ -56,6 +53,10 @@ public class Tutor {
     // Getters and setters to be used by Hibernate (setters) and Thymeleaf (getters)
     public String getTutorID() {
         return tutorID;
+    }
+
+    public void setTutorID(String tutorID) {
+        this.tutorID = tutorID;
     }
 
     public String getFirstName() {
@@ -86,11 +87,12 @@ public class Tutor {
         return coursesOffered;
     }
 
-    public List<Rating> getRatings() {
-        return ratings;
+    public String getPass() {
+        return pass;
     }
 
-    public void addRating(Rating rating) {
-        ratings.add(rating);
+    public void setPass(String pass) {
+        this.pass = pass;
     }
+
 }
