@@ -33,16 +33,17 @@
 
 <form method="post">
   <div class="selection">
-    <label>Select day of week: </label>
-    <select>
+    <label for="day">Select day of week:</label>
+    <select id="day" name="day">
       <option value="M">Monday</option>
       <option value="T">Tuesday</option>
       <option value="W">Wednesday</option>
       <option value="R">Thursday</option>
       <option value="F">Friday</option>
     </select>
-    <label>Select start time: </label>
-    <select>
+
+    <label for="start">Select start time:</label>
+    <select id="start" name="start">
       <option value="9">9:00</option>
       <option value="9.5">9:30</option>
       <option value="10">10:00</option>
@@ -60,8 +61,9 @@
       <option value="16">4:00</option>
       <option value="16.5">4:30</option>
     </select>
-    <label>Select end time: </label>
-    <select>
+
+    <label for="end">Select end time:</label>
+    <select id="end" name="end">
       <option value="9.5">9:30</option>
       <option value="10">10:00</option>
       <option value="10.5">10:30</option>
@@ -80,14 +82,16 @@
       <option value="17">5:00</option>
     </select>
   </div>
+
   <div>
     <input type="button" class="add" value="Add Time">
   </div>
-</form>
-<div>
-  <input type="button" class="review" value="Review Schedule">
-</div>
 
+  <div>
+    <input type="button" class="review" value="Review Schedule">
+  </div>
+
+</form>
 <!--on new page: display selected times (in schedule form?) then official submit-->
 <div class="display">
 

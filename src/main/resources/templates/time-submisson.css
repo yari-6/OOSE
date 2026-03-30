@@ -45,7 +45,7 @@ h3 {
     margin: 5px 20px;
 }
 
-select {
+select[name=dropdown] {
     font-size: 15px;
     border: 1px black solid;
     background-color: #FFFFFF;
