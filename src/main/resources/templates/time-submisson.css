@@ -1,0 +1,72 @@
+body {
+    font-family: sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    position: relative;
+    padding: 50px 20px;
+    text-align: center;
+    background: linear-gradient(to right, #6f263d, #8a1538);
+}
+
+.title-line {
+    width: 600px;
+    height: 4px;
+    background-color: #f3d03e;
+    border: none;
+    margin: 20px auto;
+}
+
+.logo {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 150px;
+}
+
+h3 {
+    font-size: 20px;
+    margin: 5px 20px;
+    padding: 5px;
+    text-decoration-line: underline;
+}
+
+.selection {
+    font-size: 15px;
+    width: 100%;
+    padding: 10px 0 15px 5px;
+    margin: 5px 20px;
+}
+
+select {
+    font-size: 15px;
+    border: 1px black solid;
+    background-color: #FFFFFF;
+    cursor: pointer;
+}
+
+input[type=button] {
+    background-color: #FFFFFF;
+    border: 1px solid;
+    color: #000000;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 5px 25px;
+}
+
+input[class=review] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: 15px;
+}
+
+input[type=button]:hover {background-color: #8a1538;}
