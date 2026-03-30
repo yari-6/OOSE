@@ -33,7 +33,7 @@ public class Tutor {
     )
     private Set<Course> coursesOffered = new HashSet<>();
 
-    @Column(name = "Pass", length = 15)
+    @Column(name = "Pass", length = 65)
     private String pass;
 
     // Add as soon as Grace has finished the scheduling and session tasks
@@ -41,7 +41,7 @@ public class Tutor {
     // private Set<Session> schedule = new HashSet<Session>();
 
     // Required and only used by Hibernate
-    protected Tutor() {}
+    public Tutor() {}
 
     public Tutor(String tutorID, String firstName, String lastName, String type) {
         this.tutorID = tutorID;
@@ -53,6 +53,10 @@ public class Tutor {
     // Getters and setters to be used by Hibernate (setters) and Thymeleaf (getters)
     public String getTutorID() {
         return tutorID;
+    }
+
+    public void setTutorID(String tutorID) {
+        this.tutorID = tutorID;
     }
 
     public String getFirstName() {
@@ -81,6 +85,14 @@ public class Tutor {
 
     public Set<Course> getCoursesOffered() {
         return coursesOffered;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 
 }

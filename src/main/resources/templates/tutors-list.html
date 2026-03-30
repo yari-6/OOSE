@@ -2,14 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="tutors.css">
+    <link rel="stylesheet" th:href="@{/tutors.css}">
     <title>Campus Tutors</title>
 </head>
 
 <body>
 
 <header class="header">
-    <a href="FrontPage.html">
+    <a th:href="@{/}">
 
         <img src="Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
 
@@ -21,7 +21,7 @@
     <div class="signin-container">
 
         <div class="signin-text">Are you a tutor?</div>
-        <a href="SignIn.html" class="signin-btn">Sign In</a>
+        <a th:href="@{/sign-in}" class="signin-btn">Sign In</a>
 
     </div>
 </header>
@@ -37,18 +37,16 @@
 
 </div>
 
-<div style=" left: 20px;">
-    <p > Search tutors by course: </p>
-    <form action="/search_page" method="get">
-        <input type="text" id="search-input" name="query" placeholder="Search...">
+<div class = "search-container">
+    <form th:action="@{/tutors}" method="get">
+        <label for="search-input">Search tutors by course </label>
+        <input type="text" id="search-input" name="courseSearch" placeholder="Search...">
         <button type="submit">Search</button>
     </form>
-
 </div>
 
 <table class="tutor-table">
-
-    <tr style="background: linear-gradient(to right, #6f263d, #8a1538)" ;>
+    <tr class = "tutor-table-header-row">
         <th>Name</th>
         <th>Tutor Type</th>
         <th>Profile</th>
@@ -58,7 +56,7 @@
     <tr th:each="tutor: ${tutors}">
         <td th:text="${tutor.firstName + ' ' + tutor.lastName}"></td>
         <td th:text="${tutor.type}"></td>
-        <td><a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" href="tutor-profile.html" class="button">View Profile</a>
+        <td><a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">View Profile</a>
         </td>
     </tr>
     </tbody>
