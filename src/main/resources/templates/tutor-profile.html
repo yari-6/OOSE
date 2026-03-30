@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Tutor Profile</title>
-    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" th:href="@{/profile.css}">
 </head>
 <body>
 
 
 <header class="header">
-    <a href="FrontPage.html">
+    <a th:href="@{/}">
 
-        <img src="Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
+        <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
 
     </a>
 
@@ -27,7 +27,7 @@
 </header>
 <div class="stripe-container">
 
-    <img src="fadedstripe.svg" alt="Stripe" class="stripe">
+    <img src="/fadedstripe.svg" alt="Stripe" class="stripe">
 
     <div class="stripe-text">
         <h3>Tutor Info</h3>
@@ -41,7 +41,7 @@
     <div class="profile-left">
         <div class="profile">
             <!-- Profile image -->
-            <img src="HelloKittypfp.png" alt="Profile Picture" id="profileImage">
+            <img src="/HelloKittypfp.png" alt="Profile Picture" id="profileImage">
 
             <button class="change-btn" id="changePfpBtn">Change PFP</button>
         </div>
@@ -144,11 +144,18 @@
 
             <button type="submit" class="submit">Submit Rating</button>
         </form>
-        <h3 th:text = "'Average Communication: ' + ${ratings[comm]}"></h3>
-        <h3 th:text = "'Average Approachability: ' + ${ratings[approach]}"></h3>
-        <h3 th:text = "'Average Effective Learning Strategies: ' + ${ratings[effLearn]}"></h3>
-        <h3 th:text = "'Average Helpfulness: ' + ${ratings[help]}"></h3>
-        <h3 th:text = "'Average Overall: ' + ${ratings[overall]}"></h3>
+        <h3 th:text = "'Average Communication: ' + ${ratings['comm']}"></h3>
+        <h3 th:text = "'Average Approachability: ' + ${ratings['approach']}"></h3>
+        <h3 th:text = "'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
+        <h3 th:text = "'Average Helpfulness: ' + ${ratings['help']}"></h3>
+        <h3 th:text = "'Average Overall: ' + ${ratings['overall']}"></h3>
+
+        <form id="feedbackForm">
+            <label>Leave anonymous feedback:</label>
+            <textarea id="message" name="message" rows="5"></textarea>
+            <button type="submit" class="submit">Send</button>
+        </form>
+
     </div>
 
     <div class="profile-right">
@@ -171,5 +178,11 @@
     </div>
 </div>
 <script src="pfpCode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    (function(){
+      emailjs.init("7uThrRxx3oK4X3ZxK");
+    })();
+</script>
 </body>
 </html>

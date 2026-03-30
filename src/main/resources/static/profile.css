@@ -36,21 +36,21 @@
     justify-content: center;
 }
 
- .stripe {
-     width: 100%;
-     height: auto;
-     display: block;
- }
+.stripe {
+ width: 100%;
+ height: auto;
+ display: block;
+}
 
- .stripe-text {
-     position: absolute;
-     bottom: 10px;
-     left: 10px;
-     color: black;
-     font-weight: bold;
-     font-size: 1.2rem;
-     text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
- }
+.stripe-text {
+ position: absolute;
+ bottom: 10px;
+ left: 10px;
+ color: black;
+ font-weight: bold;
+ font-size: 1.2rem;
+ text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+}
 
 .signin-container {
      position: absolute;
@@ -62,12 +62,13 @@
      align-items: center;
      gap: 6px;
  }
- .signin-text {
-     font-size: 0.8rem;
-     color: white;
-     text-align: center;
-     font-family: sans-serif;
- }
+.signin-text {
+ font-size: 0.8rem;
+ color: white;
+ text-align: center;
+ font-family: sans-serif;
+}
+
 .signin-btn {
      text-decoration: none;
      padding: 8px 16px;
@@ -82,14 +83,14 @@
      color: white;
  }
 
- h1 {
-    background-color:#6f263d;
-    color:white;
-    text-align: center;
-    font-size: 300%;
-    font-family: franklin-gothic-urw, sans-serif;
-    padding: 20px;
- }
+h1 {
+background-color:#6f263d;
+color:white;
+text-align: center;
+font-size: 300%;
+font-family: franklin-gothic-urw, sans-serif;
+padding: 20px;
+}
 
 .header h1 {
      margin: 0;
@@ -165,7 +166,6 @@ body {
     cursor:pointer;
     object-fit: cover;
     border: 3px solid  #f3d03e;
-
 }
 
 .avatar-grid img:hover{
@@ -195,7 +195,6 @@ body {
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     overflow: hidden;
-
 }
 
 .profile-left {
@@ -283,7 +282,7 @@ body {
     font-family: sans-serif;
     font-weight: bold;
     transition: all 0.2s ease;
-
+    cursor:pointer;
 }
 
 .submit:hover{
