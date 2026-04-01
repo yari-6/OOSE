@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Time Submission Confirmation</title>
+</head>
+
+<body>
+    <div class="display">
+        These are the times you have requested. Does it look right?
+        <div th:replace="fragments/schedule-view.html :: scheduleView(sessionSet=)">
+
+        </div>
+    </div>
+    <div class="buttons">
+        <button type="submit">Yes, submit.</button>
+        <button type="submit">No, go back.</button>
+    </div>
+
+
+
+
+</body>
+
+</html>

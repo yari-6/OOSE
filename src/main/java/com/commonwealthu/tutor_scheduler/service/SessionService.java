@@ -25,4 +25,5 @@ public class SessionService {
     //get sessions by tutoring type would require a type class to be able to pass to the method
     //it may work to have special tutor object for each type of tutoring
     //or it comes from a specific table, but that table is not made
+    public List<Session> getSessionsByType(String type) {return sessionRepo.findByTutoringType(type);}
 }
