@@ -3,16 +3,26 @@ const changeBtn = document.getElementById("changePfpBtn");
 const closeModalBtn = document.getElementById("closeModal");
 const profileImage = document.getElementById("profileImage");
 
-changeBtn.addEventListener("click", () => {
-    modal.style.display = "block";
-});
+
+//this is fro the pfp button, works only for logged in tutors
+if (changeBtn) {
+    changeBtn.addEventListener("click", () => {
+
+        if (!isLoggedIn) {
+            alert("You must be signed in to change your profile picture.");
+            return;
+        }
+
+        modal.style.display = "block";
+    });
+}
 
 closeModalBtn.addEventListener("click", () => {
     modal.style.display = "none";
 });
 
 window.addEventListener("click", (e) => {
-    if (e.target == modal) {
+    if (e.target === modal) {
         modal.style.display = "none";
     }
 });
@@ -21,25 +31,3 @@ function selectAvatar(src) {
     profileImage.src = src;
     modal.style.display = "none";
 }
-
-(function(){
-      emailjs.init("7uThrRxx3oK4X3ZxK");
-    })();
-
-document.getElementById("feedbackForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const message = document.getElementById("message").value;
-
-    emailjs.send("service_tqd9thp", "template_6rae5pq", {
-        message: message
-    })
-        .then(function(response) {
-        alert("Message sent successfully!");
-
-        document.getElementById("message").value = "";
-        }, function(error) {
-            alert("Failed to send message.");
-            console.log(error);
-    });
-});

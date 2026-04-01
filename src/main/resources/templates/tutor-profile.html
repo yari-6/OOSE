@@ -19,10 +19,17 @@
     <hr class="title-line">
 
     <div class="signin-container">
+        <a th:if="${session.tutorID == null}" href="/sign-in" class="signin-btn">
+            Sign In
+        </a>
 
-        <div class="signin-text">Are you a tutor?</div>
-        <a href="SignIn.html" class="signin-btn">Sign In</a>
+        <div th:if="${session.tutorID != null}" class="user-section">
+            <span class="welcome-text">
+            Welcome, <span th:text="${session.tutorID}"></span>
+            </span>
 
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
     </div>
 </header>
 <div class="stripe-container">
@@ -43,7 +50,11 @@
             <!-- Profile image -->
             <img src="/HelloKittypfp.png" alt="Profile Picture" id="profileImage">
 
-            <button class="change-btn" id="changePfpBtn">Change PFP</button>
+            <button th:if="${session.tutorID != null}"
+                    class="change-btn"
+                    id="changePfpBtn">
+                Change PFP
+            </button>
         </div>
 
         <div id="avatarModal" class="modal">
@@ -151,6 +162,9 @@
         <h3 th:text = "'Average Overall: ' + ${ratings['overall']}"></h3>
 
         <form id="feedbackForm">
+            <label>Your School Email:</label>
+            <input type="email" id="user_email" required>
+
             <label>Leave anonymous feedback:</label>
             <textarea id="message" name="message" rows="5"></textarea>
             <button type="submit" class="submit">Send</button>
@@ -179,10 +193,9 @@
 </div>
 <script src="pfpCode.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-    (function(){
-      emailjs.init("7uThrRxx3oK4X3ZxK");
-    })();
+<script src="feedback.js"></script>
+<script th:inline="javascript">
+    const isLoggedIn = [[${session.tutorID != null}]];
 </script>
 </body>
 </html>
