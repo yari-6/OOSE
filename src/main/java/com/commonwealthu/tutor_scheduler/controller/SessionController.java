@@ -17,25 +17,25 @@ public class SessionController {
     //I believe the error is that the arguments are not valid tutor IDs, but I can't properly test it yet
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
-        model.addAttribute("SIschedule", sessionService.getSessionsByTutor(si));
+        model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
         return "SI-schedule";
     }
 
     @GetMapping("schedules/drop-in")
     public String dropInSchedule(Model model) {
-        model.addAttribute("dropinSchedule", sessionService.getSessionsByTutor(dropIn));
+        model.addAttribute("dropinSchedule", sessionService.getSessionsByType("Drop-in"));
         return "drop-in-schedule";
     }
 
     @GetMapping("schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
-        model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByTutor(bfMathLab));
+        model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
         return "BF-math-lab";
     }
 
     @GetMapping("schedules/SSC")
     public String SSCSchedule(Model model) {
-        model.addAttribute("SSCSchedule", sessionService.getSessionsByTutor(sscMathLab));
+        model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
         return "SSC-schedule";
     }
 }

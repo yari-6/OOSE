@@ -6,12 +6,12 @@
 </head>
 <body>
 <!--drop down for day, start time, end time; display all, then submit button (check which form version)-->
-    <h3>Request times for drop-in/SI hours:</h3>
+    <h3>Request times for drop-in hours:</h3>
 
     <form method="post">
         <div class="selection">
             <label>Select day of week: </label>
-            <select>
+            <select name="day">
                 <option value="M">Monday</option>
                 <option value="T">Tuesday</option>
                 <option value="W">Wednesday</option>
@@ -19,7 +19,7 @@
                 <option value="F">Friday</option>
             </select>
             <label>Select start time: </label>
-            <select>
+            <select name="start">
                 <option value="9">9:00</option>
                 <option value="9.5">9:30</option>
                 <option value="10">10:00</option>
@@ -38,7 +38,7 @@
                 <option value="16.5">4:30</option>
             </select>
             <label>Select end time: </label>
-            <select>
+            <select name="end">
                 <option value="9.5">9:30</option>
                 <option value="10">10:00</option>
                 <option value="10.5">10:30</option>
