@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SI Schedule Builder</title>
+  <link rel="stylesheet" th:href="@{/time-submission-SI.css}" />
+</head>
+<body>
+<header class="header">
+  <a th:href="@{/}">
+    <img th:src="@{/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo" />
+  </a>
+  <h1>SI Schedule</h1>
+  <hr class="title-line" />
+</header>
+
+<main class="container" id="app">
+  <div class="form-row" aria-labelledby="si-leader-label">
+    <label id="si-leader-label" for="SILeader">SI Leader:</label>
+    <input type="text" id="SILeader" name="SILeader" />
+
+    <label for="Class">Class:</label>
+    <input type="text" id="Class" name="Class" />
+
+    <label for="ClassMeetingTimes">Class Meeting Times:</label>
+    <input type="text" id="ClassMeetingTimes" name="ClassMeetingTimes" />
+  </div>
+
+  <div class="controls" role="region" aria-label="session controls">
+    <label for="pattern">Pattern:
+      <select id="pattern" aria-label="session pattern">
+        <option value="3x50">3 × 50 min</option>
+        <option value="4x75">4 × 75 min</option>
+      </select>
+    </label>
+
+    <input id="generate" type="button" value="Generate Sessions" />
+    <input id="export" type="button" value="Review Schedule" />
+  </div>
+
+  <div id="sessionsWrap" style="margin-top:16px" aria-live="polite"></div>
+
+  <div class="error" id="err" aria-live="polite"></div>
+  <div class="warning" id="warn" aria-live="polite"></div>
+
+  <div id="tableWrap" aria-live="polite"></div>
+  <div class="result" id="out" aria-live="polite"></div>
+</main>
+
+<script>
+  (function(){
+    const DAY_START = 11*60; // 11:00
+    const MAX_DAY = 20*60; // 20:00
+    const STEP = 15;
+
+    const patternEl = document.getElementById('pattern');
+    const genBtn = document.getElementById('generate');
+    const exportBtn = document.getElementById('export');
+    const wrap = document.getElementById('sessionsWrap');
+    const err = document.getElementById('err');
+    const warn = document.getElementById('warn');
+    const tableWrap = document.getElementById('tableWrap');
+
+    const fmt = m => {
+      const h = Math.floor(m/60);
+      const mm = String(m%60).padStart(2,'0');
+      return `${h}:${mm}`;
+    };
+
+    function computeSessionOptions(baseStart, idx, count, dur){
+      const options = [];
+      const latestBase = MAX_DAY - count * dur;
+      for (let base = baseStart; base <= latestBase; base += STEP){
+        const s = base + idx * dur;
+        const e = s + dur;
+        if (e <= MAX_DAY) options.push({start:s,end:e});
+      }
+      // dedupe by start-end
+      const map = new Map();
+      options.forEach(o => map.set(`${o.start}-${o.end}`, o));
+      return Array.from(map.values()).sort((a,b)=>a.start-b.start);
+    }
+
+    function makeDaySelect(id){
+      const sel = document.createElement('select');
+      sel.id = id;
+      sel.className = 'small';
+      ['Monday','Tuesday','Wednesday','Thursday','Friday'].forEach(d => {
+        const o = document.createElement('option');
+        o.value = d; o.textContent = d;
+        sel.appendChild(o);
+      });
+      return sel;
+    }
+
+    function buildSelectOptions(sel, items, valueKey, labelFn){
+      sel.innerHTML = '';
+      items.forEach(it => {
+        const o = document.createElement('option');
+        o.value = String(it[valueKey]);
+        o.textContent = labelFn(it);
+        sel.appendChild(o);
+      });
+    }
+
+    function sessionsOverlap(aStart,aEnd,bStart,bEnd){
+      return aStart < bEnd && bStart < aEnd;
+    }
+
+    function checkAllOverlaps(rows){
+      const overlaps = [];
+      const perDay = {};
+      rows.forEach((row, idx) => {
+        const [daySel,startSel,endSel] = row.querySelectorAll('select');
+        const day = daySel.value;
+        const s = Number(startSel.value);
+        const e = Number(endSel.value);
+        perDay[day] = perDay[day] || [];
+        perDay[day].push({index: idx+1, start: s, end: e});
+      });
+
+      Object.keys(perDay).forEach(day => {
+        const list = perDay[day];
+        for (let i=0;i<list.length;i++){
+          for (let j=i+1;j<list.length;j++){
+            const A = list[i], B = list[j];
+            if (sessionsOverlap(A.start,A.end,B.start,B.end)){
+              overlaps.push({day,a:A.index,b:B.index,aStart:A.start,aEnd:A.end,bStart:B.start,bEnd:B.end});
+            }
+          }
+        }
+      });
+      return overlaps;
+    }
+
+    function renderSessions(){
+      err.textContent = ''; warn.textContent = ''; tableWrap.innerHTML = ''; wrap.innerHTML = '';
+
+      const [countStr,durStr] = patternEl.value.split('x');
+      const count = Number(countStr), dur = Number(durStr);
+      const startM = DAY_START;
+
+      if (startM + count*dur > MAX_DAY){
+        err.textContent = 'Pattern does not fit in the day range.';
+        return;
+      }
+
+      for (let i=0;i<count;i++){
+        const opts = computeSessionOptions(startM, i, count, dur);
+        const sessionDiv = document.createElement('div');
+        sessionDiv.className = 'session';
+
+        const lbl = document.createElement('label');
+        lbl.textContent = `Session ${i+1}:`;
+        sessionDiv.appendChild(lbl);
+
+        const daySel = makeDaySelect(`day-${i+1}`);
+        sessionDiv.appendChild(daySel);
+
+        const sSel = document.createElement('select');
+        sSel.id = `start-${i+1}`; sSel.className = 'small';
+        const eSel = document.createElement('select');
+        eSel.id = `end-${i+1}`; eSel.className = 'small';
+
+        if (!opts.length){
+          const no = document.createElement('option');
+          no.textContent = 'No options'; no.disabled = true;
+          sSel.appendChild(no.cloneNode(true)); eSel.appendChild(no);
+        } else {
+          buildSelectOptions(sSel, opts, 'start', o => fmt(o.start));
+          buildSelectOptions(eSel, opts, 'end', o => fmt(o.end));
+          sSel.value = String(opts[0].start);
+          eSel.value = String(opts[0].end);
+
+          const liveCheck = () => {
+            warn.textContent = '';
+            const rows = Array.from(wrap.querySelectorAll('.session'));
+            const ov = checkAllOverlaps(rows);
+            if (ov.length){
+              const o = ov[0];
+              warn.textContent = `Overlap: Session ${o.a} overlaps Session ${o.b} on ${o.day} (${fmt(o.aStart)}-${fmt(o.aEnd)} vs ${fmt(o.bStart)}-${fmt(o.bEnd)})`;
+            }
+          };
+
+          sSel.addEventListener('change', () => {
+            const chosen = Number(sSel.value);
+            const match = opts.find(x => x.start === chosen);
+            if (match) eSel.value = String(match.end);
+            liveCheck();
+          });
+          daySel.addEventListener('change', liveCheck);
+        }
+
+        sessionDiv.appendChild(sSel);
+        sessionDiv.appendChild(eSel);
+        wrap.appendChild(sessionDiv);
+      }
+    }
+
+    genBtn.addEventListener('click', renderSessions);
+    patternEl.addEventListener('change', renderSessions);
+
+    function makeEditableCell(content){
+      const td = document.createElement('td');
+      td.className = 'editable';
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.value = content;
+      td.appendChild(inp);
+      return td;
+    }
+
+    exportBtn.addEventListener('click', () => {
+      err.textContent = ''; warn.textContent = ''; tableWrap.innerHTML = '';
+
+      const rows = Array.from(wrap.querySelectorAll('.session'));
+      if (!rows.length){ err.textContent = 'No sessions to export'; return; }
+
+      const collected = [];
+      for (let i=0;i<rows.length;i++){
+        const [daySel,startSel,endSel] = rows[i].querySelectorAll('select');
+        if (!daySel || !startSel || !endSel){ err.textContent = 'Missing selects'; return; }
+        const day = daySel.value;
+        const s = Number(startSel.value);
+        const e = Number(endSel.value);
+        if (!Number.isFinite(s) || !Number.isFinite(e) || s >= e){ err.textContent = 'Each session must have start < end'; return; }
+        collected.push({index:i+1, day, start:s, end:e});
+      }
+
+      // overlap check
+      const overlaps = [];
+      const byDay = {};
+      collected.forEach(r => { (byDay[r.day] = byDay[r.day] || []).push(r); });
+      Object.keys(byDay).forEach(day => {
+        const list = byDay[day];
+        for (let i=0;i<list.length;i++){
+          for (let j=i+1;j<list.length;j++){
+            const A=list[i], B=list[j];
+            if (sessionsOverlap(A.start,A.end,B.start,B.end)){
+              overlaps.push({day,a:A.index,b:B.index,aStart:A.start,aEnd:A.end,bStart:B.start,bEnd:B.end});
+            }
+          }
+        }
+      });
+      if (overlaps.length){
+        const o = overlaps[0];
+        err.textContent = `Overlap detected: Session ${o.a} overlaps Session ${o.b} on ${o.day} (${fmt(o.aStart)}-${fmt(o.aEnd)} vs ${fmt(o.bStart)}-${fmt(o.bEnd)})`;
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.innerHTML = '<thead><tr><th>SI LEADER</th><th>CLASS</th><th>DAYS</th><th>TIMES</th><th>LOCATIONS</th><th>CLASS MEETING TIMES</th></tr></thead>';
+      const tbody = document.createElement('tbody');
+
+      collected.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.appendChild(makeEditableCell(document.getElementById('SILeader').value || ''));
+        tr.appendChild(makeEditableCell(document.getElementById('Class').value || ''));
+        tr.appendChild(makeEditableCell(r.day));
+        tr.appendChild(makeEditableCell(`${fmt(r.start)} - ${fmt(r.end)}`));
+        tr.appendChild(makeEditableCell('TBD'));
+        tr.appendChild(makeEditableCell(document.getElementById('ClassMeetingTimes').value || ''));
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      tableWrap.appendChild(table);
+    });
+
+    // initial render
+    renderSessions();
+  })();
+</script>
+</body>
+</html>

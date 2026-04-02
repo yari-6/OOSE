@@ -38,7 +38,8 @@ public class Tutor {
 
     // Add as soon as Grace has finished the scheduling and session tasks
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
-    // private Set<Session> schedule = new HashSet<Session>();
+    @OneToMany
+    private Set<Session> schedule = new HashSet<Session>();
 
     // Required and only used by Hibernate
     public Tutor() {}
