@@ -42,43 +42,55 @@
     </tr>
     </thead>
     <tbody>
+    <script>
+        function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        function fmt(m){ if (typeof m!=='number') return String(m); const h=Math.floor(m/60); return `${h}:${String(m%60).padStart(2,'0')}`; }
 
-    <tr>
-        <td>John Doe</td>
-        <td>STAT</td>
-        <td>Monday</td>
-        <td>1:00-1:15</td>
-        <td>Soltz 105</td>
-        <td>MWF 2:00-2:50</td>
-    </tr>
-    <tr>
-        <td>John Doe</td>
-        <td>STAT</td>
-        <td>Tuesday</td>
-        <td>2:00-2:15</td>
-        <td>Soltz 105</td>
-        <td>MWF 2:00-2:50</td>
-    </tr>
-    <tr>
-        <td>John Doe</td>
-        <td>STAT</td>
-        <td>Wednesday</td>
-        <td>3:00-3:15</td>
-        <td>Soltz 105</td>
-        <td>MWF 2:00-2:50</td>
-    </tr>
-    <tr>
+        const params = new URLSearchParams(window.location.search);
+        const raw = params.get('schedule');
+        let data = null;
 
-    </tr>
-    <tr>
+        if (raw){
+            try { data = JSON.parse(decodeURIComponent(raw)); }
+            catch(e){ console.warn('Invalid schedule payload'); }
+        } else {
+            // fallback to individual query fields (SILeader, Class, ClassMeetingTimes, sessions as repeating params)
+            const siLeader = params.get('SILeader') || '';
+            const cls = params.get('Class') || '';
+            const cmt = params.get('ClassMeetingTimes') || '';
+            const sessions = [];
+            // support sessions encoded as session0_day, session0_start, session0_end, ... up to 10
+            for (let i=0;i<10;i++){
+                const day = params.get(`session${i}_day`);
+                const start = params.get(`session${i}_start`);
+                const end = params.get(`session${i}_end`);
+                if (!day || !start || !end) continue;
+                sessions.push({day, start: Number(start), end: Number(end)});
+            }
+            if (sessions.length) data = {siLeader, class: cls, classMeetingTimes: cmt, sessions};
+        }
 
-    </tr>
-    <tr>
-
-    </tr>
-    <tr>
-
-    </tr>
+        const tbody = document.getElementById('scheduleBody');
+        if (!data || !Array.isArray(data.sessions) || !data.sessions.length){
+            // show a placeholder row
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="6">No schedule provided.</td>';
+            tbody.appendChild(tr);
+        } else {
+            data.sessions.forEach(s => {
+                const tr = document.createElement('tr');
+                const times = (typeof s.start === 'number' && typeof s.end === 'number') ? `${fmt(s.start)} - ${fmt(s.end)}` : `${escapeHtml(s.start)} - ${escapeHtml(s.end)}`;
+                tr.innerHTML =
+                    `<td>${escapeHtml(data.siLeader)}</td>` +
+                    `<td>${escapeHtml(data.class)}</td>` +
+                    `<td>${escapeHtml(s.day)}</td>` +
+                    `<td>${escapeHtml(times)}</td>` +
+                    `<td>${escapeHtml(s.location || 'TBD')}</td>` +
+                    `<td>${escapeHtml(data.classMeetingTimes)}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
     </tbody>
 </table>
 
