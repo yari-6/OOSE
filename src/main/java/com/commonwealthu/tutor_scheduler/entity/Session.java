@@ -11,7 +11,7 @@ public class Session {
     private SessionID sessionID;
 
     @Column(name="endTime")
-    private int endTime; //some way to differentiate between weeks; for use with booked tag
+    private int endTime;
 
     protected Session() {};
 

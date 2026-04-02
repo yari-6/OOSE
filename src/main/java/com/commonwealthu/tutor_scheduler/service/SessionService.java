@@ -7,6 +7,7 @@ import com.commonwealthu.tutor_scheduler.repository.SessionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SessionService {
@@ -20,10 +21,10 @@ public class SessionService {
 
     //god i hope this is it
     //https://stackoverflow.com/questions/49435969/how-to-use-part-of-composite-key-in-jpa-repository-methods
-    public List<Session> getSessionsByTutor(Tutor tutor) {return sessionRepo.findBySessionID_Tutor(tutor);}
+    public Set<Session> getSessionsByTutor(Tutor tutor) {return sessionRepo.findBySessionID_Tutor(tutor);}
 
     //get sessions by tutoring type would require a type class to be able to pass to the method
     //it may work to have special tutor object for each type of tutoring
     //or it comes from a specific table, but that table is not made
-    public List<Session> getSessionsByType(String type) {return sessionRepo.findByTutoringType(type);}
+    public Set<Session> getSessionsByType(String type) {return sessionRepo.findByTutoringType(type);}
 }

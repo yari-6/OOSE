@@ -36,7 +36,7 @@ public class Tutor {
     @Column(name = "Pass", length = 65)
     private String pass;
 
-    // Add as soon as Grace has finished the scheduling and session tasks
+    // one to many create a new table? are annotations needed here and in the Session entity?
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
     @OneToMany
     private Set<Session> schedule = new HashSet<Session>();

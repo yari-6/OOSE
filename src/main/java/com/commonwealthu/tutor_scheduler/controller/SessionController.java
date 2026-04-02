@@ -18,7 +18,7 @@ public class SessionController {
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
         model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
-        return "SI-schedule";
+        return "SI Schedule";
     }
 
     @GetMapping("schedules/drop-in")
