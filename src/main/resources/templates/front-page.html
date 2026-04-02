@@ -14,7 +14,7 @@
     <hr class="title-line">
 
     <div class="signin-container">
-        <a th:if="${session.tutorID == null}" href="/sign-in" class="signin-btn">
+        <a th:if="${session.tutorID == null}" th:href="@{/sign-in}" class="signin-btn">
             Sign In
         </a>
 
@@ -38,38 +38,46 @@
 </div>
 <div class="main-section">
     <div class="left-side">
-        <div class="hero_content box">
-            <p> View Drop-In Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View SSC Math Lab Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View Ben Frank Math Lab Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View SI Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
+            <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Build Your Tutor Schedule</p>
+                </div>
+            </a>
 
-        <div class="hero_content box">
-            <p>Click here to search for a tutor →
-                <a th:href="@{/tutors}" class="link-btn">🔍</a>
-            </p>
-        </div>
+            <a th:href="@{/drop-in-schedule}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Drop-In Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/ssc-math-lab}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SSC Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/ben-frank-math-lab}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Ben Frank Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/si-schedule}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SI Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/tutors}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Click here to search for a tutor</p>
+                </div>
+            </a>
     </div>
 
     <div class="image-side">
         <img src="tutor_center.jpg" alt="Tutor Center" width="500" height="300">
     </div>
-
 </div>
 
 <footer class="footer">
