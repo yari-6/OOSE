@@ -4,6 +4,7 @@ import com.commonwealthu.tutor_scheduler.entity.Rating;
 import com.commonwealthu.tutor_scheduler.entity.TutorLogin;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,7 +45,8 @@ public class TutorController {
     // will be displayed at once every time
     // Possibly update to be a query parameter rather than embedded in the url
     @GetMapping("/tutors/{id}")
-    public String tutorProfile(Model model, @PathVariable String id) {
+    public String tutorProfile(Model model, @PathVariable String id, HttpSession session) {
+
         model.addAttribute("tutor", tutorService.findTutorByID(id));
         model.addAttribute("ratings", ratingService.getAllRatings(id));
         return "tutor-profile";
@@ -66,16 +68,21 @@ public class TutorController {
     // ModelAttribute users the empty TutorLogin and binds the form data to it
     @PostMapping("/sign-in")
     public String handleSignIn(@Valid @ModelAttribute("loginTutor") TutorLogin loginTutor,
-                               BindingResult bindingResult) {
+                               BindingResult bindingResult,
+                               HttpSession session) {
+
         // Checks the form data
         if (bindingResult.hasErrors() ||
                 !tutorService.checkLogin(loginTutor.getTutorID(), loginTutor.getPass())) {
             return "sign-in";
         }
 
+        // create session
+        session.setAttribute("tutorID", loginTutor.getTutorID());
+
         // Does not redirect to a new page so that the tutorID is kept across pages
         if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
-            return "set-new-password"; // No get mapping needed because it is returned within the sign-in
+            return "set-new-password";
         }
 
         return "redirect:/";
@@ -90,5 +97,12 @@ public class TutorController {
         tutorService.updatePassword(loginTutor.getTutorID(), loginTutor.getNewPass());
 
         return "redirect:/sign-in";
+    }
+
+    // lets tutor logout
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 }

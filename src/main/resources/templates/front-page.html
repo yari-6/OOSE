@@ -8,20 +8,28 @@
 
 <body >
 <header class="header">
-    <a th:href="@{/}">
-        <img th:src="@{static/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo"/>
-    </a>
+    <img src="Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
+
     <h1>Welcome to Bloom Tutors</h1>
     <hr class="title-line">
 
     <div class="signin-container">
-        <div class="signin-text">Are you a tutor?</div>
-        <a th:href="@{/sign-in}" class="signin-btn">Sign In</a>
+        <a th:if="${session.tutorID == null}" th:href="@{/sign-in}" class="signin-btn">
+            Sign In
+        </a>
+
+        <div th:if="${session.tutorID != null}" class="user-section">
+            <span class="welcome-text">
+            Welcome, <span th:text="${session.tutorID}"></span>
+            </span>
+
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
     </div>
 </header>
 
 <div class="stripe-container">
-    <img th:src="@{/static/fadedstripe.svg}" alt="Stripe" class="stripe">
+    <img src="fadedstripe.svg" alt="Stripe" class="stripe">
     <div class="stripe-text">
         Blooms Tutors – Making scheduling easy!
         <hr class="accent-line">
@@ -30,38 +38,46 @@
 </div>
 <div class="main-section">
     <div class="left-side">
-        <div class="hero_content box">
-            <p> View Drop-In Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View SSC Math Lab Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View Ben Frank Math Lab Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
-        <div class="hero_content box">
-            <p> View SI Schedule
-                <a href="blank.html" class="link-btn">Here</a>
-            </p>
-        </div>
+            <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Build Your Tutor Schedule</p>
+                </div>
+            </a>
 
-        <div class="hero_content box">
-            <p>Click here to search for a tutor →
-                <a th:href="@{/tutors}" class="link-btn">🔍</a>
-            </p>
-        </div>
+            <a th:href="@{/drop-in-schedule}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Drop-In Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/ssc-math-lab}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SSC Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/ben-frank-math-lab}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Ben Frank Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/si-schedule}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SI Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/tutors}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Click here to search for a tutor</p>
+                </div>
+            </a>
     </div>
 
     <div class="image-side">
-        <img th:src="@{/static/tutor_center.jpg}" alt="Tutor Center" width="500" height="300">
+        <img src="tutor_center.jpg" alt="Tutor Center" width="500" height="300">
     </div>
-
 </div>
 
 <footer class="footer">
