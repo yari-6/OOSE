@@ -13,7 +13,7 @@ public class SessionID implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="TutorID")
-    private Tutor tutor;
+    private String tutor;
 
     @Column(name="day")
     private char day;
@@ -23,9 +23,15 @@ public class SessionID implements Serializable {
 
     protected SessionID() {};
 
-    public Tutor getTutor() { return tutor; }
+    public SessionID(String tutor, char day, double time) {
+        this.tutor = tutor;
+        this.day = day;
+        this.time = time;
+    }
 
-    public void setTutor(Tutor tutor) { this.tutor = tutor; }
+    public String getTutor() { return tutor; }
+
+    public void setTutor(String tutor) { this.tutor = tutor; }
 
     public char getDay() {
         return day;

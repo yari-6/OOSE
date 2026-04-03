@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface SessionRepository extends JpaRepository<Session, SessionID> {
-    List<Session> findBySessionID_Tutor(Tutor tutor);
+    Set<Session> findBySessionID_Tutor(Tutor tutor);
 
-    @Query("SELECT s FROM Session s WHERE s.tutor = (SELECT t FROM Tutor t WHERE t.type = type)")
-    List<Session> findByTutoringType(@Param("tutor_type") String type);
+    @Query("SELECT s FROM Session s WHERE s.tutor = (SELECT t.tutorID FROM Tutor t WHERE t.type = :tutorType)")
+    Set<Session> findByTutoringType(@Param("tutorType") String tutorType);
 }

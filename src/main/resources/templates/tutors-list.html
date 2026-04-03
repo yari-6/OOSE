@@ -19,10 +19,17 @@
     <hr class="title-line">
 
     <div class="signin-container">
+        <a th:if="${session.tutorID == null}" href="/sign-in" class="signin-btn">
+            Sign In
+        </a>
 
-        <div class="signin-text">Are you a tutor?</div>
-        <a th:href="@{/sign-in}" class="signin-btn">Sign In</a>
+        <div th:if="${session.tutorID != null}" class="user-section">
+            <span class="welcome-text">
+            Welcome, <span th:text="${session.tutorID}"></span>
+            </span>
 
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
     </div>
 </header>
 

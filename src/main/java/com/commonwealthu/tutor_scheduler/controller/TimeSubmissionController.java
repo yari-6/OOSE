@@ -1,20 +1,26 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
+import com.commonwealthu.tutor_scheduler.entity.Session;
+import com.commonwealthu.tutor_scheduler.entity.SessionID;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TimeSubmissionController {
-    //keep a list up here and clear it when the confirm button is hit? will that mess up if 2 people schedule at once?
-    //can a cookie keep a list/set?
 
     @PostMapping("/addTimes")
     public String addTimes(@RequestParam("day") char day, @RequestParam("start") double start,
                            @RequestParam("end") double end) {
-
-        return "time-submission"; //subject to change
+        //Session submitted = new Session(new SessionID(/*tutor id*/, day, start), end);
+        return "time-submission-edited"; //subject to change
     }
+
+    @PostMapping("/review")
+    public String reviewTimes() {
+        return "time-sumbit-confirm";
+    }
+
 
     //final confirm button after all sessions shown
 }
