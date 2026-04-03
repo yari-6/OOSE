@@ -11,15 +11,20 @@ public class Session {
     private SessionID sessionID;
 
     @Column(name="endTime")
-    private int endTime;
+    private double endTime;
 
     protected Session() {};
+
+    public Session(SessionID sessionId, double end) {
+        this.sessionID = sessionId;
+        this.endTime = end;
+    }
 
     public SessionID getSessionID() {return sessionID;}
 
     public void setSessionID(SessionID sessionID) {this.sessionID = sessionID;}
 
-    public int getEndTime() {return endTime;}
+    public double getEndTime() {return endTime;}
 
-    public void setEndTime(int endTime) {this.endTime = endTime;}
+    public void setEndTime(double endTime) {this.endTime = endTime;}
 }
