@@ -38,6 +38,7 @@
         <th>DAYS</th>
         <th>TIMES</th>
         <th>LOCATIONS</th>
+        <th>PROFESSOR</th>
         <th>CLASS MEETING TIMES</th>
     </tr>
     </thead>
@@ -57,6 +58,7 @@
             // fallback to individual query fields (SILeader, Class, ClassMeetingTimes, sessions as repeating params)
             const siLeader = params.get('SILeader') || '';
             const cls = params.get('Class') || '';
+            const pro = params.get('Professor') || '';
             const cmt = params.get('ClassMeetingTimes') || '';
             const sessions = [];
             // support sessions encoded as session0_day, session0_start, session0_end, ... up to 10
@@ -67,7 +69,7 @@
                 if (!day || !start || !end) continue;
                 sessions.push({day, start: Number(start), end: Number(end)});
             }
-            if (sessions.length) data = {siLeader, class: cls, classMeetingTimes: cmt, sessions};
+            if (sessions.length) data = {siLeader, class: cls, professor: pro, classMeetingTimes: cmt, sessions};
         }
 
         const tbody = document.getElementById('scheduleBody');
@@ -86,7 +88,8 @@
                     `<td>${escapeHtml(s.day)}</td>` +
                     `<td>${escapeHtml(times)}</td>` +
                     `<td>${escapeHtml(s.location || 'TBD')}</td>` +
-                    `<td>${escapeHtml(data.classMeetingTimes)}</td>`;
+                    `<td>${escapeHtml(data.professor)}</td>`;
+                `<td>${escapeHtml(data.classMeetingTimes)}</td>`;
                 tbody.appendChild(tr);
             });
         }

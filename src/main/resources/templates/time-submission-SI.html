@@ -23,6 +23,9 @@
     <label for="Class">Class:</label>
     <input type="text" id="Class" name="Class" />
 
+    <label for="Professor">Professor Name:</label>
+    <input type="text" id="Professor" name="Professor" />
+
     <label for="ClassMeetingTimes">Class Meeting Times:</label>
     <input type="text" id="ClassMeetingTimes" name="ClassMeetingTimes" />
   </div>
@@ -249,7 +252,7 @@
       }
 
       const table = document.createElement('table');
-      table.innerHTML = '<thead><tr><th>SI LEADER</th><th>CLASS</th><th>DAYS</th><th>TIMES</th><th>LOCATIONS</th><th>CLASS MEETING TIMES</th></tr></thead>';
+      table.innerHTML = '<thead><tr><th>SI LEADER</th><th>CLASS</th><th>DAYS</th><th>TIMES</th><th>LOCATIONS</th><th>PROFESSOR</th><th>CLASS MEETING TIMES</th></tr></thead>';
       const tbody = document.createElement('tbody');
 
       collected.forEach(r => {
@@ -259,6 +262,7 @@
         tr.appendChild(makeEditableCell(r.day));
         tr.appendChild(makeEditableCell(`${fmt(r.start)} - ${fmt(r.end)}`));
         tr.appendChild(makeEditableCell('TBD'));
+        tr.appendChild(makeEditableCell(document.getElementById('Professor').value || ''));
         tr.appendChild(makeEditableCell(document.getElementById('ClassMeetingTimes').value || ''));
         tbody.appendChild(tr);
       });
