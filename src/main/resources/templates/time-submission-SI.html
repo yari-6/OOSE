@@ -4,16 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SI Schedule Builder</title>
-  <link rel="stylesheet" th:href="@{/time-submission-SI.css}" />
+  <link rel="stylesheet" th:href="@{/static/time-submission-SI.css}" />
 </head>
 <body>
 <header class="header">
   <a th:href="@{/}">
-    <img th:src="@{/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo" />
+
+    <img th:src="@{/static/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo">
+
   </a>
+
   <h1>SI Schedule</h1>
-  <hr class="title-line" />
+  <hr class="title-line">
 </header>
+
+<div class="stripe-container">
+
+  <img th:src="@{/static/fadedstripe.svg}"  alt="Stripe" class="stripe">
+
+  <div class="stripe-text">
+    <hr class="accent-line">
+  </div>
+
+</div>
 
 <main class="container" id="app">
   <div class="form-row" aria-labelledby="si-leader-label">
@@ -79,7 +92,6 @@
         const e = s + dur;
         if (e <= MAX_DAY) options.push({start:s,end:e});
       }
-      // dedupe by start-end
       const map = new Map();
       options.forEach(o => map.set(`${o.start}-${o.end}`, o));
       return Array.from(map.values()).sort((a,b)=>a.start-b.start);
@@ -230,7 +242,6 @@
         collected.push({index:i+1, day, start:s, end:e});
       }
 
-      // overlap check
       const overlaps = [];
       const byDay = {};
       collected.forEach(r => { (byDay[r.day] = byDay[r.day] || []).push(r); });
@@ -271,7 +282,6 @@
       tableWrap.appendChild(table);
     });
 
-    // initial render
     renderSessions();
   })();
 </script>
