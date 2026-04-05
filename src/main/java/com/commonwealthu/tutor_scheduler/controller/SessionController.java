@@ -30,12 +30,12 @@ public class SessionController {
     @GetMapping("schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
         model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "BF-math-lab";
+        return "ben-frank-math-lab";
     }
 
     @GetMapping("schedules/SSC")
     public String SSCSchedule(Model model) {
         model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "SSC-schedule";
+        return "ssc-math-lab";
     }
 }

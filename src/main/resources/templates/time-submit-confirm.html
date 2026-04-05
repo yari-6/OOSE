@@ -8,13 +8,13 @@
 <body>
     <div class="display">
         These are the times you have requested. Does it look right?
-        <div th:replace="fragments/schedule-view.html :: scheduleView(sessionSet=)">
-
+        <div th:replace="fragments/schedule-view.html :: scheduleView(sessionSet=tutor.schedule)">
         </div>
     </div>
     <div class="buttons">
-        <button type="submit">Yes, submit.</button>
-        <button type="submit">No, go back.</button>
+        <button name="yes" type="submit">Yes, submit.</button>
+        <button name="no" type="submit">No, go back.</button>
+        Note: If you select 'no', all entered times will be erased.
     </div>
 
 
