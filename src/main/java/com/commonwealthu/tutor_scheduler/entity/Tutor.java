@@ -96,4 +96,6 @@ public class Tutor {
         this.pass = pass;
     }
 
+    public Set<Session> getSchedule() {return schedule;}
+
 }
