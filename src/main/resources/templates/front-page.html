@@ -38,9 +38,15 @@
 </div>
 <div class="main-section">
     <div class="left-side">
-            <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
+            <a th:if="${session.tutorID != null}" th:href="@{/time-submission-edited}" class="hero-link">
                 <div class="hero_content box">
-                    <p>Build Your Tutor Schedule</p>
+                    <p>Build Your Drop-in Schedule</p>
+                </div>
+            </a>
+
+            <a th:if="${session.tutorID != null}" th:href="@{/time-submission-SI}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Build Your SI Schedule</p>
                 </div>
             </a>
 
@@ -62,7 +68,7 @@
                 </div>
             </a>
 
-            <a th:href="@{/si-schedule}" class="hero-link">
+            <a th:href="@{/SI Schedule}" class="hero-link">
                 <div class="hero_content box">
                     <p>View SI Schedule</p>
                 </div>
