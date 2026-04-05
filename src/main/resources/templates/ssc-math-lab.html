@@ -7,7 +7,7 @@
 
 <body>
     <h3>SSC Math Lab Schedule</h3>
-    <div th:replace="~{schedule-view :: scheduleView(SSCSchedule)}"></div>
+    <div th:replace="~{schedule-view :: scheduleView(${SSCSchedule})}"></div>
 </body>
 
 </html>
