@@ -24,18 +24,18 @@ public class SessionController {
     @GetMapping("schedules/drop-in")
     public String dropInSchedule(Model model) {
         model.addAttribute("dropinSchedule", sessionService.getSessionsByType("Drop-in"));
-        return "drop-in-schedule";
+        return "drop-in-schedule.html";
     }
 
     @GetMapping("schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
         model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "ben-frank-math-lab";
+        return "ben-frank-math-lab.html";
     }
 
     @GetMapping("schedules/SSC")
     public String SSCSchedule(Model model) {
         model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "ssc-math-lab";
+        return "ssc-math-lab.html";
     }
 }
