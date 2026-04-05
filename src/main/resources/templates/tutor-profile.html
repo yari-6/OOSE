@@ -186,7 +186,8 @@
         </section>
         <section class="schedule-section">
             <h2>Schedule</h2>
-            <div th:replace="~{schedule-view :: scheduleView(sessionSet=${tutor.schedule})}"></div>
+            <div th:unless="${tutor.schedule}==null" th:replace="~{schedule-view :: scheduleView(sessionSet=${tutor.schedule})}"></div>
+            <div th:if="${tutor.schedule}==null">Schedule coming soon.</div>
             <!--<div th:replace="fragments/schedule-view.html :: scheduleView(sessionSet=${tutor.schedule})">
             </div>-->
         </section>

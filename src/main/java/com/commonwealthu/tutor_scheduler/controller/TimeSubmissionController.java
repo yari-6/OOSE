@@ -3,7 +3,10 @@ package com.commonwealthu.tutor_scheduler.controller;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
+import com.commonwealthu.tutor_scheduler.repository.TutorRepository;
+import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,11 +14,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TimeSubmissionController {
+    @Autowired
+    private TutorService tutorService;
+
+    @GetMapping("/schedule-builder")
+    public String buildSchedule(HttpSession browserSession) {
+        Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
+        if(loggedIn.getType()=="SI") {
+            return "time-submission-edited";
+        } else {
+            return "time-submission-SI";
+        }
+    }
 
     @PostMapping("/addTimes")
     public String addTimes(@RequestParam("day") char day, @RequestParam("start") double start,
                            @RequestParam("end") double end, HttpSession browserSession) {
-        Tutor loggedIn = (Tutor) browserSession.getAttribute("tutorID");
+        Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         Session submitted = new Session(new SessionID(loggedIn, day, start), end);
         return "time-submission-edited";
     }

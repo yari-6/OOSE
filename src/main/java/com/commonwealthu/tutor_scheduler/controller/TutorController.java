@@ -80,6 +80,7 @@ public class TutorController {
         // create session
         session.setAttribute("tutorID", loginTutor.getTutorID());
 
+
         // Does not redirect to a new page so that the tutorID is kept across pages
         if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
             return "set-new-password";
