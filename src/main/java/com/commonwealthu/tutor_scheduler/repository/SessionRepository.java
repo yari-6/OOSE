@@ -13,6 +13,6 @@ import java.util.Set;
 public interface SessionRepository extends JpaRepository<Session, SessionID> {
     Set<Session> findBySessionID_Tutor(Tutor tutor);
 
-    @Query("SELECT s FROM Session s WHERE s.tutor = (SELECT t.tutorID FROM Tutor t WHERE t.type = :tutorType)")
+    @Query("SELECT s FROM Session s WHERE s.tutor.type = :tutorType")
     Set<Session> findByTutoringType(@Param("tutorType") String tutorType);
 }

@@ -2,7 +2,10 @@ package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
+import com.commonwealthu.tutor_scheduler.entity.Tutor;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -11,9 +14,10 @@ public class TimeSubmissionController {
 
     @PostMapping("/addTimes")
     public String addTimes(@RequestParam("day") char day, @RequestParam("start") double start,
-                           @RequestParam("end") double end) {
-        //Session submitted = new Session(new SessionID(/*tutor id*/, day, start), end);
-        return "time-submission-edited"; //subject to change
+                           @RequestParam("end") double end, HttpSession browserSession) {
+        Tutor loggedIn = (Tutor) browserSession.getAttribute("tutorID");
+        Session submitted = new Session(new SessionID(loggedIn, day, start), end);
+        return "time-submission-edited";
     }
 
     @PostMapping("/review")
@@ -21,6 +25,15 @@ public class TimeSubmissionController {
         return "time-sumbit-confirm";
     }
 
+    //sessions should already be created; redirect to the tutor's profile
+    @GetMapping("/yes")
+    public String confirm() {
+        return "tutor-profile";
+    }
 
-    //final confirm button after all sessions shown
+    //will involve deleting sessions, which requires another repo+service method
+    /*@GetMapping("/no")
+    public String refuse(){
+
+    }*/
 }

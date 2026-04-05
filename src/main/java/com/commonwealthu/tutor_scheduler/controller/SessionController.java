@@ -18,7 +18,7 @@ public class SessionController {
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
         model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
-        return "SI Schedule";
+        return "si-schedule";
     }
 
     @GetMapping("schedules/drop-in")
@@ -30,12 +30,12 @@ public class SessionController {
     @GetMapping("schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
         model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "BF-math-lab";
+        return "ben-frank-math-lab";
     }
 
     @GetMapping("schedules/SSC")
     public String SSCSchedule(Model model) {
         model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "SSC-schedule";
+        return "ssc-math-lab";
     }
 }
