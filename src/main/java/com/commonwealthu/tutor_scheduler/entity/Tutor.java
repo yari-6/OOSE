@@ -10,7 +10,7 @@ import java.util.Set;
 public class Tutor {
 
     @Id
-    @Column(name = "TutorID", nullable = false, length = 10)
+    @Column(name = "TutorID", nullable = false, length = 50)
     private String tutorID;
 
     @Column(name = "FirstName", nullable = false, length = 50)
@@ -24,7 +24,7 @@ public class Tutor {
 
     @ManyToMany
     @JoinTable(
-            name = "Tutor_Courses",
+            name = "Tutor_courses",
             joinColumns = @JoinColumn(name = "TutorID"),
             inverseJoinColumns = {
                     @JoinColumn(name = "CourseSubject", referencedColumnName = "CourseSubject"),
@@ -38,8 +38,9 @@ public class Tutor {
 
     // one to many create a new table? are annotations needed here and in the Session entity?
     // need to make sure these are ordered by, so that they will be pre sorted when displayed
-    @OneToMany
-    private Set<Session> schedule = new HashSet<Session>();
+    @OneToMany(mappedBy = "sessionID.tutor")
+    @OrderBy("sessionID.day ASC, sessionID.time ASC")
+    private Set<Session> schedule = new HashSet<>();
 
     // Required and only used by Hibernate
     public Tutor() {}

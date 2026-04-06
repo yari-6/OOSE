@@ -1,5 +1,6 @@
 package com.commonwealthu.tutor_scheduler.entity;
 
+import java.time.LocalTime;
 import jakarta.persistence.*;
 
 
@@ -11,11 +12,11 @@ public class Session {
     private SessionID sessionID;
 
     @Column(name="endTime")
-    private double endTime;
+    private LocalTime endTime;
 
-    protected Session() {};
+    protected Session() {}
 
-    public Session(SessionID sessionId, double end) {
+    public Session(SessionID sessionId, LocalTime end) {
         this.sessionID = sessionId;
         this.endTime = end;
     }
@@ -24,7 +25,7 @@ public class Session {
 
     public void setSessionID(SessionID sessionID) {this.sessionID = sessionID;}
 
-    public double getEndTime() {return endTime;}
+    public LocalTime getEndTime() {return endTime;}
 
-    public void setEndTime(double endTime) {this.endTime = endTime;}
+    public void setEndTime(LocalTime endTime) {this.endTime = endTime;}
 }

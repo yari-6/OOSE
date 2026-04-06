@@ -6,6 +6,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Embeddable
@@ -19,11 +20,11 @@ public class SessionID implements Serializable {
     private char day;
 
     @Column(name = "time")
-    private double time;
+    private LocalTime time;
 
     protected SessionID() {};
 
-    public SessionID(Tutor tutor, char day, double time) {
+    public SessionID(Tutor tutor, char day, LocalTime time) {
         this.tutor = tutor;
         this.day = day;
         this.time = time;
@@ -41,11 +42,11 @@ public class SessionID implements Serializable {
         this.day = day;
     }
 
-    public double getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
