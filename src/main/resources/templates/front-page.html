@@ -40,7 +40,13 @@
     <div class="left-side">
             <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
                 <div class="hero_content box">
-                    <p>Build Your Tutor Schedule</p>
+                    <p>Build Your SI Schedule</p>
+                </div>
+            </a>
+
+            <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Build Your Drop-in Schedule</p>
                 </div>
             </a>
 

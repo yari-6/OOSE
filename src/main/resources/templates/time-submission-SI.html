@@ -4,298 +4,229 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SI Schedule Builder</title>
-  <link rel="stylesheet" th:href="@{/static/time-submission-SI.css}" />
+  <link rel="stylesheet" th:href="@{/SIschedule.css}" />
+  <style>
+    .session-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: #f4f4f4;
+      border-radius: 6px;
+    }
+    .table-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      padding: 4px;
+    }
+    .table-fill th {
+      background-color: #6f263d;
+      color: white;
+      padding: 10px;
+    }
+  </style>
 </head>
 <body>
+
 <header class="header">
   <a th:href="@{/}">
-
     <img src="Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
-
   </a>
-
   <h1>SI Schedule</h1>
   <hr class="title-line">
 </header>
 
 <div class="stripe-container">
-
   <img src="fadedstripe.svg" alt="Stripe" class="stripe">
-
   <div class="stripe-text">
+    Blooms Tutors – Making scheduling easy!
     <hr class="accent-line">
   </div>
-
 </div>
 
 <main class="container" id="app">
-  <div class="form-row" aria-labelledby="si-leader-label">
-    <label id="si-leader-label" for="SILeader">SI Leader:</label>
-    <input type="text" id="SILeader" name="SILeader" />
-
-    <label for="Class">Class:</label>
-    <input type="text" id="Class" name="Class" />
-
-    <label for="Professor">Professor Name:</label>
-    <input type="text" id="Professor" name="Professor" />
-
-    <label for="ClassMeetingTimes">Class Meeting Times:</label>
-    <input type="text" id="ClassMeetingTimes" name="ClassMeetingTimes" />
+  <div class="form-row">
+    <div class="input-group">
+      <label for="SILeader">SI Leader Name</label>
+      <input type="text" id="SILeader" placeholder="Name">
+    </div>
+    <div class="input-group">
+      <label for="Class">Class / Course</label>
+      <input type="text" id="Class" placeholder="e.g. BIOL 114">
+    </div>
+    <div class="input-group">
+      <label for="Professor">Professor</label>
+      <input type="text" id="Professor" placeholder="Name">
+    </div>
+    <div class="input-group">
+      <label for="ClassMeetingTimes">Course Meeting Times</label>
+      <input type="text" id="ClassMeetingTimes" placeholder="MWF 10:00AM">
+    </div>
   </div>
 
-  <div class="controls" role="region" aria-label="session controls">
-    <label for="pattern">Pattern:
-      <select id="pattern" aria-label="session pattern">
-        <option value="3x50">3 × 50 min</option>
-        <option value="4x75">4 × 75 min</option>
-      </select>
-    </label>
-
-    <input id="generate" type="button" value="Generate Sessions" />
-    <input id="export" type="button" value="Review Schedule" />
+  <div class="controls">
+    <label for="pattern" style="font-weight:bold;">Session Pattern: </label>
+    <select id="pattern" style="padding: 8px; border-radius: 4px;">
+      <option value="3x50">3 × 50 min</option>
+      <option value="4x75">4 × 75 min</option>
+    </select>
+    <button id="generate" type="button">Generate Sessions</button>
+    <button id="export" type="button">Review Schedule</button>
   </div>
 
-  <div id="sessionsWrap" style="margin-top:16px" aria-live="polite"></div>
-
-  <div class="error" id="err" aria-live="polite"></div>
-  <div class="warning" id="warn" aria-live="polite"></div>
-
-  <div id="tableWrap" aria-live="polite"></div>
-
-  <div class="result" id="out" aria-live="polite"></div>
-
+  <div id="sessionsWrap" style="margin-top: 20px;"></div>
+  <div id="tableWrap"></div>
 </main>
 
-<script>
+<script th:inline="javascript">
   (function(){
-    const DAY_START = 11*60; // 11:00
-    const MAX_DAY = 20*60; // 20:00
+    const DAY_START = 660; // 11:00 AM
+    const MAX_START = 1080; // 6:00 PM
     const STEP = 15;
 
-    const patternEl = document.getElementById('pattern');
     const genBtn = document.getElementById('generate');
     const exportBtn = document.getElementById('export');
     const wrap = document.getElementById('sessionsWrap');
-    const err = document.getElementById('err');
-    const warn = document.getElementById('warn');
     const tableWrap = document.getElementById('tableWrap');
 
     const fmt = m => {
-      const h = Math.floor(m/60);
-      const mm = String(m%60).padStart(2,'0');
-      return `${h}:${mm}`;
+      let h = Math.floor(m / 60);
+      let mm = String(m % 60).padStart(2, '0');
+      let suffix = h >= 12 ? 'PM' : 'AM';
+      let displayH = h % 12 || 12;
+      return `${displayH}:${mm} ${suffix}`;
     };
 
-    function computeSessionOptions(baseStart, idx, count, dur){
-      const options = [];
-      const latestBase = MAX_DAY - count * dur;
-      for (let base = baseStart; base <= latestBase; base += STEP){
-        const s = base + idx * dur;
-        const e = s + dur;
-        if (e <= MAX_DAY) options.push({start:s,end:e});
+    function renderSessions() {
+      wrap.innerHTML = '';
+      tableWrap.innerHTML = '';
+      const [count, dur] = document.getElementById('pattern').value.split('x').map(Number);
+
+      for(let i=0; i<count; i++) {
+        const div = document.createElement('div');
+        div.className = 'session-row';
+
+        const daySel = document.createElement('select');
+        ['Monday','Tuesday','Wednesday','Thursday','Friday'].forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d; opt.textContent = d;
+          daySel.appendChild(opt);
+        });
+
+        const startSel = document.createElement('select');
+        for(let t = DAY_START; t <= MAX_START; t += STEP) {
+          const opt = document.createElement('option');
+          opt.value = t;
+          opt.textContent = fmt(t);
+          startSel.appendChild(opt);
+        }
+
+        const endDisplay = document.createElement('span');
+        endDisplay.style.marginLeft = "15px";
+        endDisplay.style.color = "#666";
+
+        startSel.addEventListener('change', () => {
+          endDisplay.textContent = " — Ends at " + fmt(Number(startSel.value) + dur);
+        });
+
+        div.innerHTML = `<span style="font-weight:bold; min-width:100px;">Session ${i+1}:</span>`;
+        div.appendChild(daySel);
+        div.appendChild(startSel);
+        div.appendChild(endDisplay);
+
+        startSel.dispatchEvent(new Event('change'));
+        wrap.appendChild(div);
       }
-      const map = new Map();
-      options.forEach(o => map.set(`${o.start}-${o.end}`, o));
-      return Array.from(map.values()).sort((a,b)=>a.start-b.start);
     }
 
-    function makeDaySelect(id){
-      const sel = document.createElement('select');
-      sel.id = id;
-      sel.className = 'small';
-      ['Monday','Tuesday','Wednesday','Thursday','Friday'].forEach(d => {
-        const o = document.createElement('option');
-        o.value = d; o.textContent = d;
-        sel.appendChild(o);
-      });
-      return sel;
-    }
+    // Logic to ensure no two sessions overlap on the same day
+    function checkOverlaps() {
+      const sessions = Array.from(wrap.querySelectorAll('.session-row'));
+      const dur = Number(document.getElementById('pattern').value.split('x')[1]);
+      const data = sessions.map(s => ({
+        day: s.querySelectorAll('select')[0].value,
+        start: Number(s.querySelectorAll('select')[1].value),
+        end: Number(s.querySelectorAll('select')[1].value) + dur
+      }));
 
-    function buildSelectOptions(sel, items, valueKey, labelFn){
-      sel.innerHTML = '';
-      items.forEach(it => {
-        const o = document.createElement('option');
-        o.value = String(it[valueKey]);
-        o.textContent = labelFn(it);
-        sel.appendChild(o);
-      });
-    }
-
-    function sessionsOverlap(aStart,aEnd,bStart,bEnd){
-      return aStart < bEnd && bStart < aEnd;
-    }
-
-    function checkAllOverlaps(rows){
-      const overlaps = [];
-      const perDay = {};
-      rows.forEach((row, idx) => {
-        const [daySel,startSel,endSel] = row.querySelectorAll('select');
-        const day = daySel.value;
-        const s = Number(startSel.value);
-        const e = Number(endSel.value);
-        perDay[day] = perDay[day] || [];
-        perDay[day].push({index: idx+1, start: s, end: e});
-      });
-
-      Object.keys(perDay).forEach(day => {
-        const list = perDay[day];
-        for (let i=0;i<list.length;i++){
-          for (let j=i+1;j<list.length;j++){
-            const A = list[i], B = list[j];
-            if (sessionsOverlap(A.start,A.end,B.start,B.end)){
-              overlaps.push({day,a:A.index,b:B.index,aStart:A.start,aEnd:A.end,bStart:B.start,bEnd:B.end});
+      for (let i = 0; i < data.length; i++) {
+        for (let j = i + 1; j < data.length; j++) {
+          if (data[i].day === data[j].day) {
+            if (data[i].start < data[j].end && data[i].end > data[j].start) {
+              return `Conflict: Session ${i+1} and Session ${j+1} overlap on ${data[i].day}.`;
             }
           }
         }
-      });
-      return overlaps;
-    }
-
-    function renderSessions(){
-      err.textContent = ''; warn.textContent = ''; tableWrap.innerHTML = ''; wrap.innerHTML = '';
-
-      const [countStr,durStr] = patternEl.value.split('x');
-      const count = Number(countStr), dur = Number(durStr);
-      const startM = DAY_START;
-
-      if (startM + count*dur > MAX_DAY){
-        err.textContent = 'Pattern does not fit in the day range.';
-        return;
       }
-
-      for (let i=0;i<count;i++){
-        const opts = computeSessionOptions(startM, i, count, dur);
-        const sessionDiv = document.createElement('div');
-        sessionDiv.className = 'session';
-
-        const lbl = document.createElement('label');
-        lbl.textContent = `Session ${i+1}:`;
-        sessionDiv.appendChild(lbl);
-
-        const daySel = makeDaySelect(`day-${i+1}`);
-        sessionDiv.appendChild(daySel);
-
-        const sSel = document.createElement('select');
-        sSel.id = `start-${i+1}`; sSel.className = 'small';
-        const eSel = document.createElement('select');
-        eSel.id = `end-${i+1}`; eSel.className = 'small';
-
-        if (!opts.length){
-          const no = document.createElement('option');
-          no.textContent = 'No options'; no.disabled = true;
-          sSel.appendChild(no.cloneNode(true)); eSel.appendChild(no);
-        } else {
-          buildSelectOptions(sSel, opts, 'start', o => fmt(o.start));
-          buildSelectOptions(eSel, opts, 'end', o => fmt(o.end));
-          sSel.value = String(opts[0].start);
-          eSel.value = String(opts[0].end);
-
-          const liveCheck = () => {
-            warn.textContent = '';
-            const rows = Array.from(wrap.querySelectorAll('.session'));
-            const ov = checkAllOverlaps(rows);
-            if (ov.length){
-              const o = ov[0];
-              warn.textContent = `Overlap: Session ${o.a} overlaps Session ${o.b} on ${o.day} (${fmt(o.aStart)}-${fmt(o.aEnd)} vs ${fmt(o.bStart)}-${fmt(o.bEnd)})`;
-            }
-          };
-
-          sSel.addEventListener('change', () => {
-            const chosen = Number(sSel.value);
-            const match = opts.find(x => x.start === chosen);
-            if (match) eSel.value = String(match.end);
-            liveCheck();
-          });
-          daySel.addEventListener('change', liveCheck);
-        }
-
-        sessionDiv.appendChild(sSel);
-        sessionDiv.appendChild(eSel);
-        wrap.appendChild(sessionDiv);
-      }
-    }
-
-    genBtn.addEventListener('click', renderSessions);
-    patternEl.addEventListener('change', renderSessions);
-
-    function makeEditableCell(content){
-      const td = document.createElement('td');
-      td.className = 'editable';
-      const inp = document.createElement('input');
-      inp.type = 'text'; inp.value = content;
-      td.appendChild(inp);
-      return td;
+      return null;
     }
 
     exportBtn.addEventListener('click', () => {
-      err.textContent = ''; warn.textContent = ''; tableWrap.innerHTML = '';
-
-      const rows = Array.from(wrap.querySelectorAll('.session'));
-      if (!rows.length){ err.textContent = 'No sessions to export'; return; }
-
-      const collected = [];
-      for (let i=0;i<rows.length;i++){
-        const [daySel,startSel,endSel] = rows[i].querySelectorAll('select');
-        if (!daySel || !startSel || !endSel){ err.textContent = 'Missing selects'; return; }
-        const day = daySel.value;
-        const s = Number(startSel.value);
-        const e = Number(endSel.value);
-        if (!Number.isFinite(s) || !Number.isFinite(e) || s >= e){ err.textContent = 'Each session must have start < end'; return; }
-        collected.push({index:i+1, day, start:s, end:e});
-      }
-
-      const overlaps = [];
-      const byDay = {};
-      collected.forEach(r => { (byDay[r.day] = byDay[r.day] || []).push(r); });
-      Object.keys(byDay).forEach(day => {
-        const list = byDay[day];
-        for (let i=0;i<list.length;i++){
-          for (let j=i+1;j<list.length;j++){
-            const A=list[i], B=list[j];
-            if (sessionsOverlap(A.start,A.end,B.start,B.end)){
-              overlaps.push({day,a:A.index,b:B.index,aStart:A.start,aEnd:A.end,bStart:B.start,bEnd:B.end});
-            }
-          }
-        }
-      });
-      if (overlaps.length){
-        const o = overlaps[0];
-        err.textContent = `Overlap detected: Session ${o.a} overlaps Session ${o.b} on ${o.day} (${fmt(o.aStart)}-${fmt(o.aEnd)} vs ${fmt(o.bStart)}-${fmt(o.bEnd)})`;
+      const overlapError = checkOverlaps();
+      if (overlapError) {
+        alert(overlapError);
         return;
       }
 
-      const table = document.createElement('table');
-      table.innerHTML = '<thead><tr><th>SI LEADER</th><th>CLASS</th><th>DAYS</th><th>TIMES</th><th>LOCATIONS</th><th>PROFESSOR</th><th>CLASS MEETING TIMES</th></tr></thead>';
-      const tbody = document.createElement('tbody');
+      const sessions = Array.from(wrap.querySelectorAll('.session-row'));
+      if (!sessions.length) return;
 
-      collected.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.appendChild(makeEditableCell(document.getElementById('SILeader').value || ''));
-        tr.appendChild(makeEditableCell(document.getElementById('Class').value || ''));
-        tr.appendChild(makeEditableCell(r.day));
-        tr.appendChild(makeEditableCell(`${fmt(r.start)} - ${fmt(r.end)}`));
-        tr.appendChild(makeEditableCell('TBD'));
-        tr.appendChild(makeEditableCell(document.getElementById('Professor').value || ''));
-        tr.appendChild(makeEditableCell(document.getElementById('ClassMeetingTimes').value || ''));
-        tbody.appendChild(tr);
+      let html = `<table class="table-fill">
+                <thead><tr>
+                    <th>SI LEADER</th><th>CLASS</th><th>DAY</th><th>TIME</th><th>LOCATION</th><th>PROFESSOR</th>
+                </tr></thead><tbody>`;
+
+      sessions.forEach(s => {
+        const day = s.querySelectorAll('select')[0].value;
+        const start = Number(s.querySelectorAll('select')[1].value);
+        const dur = Number(document.getElementById('pattern').value.split('x')[1]);
+        const timeStr = `${fmt(start)} - ${fmt(start + dur)}`;
+
+        html += `<tr>
+                    <td><input class="table-input" value="${document.getElementById('SILeader').value}"></td>
+                    <td><input class="table-input" value="${document.getElementById('Class').value}"></td>
+                    <td><input class="table-input" value="${day}"></td>
+                    <td><input class="table-input" value="${timeStr}"></td>
+                    <td><input class="table-input" value="TBD"></td>
+                    <td><input class="table-input" value="${document.getElementById('Professor').value}"></td>
+                </tr>`;
       });
 
-      table.appendChild(tbody);
-      tableWrap.appendChild(table);
+      html += `</tbody></table>
+                <div style="margin-top:25px; text-align:right;">
+                    <button id="dbSubmit" style="background:#6f263d; color:white; padding:12px 40px; font-size:1.1rem; border:none; cursor:pointer; border-radius:4px;">Submit Final Schedule</button>
+                </div>`;
 
-      const submitBtn = document.createElement('button');
-      submitBtn.type = 'button';
-      submitBtn.id = 'submitSchedule';
-      submitBtn.textContent = 'Submit Schedule';
+      tableWrap.innerHTML = html;
 
-      const btnWrap = document.createElement('div');
-      btnWrap.style.marginTop = '12px';
-      btnWrap.appendChild(submitBtn);
-      tableWrap.appendChild(btnWrap);
+      document.getElementById('dbSubmit').addEventListener('click', async () => {
+        const payload = {
+          siLeader: document.getElementById('SILeader').value,
+          className: document.getElementById('Class').value,
+          sessions: Array.from(tableWrap.querySelectorAll('tbody tr')).map(tr => ({
+            day: tr.cells[2].querySelector('input').value,
+            time: tr.cells[3].querySelector('input').value
+          }))
+        };
+
+        try {
+          const res = await fetch('/api/schedule/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) alert("Submitted successfully!");
+        } catch(e) { alert("Server error."); }
+      });
     });
 
+    genBtn.addEventListener('click', renderSessions);
     renderSessions();
   })();
 </script>
+
 </body>
 </html>
