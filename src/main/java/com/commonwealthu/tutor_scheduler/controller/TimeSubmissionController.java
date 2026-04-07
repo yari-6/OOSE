@@ -38,7 +38,7 @@ public class TimeSubmissionController {
 
     @PostMapping("/review")
     public String reviewTimes() {
-        return "time-sumbit-confirm";
+        return "time-submit-confirm";
     }
 
     //sessions should already be created; redirect to the tutor's profile
