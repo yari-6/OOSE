@@ -21,10 +21,10 @@ public class TimeSubmissionController {
     @GetMapping("/schedule-builder")
     public String buildSchedule(HttpSession browserSession) {
         Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
-        if(loggedIn.getType()=="SI") {
-            return "time-submission-edited";
-        } else {
+        if(loggedIn.getType().equals("SI")) {
             return "time-submission-SI";
+        } else {
+            return "time-submission-edited";
         }
     }
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SI Schedule Builder</title>
-  <link rel="stylesheet" th:href="@{/SIschedule.css}" />
+  <link rel="stylesheet" th:href="@{/time-submission-SI.css}" />
   <style>
     .session-row {
       display: flex;
@@ -70,8 +70,8 @@
   <div class="controls">
     <label for="pattern" style="font-weight:bold;">Session Pattern: </label>
     <select id="pattern" style="padding: 8px; border-radius: 4px;">
-      <option value="3x50">3 × 50 min</option>
-      <option value="4x75">4 × 75 min</option>
+      <option value="4x50">4 × 50 min</option>
+      <option value="3x75">3 × 75 min</option>
     </select>
     <button id="generate" type="button">Generate Sessions</button>
     <button id="export" type="button">Review Schedule</button>
