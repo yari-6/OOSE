@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById("user_email").value.trim();
         const message = document.getElementById("message").value.trim();
 
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@commonwealthu\.edu$/;  //this checks for commonwealthu emails only
+        //this checks for commonwealthu emails only
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@commonwealthu\.edu$/;
 
         if (!emailPattern.test(email)) {
             alert("You must use your commonwealth email.");

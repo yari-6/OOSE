@@ -3,18 +3,21 @@ body {
     min-height: 100vh;
     background-color: #921e33;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 h1 {
     font-family: franklin-gothic-urw, sans-serif;
 }
+
 .container {
     width: 28%;
     margin: auto;
     background: white;
     padding: 20px;
-    height: 70vh;
+    min-height: 70vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -37,7 +40,7 @@ h1 {
   height: 4px;
   background-color: #f3d03e;
   border: none;
-  left: 10 px;
+  left: 10px;
 }
 
 input {
