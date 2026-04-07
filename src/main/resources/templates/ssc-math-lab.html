@@ -2,11 +2,36 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/schedule-view.css}">
     <title>SSC Math Lab Schedule</title>
 </head>
 
 <body>
-    <h3>SSC Math Lab Schedule</h3>
+    <header class="header">
+        <a th:href="@{/}">
+
+            <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
+
+        </a>
+
+        <h1>SSC Math Lab Schedule</h1>
+        <hr class="title-line">
+
+        <div class="signin-container">
+            <a th:if="${session.tutorID == null}" href="/sign-in" class="signin-btn">
+                Sign In
+            </a>
+
+            <div th:if="${session.tutorID != null}" class="user-section">
+                <span class="welcome-text">
+                Welcome, <span th:text="${session.tutorID}"></span>
+                </span>
+
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
     <div th:replace="~{schedule-view :: scheduleView(${SSCSchedule})}"></div>
 </body>
 
