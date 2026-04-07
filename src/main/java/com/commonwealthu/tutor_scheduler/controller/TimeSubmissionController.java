@@ -36,7 +36,6 @@ public class TimeSubmissionController {
                            @RequestParam("end") LocalTime end, HttpSession browserSession) {
         Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         Session submitted = new Session(new SessionID(loggedIn, day, start), end);
-        sessionService.saveSession(submitted);
         return "time-submission-edited";
     }
 
