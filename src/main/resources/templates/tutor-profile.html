@@ -7,12 +7,9 @@
 </head>
 <body>
 
-
 <header class="header">
     <a th:href="@{/}">
-
         <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
-
     </a>
 
     <h1>Tutor Information</h1>
@@ -33,14 +30,11 @@
     </div>
 </header>
 <div class="stripe-container">
-
     <img src="/fadedstripe.svg" alt="Stripe" class="stripe">
-
     <div class="stripe-text">
         <h3>Tutor Info</h3>
         <hr class="accent-line">
     </div>
-
 </div>
 
 
@@ -48,7 +42,7 @@
     <div class="profile-left">
         <div class="profile">
             <!-- Profile image -->
-            <img src="/helloKittyPfp.jpg" alt="Profile Picture" id="profileImage">
+            <img src="/graypfp.png" alt="Profile Picture" id="profileImage">
 
             <button th:if="${session.tutorID != null}"
                     class="change-btn"
@@ -62,10 +56,10 @@
                 <span class="close" id="closeModal">&times;</span>
                 <h2>Select an Avatar</h2>
                 <div class="avatar-grid">
-                    <img src="pochacoPfp.jpg" onclick="selectAvatar('pochacoPfp.jpg')">
-                    <img src="myMelodyPfp.jpg" onclick="selectAvatar('myMelodyPfp.jpg')">
-                    <img src="kuroppiPfp.jpg" onclick="selectAvatar('kuroppiPfp.jpg')">
-                    <img src="helloKittyPfp.jpg" onclick="selectAvatar('helloKittyPfp.jpg')">
+                    <img src="/pochacoPfp.jpg" onclick="selectAvatar('/pochacoPfp.jpg')">
+                    <img src="/myMelodyPfp.jpg" onclick="selectAvatar('/myMelodyPfp.jpg')">
+                    <img src="/kuroppiPfp.jpg" onclick="selectAvatar('/kuroppiPfp.jpg')">
+                    <img src="/helloKittyPfp.jpg" onclick="selectAvatar('/helloKittyPfp.jpg')">
                 </div>
             </div>
         </div>

@@ -20,4 +20,4 @@ target/
 *.ipr
 
 # application properties, add back once passowrd is in an env variable?
-src/main/resources/application.properties
+src/main/application.properties

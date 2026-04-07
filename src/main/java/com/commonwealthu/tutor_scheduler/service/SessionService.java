@@ -27,4 +27,8 @@ public class SessionService {
     //it may work to have special tutor object for each type of tutoring
     //or it comes from a specific table, but that table is not made
     public Set<Session> getSessionsByType(String type) {return sessionRepo.findByTutoringType(type);}
+
+    public void saveSession(Session session) {
+        sessionRepo.save(session);
+    }
 }
