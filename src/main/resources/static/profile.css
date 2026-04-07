@@ -62,6 +62,7 @@
      align-items: center;
      gap: 6px;
  }
+
 .signin-text {
  font-size: 0.8rem;
  color: white;
@@ -78,6 +79,7 @@
      font-weight: bold;
      transition: all 0.2s ease;
  }
+
 .signin-btn:hover {
      background: linear-gradient(to right, #6f263d, #8a1538);
      color: white;
@@ -159,7 +161,7 @@ body {
     margin-top:20px;
 }
 
-.avatar-grid img{  ////
+.avatar-grid img{
     width:70px;
     height:70px;
     border-radius:50%;
@@ -288,6 +290,13 @@ body {
 .submit:hover{
     background: linear-gradient(to right, #6f263d, #8a1538);
     color: white;
+}
+
+.feedback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .profile-right {
