@@ -161,12 +161,12 @@
         <h3 th:text = "'Average Helpfulness: ' + ${ratings['help']}"></h3>
         <h3 th:text = "'Average Overall: ' + ${ratings['overall']}"></h3>
 
-        <form id="feedbackForm">
+        <form id="feedbackForm" class="feedback">
             <label>Your School Email:</label>
             <input type="email" id="user_email" required>
 
             <label>Leave anonymous feedback:</label>
-            <textarea id="message" name="message" rows="5"></textarea>
+            <textarea id="message" name="message" rows="5">Please include the Tutors name!</textarea>
             <button type="submit" class="submit">Send</button>
         </form>
 
@@ -192,9 +192,9 @@
 
     </div>
 </div>
-<script src="pfpCode.js"></script>
+<script th:src="@{/pfpCode.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script src="feedback.js"></script>
+<script th:src="@{/feedback.js}"></script>
 <script th:inline="javascript">
     const isLoggedIn = [[${session.tutorID != null}]];
 </script>
