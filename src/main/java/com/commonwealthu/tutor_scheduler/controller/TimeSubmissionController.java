@@ -9,6 +9,7 @@ import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,8 +40,9 @@ public class TimeSubmissionController {
         return "time-submission-edited";
     }
 
-    @PostMapping("/review")
-    public String reviewTimes() {
+    @GetMapping("/review")
+    public String reviewTimes(HttpSession browserSession, Model model) {
+        model.addAttribute("tutor", tutorService.findTutorByID((String) browserSession.getAttribute("tutorID")));
         return "time-submit-confirm";
     }
 

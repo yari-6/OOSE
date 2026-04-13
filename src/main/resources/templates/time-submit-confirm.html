@@ -2,19 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/schedule-view.css}">
     <title>Time Submission Confirmation</title>
 </head>
 
 <body>
     <div class="display">
         These are the times you have requested. Does it look right?
-        <div th:replace="fragments/schedule-view.html :: scheduleView(sessionSet=tutor.schedule)">
+        <div th:replace="~{schedule-view :: scheduleView(${tutor.getSchedule()})}">
         </div>
     </div>
     <div class="buttons">
-        <button name="yes" type="submit">Yes, submit.</button>
+        <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">Yes</a>
         <button name="no" type="submit">No, go back.</button>
-        Note: If you select 'no', all entered times will be erased.
+        <p>Note: If you select 'no', all entered times will be erased.</p>
     </div>
 
 
