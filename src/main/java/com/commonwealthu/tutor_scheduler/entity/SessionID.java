@@ -19,7 +19,7 @@ public class SessionID implements Serializable {
     @Column(name="day")
     private char day;
 
-    @Column(name = "time")
+    @Column(name = "time", columnDefinition = "TIME")
     private LocalTime time;
 
     protected SessionID() {};

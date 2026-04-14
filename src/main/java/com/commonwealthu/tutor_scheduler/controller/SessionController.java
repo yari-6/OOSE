@@ -6,9 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 
-
-import javax.annotation.processing.Generated;
-
 @Controller
 public class SessionController {
     private final SessionService sessionService;
@@ -18,24 +15,24 @@ public class SessionController {
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
         model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
-        return "SI Schedule";
+        return "si-schedule";
     }
 
-    @GetMapping("schedules/drop-in")
+    @GetMapping("/schedules/drop-in")
     public String dropInSchedule(Model model) {
         model.addAttribute("dropinSchedule", sessionService.getSessionsByType("Drop-in"));
-        return "drop-in-schedule.html";
+        return "drop-in-schedule";
     }
 
-    @GetMapping("schedules/math-lab")
+    @GetMapping("/schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
         model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "ben-frank-math-lab.html";
+        return "ben-frank-math-lab";
     }
 
-    @GetMapping("schedules/SSC")
+    @GetMapping("/schedules/SSC")
     public String SSCSchedule(Model model) {
         model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
-        return "ssc-math-lab.html";
+        return "ssc-math-lab";
     }
 }

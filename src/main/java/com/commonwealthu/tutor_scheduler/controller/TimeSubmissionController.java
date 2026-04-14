@@ -3,7 +3,6 @@ package com.commonwealthu.tutor_scheduler.controller;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
-import com.commonwealthu.tutor_scheduler.repository.TutorRepository;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +36,7 @@ public class TimeSubmissionController {
                            @RequestParam("end") LocalTime end, HttpSession browserSession) {
         Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         Session submitted = new Session(new SessionID(loggedIn, day, start), end);
+        sessionService.saveSession(submitted);
         return "time-submission-edited";
     }
 
