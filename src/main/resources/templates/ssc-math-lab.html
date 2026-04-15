@@ -7,30 +7,7 @@
 </head>
 
 <body>
-    <header class="header">
-        <a th:href="@{/}">
-
-            <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
-
-        </a>
-
-        <h1>SSC Math Lab Schedule</h1>
-        <hr class="title-line">
-
-        <div class="signin-container">
-            <a th:if="${session.tutorID == null}" href="/sign-in" class="signin-btn">
-                Sign In
-            </a>
-
-            <div th:if="${session.tutorID != null}" class="user-section">
-                <span class="welcome-text">
-                Welcome, <span th:text="${session.tutorID}"></span>
-                </span>
-
-                <a href="/logout" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </header>
+<div th:replace="headerFragment :: header('Math Lab Schedule')"></div>
 
     <div th:replace="~{schedule-view :: scheduleView(${SSCSchedule})}"></div>
 </body>

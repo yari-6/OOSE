@@ -31,13 +31,7 @@
 </head>
 <body>
 
-<header class="header">
-  <a th:href="@{/}">
-    <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
-  </a>
-  <h1>SI Schedule</h1>
-  <hr class="title-line">
-</header>
+<div th:replace="headerFragment :: header('SI Time Submission')"></div>
 
 <div class="stripe-container">
   <img src="/fadedstripe.svg" alt="Stripe" class="stripe">
