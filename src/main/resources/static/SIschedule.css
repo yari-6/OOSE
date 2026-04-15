@@ -8,48 +8,12 @@ body {
     min-height: 100vh;
 }
 
-.header {
-    position: relative;
-    padding: 50px 20px;
-    text-align: center;
-    background: linear-gradient(to right, #6f263d, #8a1538);
-}
-
-.title-line {
-    width: 600px;
-    height: 4px;
-    background-color: #f3d03e;
-    border: none;
-    margin: 20px auto;
-}
-
-.logo {
-    position: absolute;
-    left: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 150px;
-}
-
-.stripe-container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
- }
-
-.stripe {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-/*** Table Styles **/
+/* Table Styles */
 
 .table-fill {
-    border-radius:3px;
+    border-radius: 3px;
     border-collapse: collapse;
-    margin:20px auto;
+    margin: 20px auto;
     width: 90%;
 }
 
@@ -59,29 +23,34 @@ table, th, td {
 }
 
 th {
-    background-color: White;
+    background-color: white;
     color: #000000;
-    font-size:20px;
+    font-size: 20px;
     font-weight: 500;
-    padding:12px;
-    text-align:center;
-    vertical-align:middle;
+    padding: 12px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 tr {
     background-color: #9fc5e8;
     color: #000000;
-    text-align:center;
-    vertical-align:middle;
+    text-align: center;
+    vertical-align: middle;
 }
 
-tr:nth-child(even) {background-color: #6fa8dc;}
-tr:hover {background-color: #f3d03e;}
+tr:nth-child(even) {
+    background-color: #6fa8dc;
+}
+
+tr:hover {
+    background-color: #f3d03e;
+}
 
 td {
-    padding:5px;
-    text-align:left;
-    vertical-align:middle;
-    font-weight:300;
-    font-size:16px;
+    padding: 5px;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: 300;
+    font-size: 16px;
 }
