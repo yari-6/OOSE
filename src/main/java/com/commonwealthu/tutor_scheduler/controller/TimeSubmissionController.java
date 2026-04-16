@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 public class TimeSubmissionController {
@@ -42,7 +44,30 @@ public class TimeSubmissionController {
 
     @GetMapping("/review")
     public String reviewTimes(HttpSession browserSession, Model model) {
-        model.addAttribute("tutor", tutorService.findTutorByID((String) browserSession.getAttribute("tutorID")));
+        Tutor tutor = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
+        Set<Session> sessions = sessionService.getSessionsByTutor(tutor);
+
+        model.addAttribute("tutor", tutor);
+        model.addAttribute("sessions", sessions);
+        model.addAttribute("times", List.of(
+                LocalTime.of(9,0),
+                LocalTime.of(9,30),
+                LocalTime.of(10,0),
+                LocalTime.of(10,30),
+                LocalTime.of(11,0),
+                LocalTime.of(11,30),
+                LocalTime.of(12,0),
+                LocalTime.of(12,30),
+                LocalTime.of(1,0),
+                LocalTime.of(1,30),
+                LocalTime.of(2,0),
+                LocalTime.of(2,30),
+                LocalTime.of(3,0),
+                LocalTime.of(3,30),
+                LocalTime.of(4,0),
+                LocalTime.of(4,30)
+        ));
+
         return "time-submit-confirm";
     }
 

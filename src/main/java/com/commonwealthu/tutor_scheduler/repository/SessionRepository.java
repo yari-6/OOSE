@@ -15,4 +15,5 @@ public interface SessionRepository extends JpaRepository<Session, SessionID> {
 
     @Query("SELECT s FROM Session s WHERE s.sessionID.tutor.type = :tutorType")
     Set<Session> findByTutoringType(@Param("tutorType") String tutorType);
+
 }

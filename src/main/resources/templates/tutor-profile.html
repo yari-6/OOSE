@@ -180,7 +180,7 @@
         </section>
         <section class="schedule-section">
             <h2>Schedule</h2>
-            <div th:unless="${tutor.getSchedule().isEmpty()}" th:replace="~{schedule-view :: scheduleView(sessionSet=${tutor.getSchedule()})}"></div>
+            <div th:unless="${tutor.getSchedule().isEmpty()}" th:replace="~{schedule-view :: scheduleView(${tutor.getSchedule()})}"></div>
             <div th:if="${tutor.getSchedule().isEmpty()}">Schedule coming soon.</div>
         </section>
 

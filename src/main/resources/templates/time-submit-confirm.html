@@ -9,7 +9,7 @@
 <body>
     <div class="display">
         These are the times you have requested. Does it look right?
-        <div th:replace="~{schedule-view :: scheduleView(${tutor.getSchedule()})}">
+        <div th:replace="~{schedule-view :: scheduleView(${sessions})}">
         </div>
     </div>
     <div class="buttons">
@@ -17,9 +17,6 @@
         <button name="no" type="submit">No, go back.</button>
         <p>Note: If you select 'no', all entered times will be erased.</p>
     </div>
-
-
-
 
 </body>
 

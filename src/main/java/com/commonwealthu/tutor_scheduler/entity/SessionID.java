@@ -19,7 +19,7 @@ public class SessionID implements Serializable {
     @Column(name="day")
     private char day;
 
-    @Column(name = "time", columnDefinition = "TIME")
+    @Column(name = "time")
     private LocalTime time;
 
     protected SessionID() {};
@@ -54,7 +54,7 @@ public class SessionID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SessionID sessionID)) return false;
-        return Objects.equals(tutor, sessionID.tutor) && day == sessionID.day && time==sessionID.time;
+        return Objects.equals(tutor, sessionID.tutor) && day == sessionID.day && Objects.equals(time, sessionID.time);
     }
 
     @Override

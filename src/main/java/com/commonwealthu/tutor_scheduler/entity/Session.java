@@ -11,7 +11,7 @@ public class Session {
     @EmbeddedId
     private SessionID sessionID;
 
-    @Column(name="endTime", columnDefinition = "TIME")
+    @Column(name="endTime")
     private LocalTime endTime;
 
     protected Session() {}
