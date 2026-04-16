@@ -11,11 +11,14 @@
 <div th:replace="headerFragment :: header('Welcome to Bloom Tutors')"></div>
 
 <div class="stripe-container">
-    <img src="fadedstripe.svg" alt="Stripe" class="stripe">
+
+    <img th:src="@{/fadedstripe.svg}" class="stripe">
+
     <div class="stripe-text">
         Blooms Tutors – Making scheduling easy!
         <hr class="accent-line">
     </div>
+
 </div>
 
 <div class="main-section">

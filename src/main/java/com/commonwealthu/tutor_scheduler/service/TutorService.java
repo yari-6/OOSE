@@ -23,7 +23,14 @@ public class TutorService {
     // Updated to use the default Optional<Tutor> return of the TutorRepository
     // Changed from returning error to just returning null if no tutor is found, exceptions to be added
     public Tutor findTutorByID(String id) {
-        return tutorRepo.findById(id).orElse(null);
+        Tutor t = tutorRepo.findById(id).orElse(null);
+
+        if (t != null) {
+            t.getCoursesOffered().size();
+            t.getSchedule().size();
+        }
+
+        return t;
     }
 
     public boolean checkLogin(String formTutorID, String formPass) {
@@ -67,6 +74,14 @@ public class TutorService {
         String courseSubject = searchParts[0];
         int courseNumber = Integer.parseInt(searchParts[1]);
         return tutorRepo.findTutorsByCourse(courseSubject, courseNumber);
+    }
+
+    public void updateProfilePicture(String tutorID, String profilePicture) {
+        Tutor tutor = findTutorByID(tutorID);
+        if (tutor != null) {
+            tutor.setProfilePicture(profilePicture);
+            tutorRepo.save(tutor);
+        }
     }
 
 }

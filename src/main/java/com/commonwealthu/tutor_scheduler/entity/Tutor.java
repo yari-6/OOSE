@@ -1,11 +1,10 @@
 package com.commonwealthu.tutor_scheduler.entity;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity // Must have a primary key and default constructor
+@Entity
 @Table(name = "Tutors")
 public class Tutor {
 
@@ -36,13 +35,13 @@ public class Tutor {
     @Column(name = "Pass", length = 65)
     private String pass;
 
-    // one to many create a new table? are annotations needed here and in the Session entity?
-    // need to make sure these are ordered by, so that they will be pre sorted when displayed
+    @Column(name = "ProfilePicture", length = 255)
+    private String profilePicture;
+
     @OneToMany(mappedBy = "sessionID.tutor")
     @OrderBy("sessionID.day ASC, sessionID.time ASC")
     private Set<Session> schedule = new HashSet<>();
 
-    // Required and only used by Hibernate
     public Tutor() {}
 
     public Tutor(String tutorID, String firstName, String lastName, String type) {
@@ -52,7 +51,6 @@ public class Tutor {
         this.type = type;
     }
 
-    // Getters and setters to be used by Hibernate (setters) and Thymeleaf (getters)
     public String getTutorID() {
         return tutorID;
     }
@@ -97,6 +95,15 @@ public class Tutor {
         this.pass = pass;
     }
 
-    public Set<Session> getSchedule() {return schedule;}
+    public String getProfilePicture() {
+        return profilePicture;
+    }
 
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public Set<Session> getSchedule() {
+        return schedule;
+    }
 }

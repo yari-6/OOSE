@@ -12,7 +12,7 @@
 <div th:replace="headerFragment :: header('Enter Session Times')"></div>
 
 <div class="stripe-container">
-  <img src="fadedstripe.svg" alt="Stripe" class="stripe">
+  <img th:src="@{/fadedstripe.svg}" class="stripe">
   <div class="stripe-text">
     Drop-in Builder
     <hr class="accent-line">

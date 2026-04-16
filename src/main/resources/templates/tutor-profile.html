@@ -11,21 +11,22 @@
 <div th:replace="headerFragment :: header('Tutor Information')"></div>
 
 <div class="stripe-container">
-    <img src="/fadedstripe.svg" alt="Stripe" class="stripe">
+    <img th:src="@{/fadedstripe.svg}" class="stripe">
     <div class="stripe-text">
         Tutor Info
         <hr class="accent-line">
     </div>
 </div>
 
-
 <div class="profile-container">
     <div class="profile-left">
 
         <div class="profile">
-            <img src="/graypfp.png" alt="Profile Picture" id="profileImage">
+            <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
+                 alt="Profile Picture"
+                 id="profileImage">
 
-            <button th:if="${session.tutorID != null}"
+            <button th:if="${session.tutorID == tutor.tutorID}"
                     class="change-btn"
                     id="changePfpBtn">
                 Change PFP
@@ -45,10 +46,10 @@
             </div>
         </div>
 
-        <h1 th:text="${tutor.firstName + ' ' + tutor.lastName}"></h1>
+        <h1 th:text="${tutor != null ? tutor.firstName + ' ' + tutor.lastName : 'Unknown'}"></h1>
         <h3 class="tutor-type" th:text="${tutor.type}"></h3>
 
-        <div class="profile-card" th:if="${ratings['overall'] != null}">
+        <div class="profile-card" th:if="${ratings != null and ratings['overall'] != null}">
             <h3 th:text="'Average Communication: ' + ${ratings['comm']}"></h3>
             <h3 th:text="'Average Approachability: ' + ${ratings['approach']}"></h3>
             <h3 th:text="'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
@@ -135,8 +136,7 @@
                 <input type="email" id="user_email" required placeholder="email@commonwealthu.edu">
 
                 <label>Leave anonymous feedback:</label>
-                <textarea id="message" name="message" rows="5"
-                          placeholder="Please include the tutors name!"></textarea>
+                <textarea id="message" name="message" rows="5" placeholder="Please include the tutors name!"></textarea>
 
                 <button type="submit" class="submit">Send</button>
             </form>
@@ -164,12 +164,15 @@
         </section>
     </div>
 </div>
-</div>
+
 <script th:src="@{/pfpCode.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script th:src="@{/feedback.js}"></script>
+
 <script th:inline="javascript">
     const isLoggedIn = [[${session.tutorID != null}]];
+    const tutorID = [[${tutor.tutorID}]];
 </script>
+
 </body>
 </html>
