@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table (name = "courses")
+@Table (name = "\"courses\"")
 public class Course {
 
     @EmbeddedId
     private CourseID courseID;
 
-    @Column(name = "CourseTitle", length = 200)
+    @Column(name = "\"CourseTitle\"", nullable = false, length = 200)
     private String courseTitle;
 
     // Required and only used by Hibernate

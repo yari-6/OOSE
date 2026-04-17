@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "Tutor_Sessions")
+@Table(name = "\"Tutor_Sessions\"")
 public class Session {
 
     @EmbeddedId
     private SessionID sessionID;
 
-    @Column(name="endTime")
+    @Column(name="\"endTime\"")
     private LocalTime endTime;
 
     protected Session() {}

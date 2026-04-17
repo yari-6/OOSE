@@ -5,37 +5,37 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Tutors")
+@Table(name = "\"Tutors\"")
 public class Tutor {
 
     @Id
-    @Column(name = "TutorID", nullable = false, length = 50)
+    @Column(name = "\"TutorID\"", nullable = false, length = 50)
     private String tutorID;
 
-    @Column(name = "FirstName", nullable = false, length = 50)
+    @Column(name = "\"FirstName\"", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "LastName", nullable = false, length = 50)
+    @Column(name = "\"LastName\"", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "TutorType", nullable = false, length = 10)
+    @Column(name = "\"TutorType\"", nullable = false, length = 10)
     private String type;
 
     @ManyToMany
     @JoinTable(
-            name = "Tutor_courses",
-            joinColumns = @JoinColumn(name = "TutorID"),
+            name = "\"Tutor_Courses\"",
+            joinColumns = @JoinColumn(name = "\"TutorID\""),
             inverseJoinColumns = {
-                    @JoinColumn(name = "CourseSubject", referencedColumnName = "CourseSubject"),
-                    @JoinColumn(name = "CourseNumber", referencedColumnName = "CourseNumber")
+                    @JoinColumn(name = "\"CourseSubject\"", referencedColumnName = "\"CourseSubject\""),
+                    @JoinColumn(name = "\"CourseNumber\"", referencedColumnName = "\"CourseNumber\"")
             }
     )
     private Set<Course> coursesOffered = new HashSet<>();
 
-    @Column(name = "Pass", length = 65)
+    @Column(name = "\"Pass\"", length = 65)
     private String pass;
 
-    @Column(name = "ProfilePicture", length = 255)
+    @Column(name = "\"ProfilePicture\"", length = 255)
     private String profilePicture;
 
     @OneToMany(mappedBy = "sessionID.tutor")
