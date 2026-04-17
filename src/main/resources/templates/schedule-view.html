@@ -22,44 +22,34 @@
     <tr th:each="t : ${times}">
         <th th:text="${t}"></th>
 
-        <!-- Monday -->
         <td>
             <span th:each="s : ${sessionSet}"
-                  th:if="${s.sessionID.day == 'M' and s.sessionID.time.equals(t)}"
-                  th:text="'X'">
-            </span>
+                  th:if="${s.sessionID.day == 'M' and !t.isBefore(s.sessionID.time)
+                            and t.isBefore(s.endTime)}"> X </span>
         </td>
 
-        <!-- Tuesday -->
         <td>
             <span th:each="s : ${sessionSet}"
-                  th:if="${s.sessionID.day == 'T' and s.sessionID.time.equals(t)}"
-                  th:text="'X'">
-            </span>
+                  th:if="${s.sessionID.day == 'T' and !t.isBefore(s.sessionID.time)
+                            and t.isBefore(s.endTime)}"> X </span>
         </td>
 
-        <!-- Wednesday -->
         <td>
             <span th:each="s : ${sessionSet}"
-                  th:if="${s.sessionID.day == 'W' and s.sessionID.time.equals(t)}"
-                  th:text="'X'">
-            </span>
+                  th:if="${s.sessionID.day == 'W' and !t.isBefore(s.sessionID.time)
+                            and t.isBefore(s.endTime)}"> X </span>
         </td>
 
-        <!-- Thursday -->
         <td>
             <span th:each="s : ${sessionSet}"
-                  th:if="${s.sessionID.day == 'R' and s.sessionID.time.equals(t)}"
-                  th:text="'X'">
-            </span>
+                  th:if="${s.sessionID.day == 'R' and !t.isBefore(s.sessionID.time)
+                            and t.isBefore(s.endTime)}"> X </span>
         </td>
 
-        <!-- Friday -->
         <td>
             <span th:each="s : ${sessionSet}"
-                  th:if="${s.sessionID.day == 'F' and s.sessionID.time.equals(t)}"
-                  th:text="'X'">
-            </span>
+                  th:if="${s.sessionID.day == 'F' and !t.isBefore(s.sessionID.time)
+                            and t.isBefore(s.endTime)}"> X </span>
         </td>
 
     </tr>
