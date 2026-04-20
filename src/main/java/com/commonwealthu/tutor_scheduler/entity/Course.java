@@ -6,17 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table (name = "courses")
+@Table (name = "\"courses\"")
 public class Course {
 
     @EmbeddedId
     private CourseID courseID;
 
-    @Column(name = "CourseTitle", length = 200)
+    @Column(name = "\"CourseTitle\"", nullable = false, length = 200)
     private String courseTitle;
-
-    @ManyToMany (mappedBy = "coursesOffered")
-    private Set<Tutor> tutors = new HashSet<Tutor>();
 
     // Required and only used by Hibernate
     protected Course() {}
@@ -27,10 +24,6 @@ public class Course {
 
     public String getCourseTitle() {
         return courseTitle;
-    }
-
-    public Set<Tutor> getTutors() {
-        return tutors;
     }
 
     // Possibly add equals and hashcode, unsure if needed

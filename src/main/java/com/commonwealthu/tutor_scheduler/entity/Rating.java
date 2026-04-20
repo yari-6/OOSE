@@ -3,33 +3,33 @@ package com.commonwealthu.tutor_scheduler.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name = "Ratings")
+@Table (name = "\"Ratings\"")
 public class Rating {
 
     // Have Hibernate automatically generate the rating id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "RatingID", nullable = false, unique = true)
+    @Column (name = "\"RatingID\"", nullable = false, unique = true)
     private Long id;
 
     // All categories must be submitted for a rating to be complete
     // If this is not how the ratings are intended to function, could be changed to
     // submit categories individually
-    @Column (name = "Communication", nullable = false)
+    @Column (name = "\"Communication\"", nullable = false)
     private int communication;
 
-    @Column (name = "Approachability", nullable = false)
+    @Column (name = "\"Approachability\"", nullable = false)
     private int approach;
 
     // EffLearn = Effective Learning Strategies
-    @Column (name = "EffLearn", nullable = false)
+    @Column (name = "\"EffLearn\"", nullable = false)
     private int effLearn;
 
-    @Column (name = "Helpfulness", nullable = false)
+    @Column (name = "\"Helpfulness\"", nullable = false)
     private int helpfulness;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TutorID", nullable = false)
+    @JoinColumn(name = "\"TutorID\"", nullable = false)
     private Tutor tutor;
 
     protected Rating() {}

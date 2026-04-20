@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>BloomTutors</title>
+    <link rel="stylesheet" th:href="@{/schedule-view.css}">
+    <link rel="stylesheet" th:href="@{/header.css}">
 
+</head>
 
+<div th:replace="headerFragment :: header('Schedule View')"></div>
 <!--for each entry in the row (except the header (time)), iterate through sessions list and if one matches, change bg color-->
 
 
@@ -19,7 +26,7 @@
             <th>9:00</th>
             <td
                 th:each="session: ${sessionSet}"
-                th:if="${session.day}=='M' && ${session.time}.equals(LocalTimeof(9, 0))"
+                th:if="${session.day}=='M' && ${session.time}==9"
                 bgcolor= "#FED356"
             >
                 <!--got this color from one of the css pages-->
@@ -270,13 +277,13 @@
             </td>
             <td
                 th:each="session: ${sessionSet}"
-                th:if="${session.day=='W' and session.time.equals(LocalTime.of(12, 30))}"
-                background-color= "#FED356"
+                th:if="${session.day}=='W' && ${session.time}==12.5"
+                bgcolor= "#FED356"
             >
             </td>
             <td
                 th:each="session: ${sessionSet}"
-                th:if="${session.day}=='R' && ${session.time}.equals(LocalTime.of(12, 30))"
+                th:if="${session.day}=='R' && ${session.time}==12.5"
                 bgcolor= "#FED356"
             >
             </td>
@@ -304,8 +311,8 @@
             </td>
             <td
                 th:each="session: ${sessionSet}"
-                th:if="${session.day}=='W' and ${session.time}.equals(LocalTime.of(13, 0))"
-                background-color= "#FED356"
+                th:if="${session.day}=='W' && ${session.time}==13"
+                bgcolor= "#FED356"
             >
             </td>
             <td
@@ -338,8 +345,8 @@
             </td>
             <td
                 th:each="session: ${sessionSet}"
-                th:if="${session.day}=='W' and ${session.time}.equals(LocalTime.of(13, 30))"
-                background-color= "#FED356"
+                th:if="${session.day}=='W' && ${session.time}==13.5"
+                bgcolor= "#FED356"
             >
             </td>
             <td
