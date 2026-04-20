@@ -8,7 +8,7 @@
 </head>
 
 <body>
-<div th:replace="headerFragment :: header('Drop-In Tutor Scheduling')"></div>
+<div th:replace="~{headerFragment :: header('Drop-In Tutor Scheduling')}"></div>
 
     <div th:replace="~{schedule-view :: scheduleView(${dropinSchedule})}"></div>
 </body>

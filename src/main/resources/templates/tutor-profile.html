@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div th:replace="headerFragment :: header('Tutor Information')"></div>
+<div th:replace="~{headerFragment :: header('Tutor Information')}"></div>
 
 <div class="stripe-container">
     <img th:src="@{/fadedstripe.svg}" class="stripe">
