@@ -9,10 +9,10 @@ import java.util.Objects;
 @Embeddable
 public class CourseID implements Serializable {
 
-    @Column(name = "CourseSubject", nullable = false, length = 5)
+    @Column(name = "\"CourseSubject\"", nullable = false, length = 5)
     private String courseSubject;
 
-    @Column(name = "CourseNumber", nullable = false)
+    @Column(name = "\"CourseNumber\"", nullable = false)
     private int courseNumber;
 
     // Required and only used by Hibernate

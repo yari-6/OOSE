@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Controller
 public class TutorController {
 
@@ -50,6 +52,21 @@ public class TutorController {
         model.addAttribute("tutor", tutorService.findTutorByID(id));
         model.addAttribute("ratings", ratingService.getAllRatings(id));
         return "tutor-profile";
+    }
+
+    @PostMapping("/tutors/update-pfp")
+    @ResponseBody
+    public String updateProfilePicture(@RequestBody Map<String, String> body,
+                                       HttpSession session) {
+
+        String tutorId = (String) session.getAttribute("tutorID");
+        if (tutorId == null) return "not_logged_in";
+
+        String profilePicture = body.get("profilePicture");
+
+        tutorService.updateProfilePicture(tutorId, profilePicture);
+
+        return profilePicture;
     }
 
     @PostMapping("/tutors/{id}/rate")

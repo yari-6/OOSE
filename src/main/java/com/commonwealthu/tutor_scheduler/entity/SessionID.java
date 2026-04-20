@@ -13,13 +13,13 @@ import java.util.Objects;
 public class SessionID implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name="TutorID")
+    @JoinColumn(name= "\"TutorID\"")
     private Tutor tutor;
 
-    @Column(name="day")
+    @Column(name="\"day\"")
     private char day;
 
-    @Column(name = "time")
+    @Column(name = "\"time\"")
     private LocalTime time;
 
     protected SessionID() {};

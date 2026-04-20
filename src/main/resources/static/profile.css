@@ -1,121 +1,26 @@
-.header {
-      position: relative;
-      padding: 30px 20px;
-      text-align: center;
-      background: linear-gradient(to right, #6f263d, #8a1538);
- }
-
-.title-line {
-   width: 600px;
-   height: 4px;
-   background-color: #f3d03e;
-   border: none;
-   margin: 20px auto;
- }
-
-.logo {
-    position: absolute;
-    left: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 150px;
- }
-
-.accent-line {
-    width: 95px;
-    height: 4px;
-    background-color: #f3d03e;
-    border: none;
-    left: 10 px;
-}
-
-.stripe-container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.stripe {
- width: 100%;
- height: auto;
- display: block;
-}
-
-.stripe-text {
- position: absolute;
- bottom: 10px;
- left: 10px;
- color: black;
- font-weight: bold;
- font-size: 1.2rem;
- text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
-}
-
-.signin-container {
-     position: absolute;
-     right: 30px;
-     top: 50%;
-     transform: translateY(-50%);
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     gap: 6px;
- }
-
-.signin-text {
- font-size: 0.8rem;
- color: white;
- text-align: center;
- font-family: sans-serif;
-}
-
-.signin-btn {
-     text-decoration: none;
-     padding: 8px 16px;
-     background-color: #f3d03e;
-     color: black;
-     border-radius: 2px;
-     font-weight: bold;
-     transition: all 0.2s ease;
- }
-
-.signin-btn:hover {
-     background: linear-gradient(to right, #6f263d, #8a1538);
-     color: white;
- }
-
-h1 {
-background-color:#6f263d;
-color:white;
-text-align: center;
-font-size: 300%;
-font-family: franklin-gothic-urw, sans-serif;
-padding: 20px;
-}
-
-.header h1 {
-     margin: 0;
-     color: white;
-     font-size: 300%;
-     font-family: franklin-gothic-urw, sans-serif;
-     background: linear-gradient(to right, #6f263d, #8a1538);
-     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
- }
-
 body {
     font-family: Arial;
-    background-color: #f5f7fa;
+    background-color: white;
     margin: 0;
     padding: 0;
 }
 
 .profile {
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0px;
+    gap: 3px;
+    margin-bottom: 3px;
+}
+
+.profile-left h1 {
+    margin: 2px 0 0 0;
+    line-height: 1.1;
+}
+
+.tutor-type {
+    margin: 0 0 4px 0;
+    line-height: 1.1;
 }
 
 .profile img {
@@ -123,7 +28,7 @@ body {
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid  #f3d03e;
+    border: 5px solid #f3d03e;
 }
 
 .modal {
@@ -138,53 +43,53 @@ body {
     border-radius: 8px;
 }
 
-.modal-content{
-    background:white;
-    width:400px;
-    margin:10% auto;
-    padding:25px;
-    border-radius:8px;
-    text-align:center;
+.modal-content {
+    background: white;
+    width: 400px;
+    margin: 10% auto;
+    padding: 25px;
+    border-radius: 8px;
+    text-align: center;
 }
 
-.close{
-    float:right;
-    font-size:28px;
-    cursor:pointer;
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
     color: black;
 }
 
-.avatar-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    margin-top:20px;
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.avatar-grid img{
-    width:70px;
-    height:70px;
-    border-radius:50%;
-    cursor:pointer;
+.avatar-grid img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    cursor: pointer;
     object-fit: cover;
-    border: 3px solid  #f3d03e;
+    border: 3px solid #f3d03e;
 }
 
-.avatar-grid img:hover{
-    border:3px solid #f3d03e;
+.avatar-grid img:hover {
+    border: 3px solid #f3d03e;
 }
 
-.change-btn{
-    margin-top:15px;
-    padding:8px 16px;
-    border:none;
-    background:#f3d03e;
-    font-weight:bold;
-    cursor:pointer;
-    border-radius:4px;
+.change-btn {
+    margin-top: 15px;
+    padding: 8px 16px;
+    border: none;
+    background: #f3d03e;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
 }
 
-.change-btn:hover{
+.change-btn:hover {
     background: linear-gradient(to right, #6f263d, #8a1538);
     color: white;
 }
@@ -204,17 +109,19 @@ body {
     background: linear-gradient(to right, #6f263d, #8a1538);
     color: white;
     padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     text-align: center;
 }
 
-.profile-left h1 {
-    margin-bottom: 10px;
-    font-family: franklin-gothic-urw, sans-serif;
-}
-
-.tutor-type {
-    margin-bottom: 25px;
-    font-weight: bold;
+.profile-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .rating {
@@ -239,20 +146,12 @@ body {
 .rating label:hover,
 .rating label:hover ~ label {
     color: #f3d03e;
+    animation: spinStar 0.6s linear;
 }
 
 @keyframes spinStar {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.rating label:hover,
-.rating label:hover ~ label {
-    animation: spinStar 0.6s linear;
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .rating input:checked ~ label {
@@ -260,19 +159,11 @@ body {
 }
 
 .rating:hover input:checked ~ label {
-    animation: spinStar 1.0s linear;
-}
-
-.rating-radio {
-    display: none;
+    animation: spinStar 1s linear;
 }
 
 .rating input[type="radio"] {
     display: none;
-}
-
-.rating input[type="radio"]:checked ~ label {
-    color: #f3d03e;
 }
 
 .submit {
@@ -284,10 +175,10 @@ body {
     font-family: sans-serif;
     font-weight: bold;
     transition: all 0.2s ease;
-    cursor:pointer;
+    cursor: pointer;
 }
 
-.submit:hover{
+.submit:hover {
     background: linear-gradient(to right, #6f263d, #8a1538);
     color: white;
 }

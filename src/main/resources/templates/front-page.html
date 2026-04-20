@@ -4,36 +4,21 @@
     <meta charset="UTF-8">
     <title>BloomTutors</title>
     <link rel="stylesheet" th:href="@{/Style.css}">
+    <link rel="stylesheet" th:href="@{/header.css}">
 </head>
 
 <body >
-<header class="header">
-    <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
-
-    <h1>Welcome to Bloom Tutors</h1>
-    <hr class="title-line">
-
-    <div class="signin-container">
-        <a th:if="${session.tutorID == null}" th:href="@{/sign-in}" class="signin-btn">
-            Sign In
-        </a>
-
-        <div th:if="${session.tutorID != null}" class="user-section">
-            <span class="welcome-text">
-            Welcome, <span th:text="${session.tutorID}"></span>
-            </span>
-
-            <a href="/logout" class="logout-btn">Logout</a>
-        </div>
-    </div>
-</header>
+<div th:replace="headerFragment :: header('Welcome to Bloom Tutors')"></div>
 
 <div class="stripe-container">
-    <img src="fadedstripe.svg" alt="Stripe" class="stripe">
+
+    <img th:src="@{/fadedstripe.svg}" class="stripe">
+
     <div class="stripe-text">
         Blooms Tutors – Making scheduling easy!
         <hr class="accent-line">
     </div>
+
 </div>
 
 <div class="main-section">
@@ -85,8 +70,8 @@
     <div class="footer-content">
         <div class="footer-section">
             <h3>Contact Us</h3>
-            <p>Email: support@bloomtutors.com</p>
-            <p>Phone: (123) 456-7890</p>
+            <p>Email: bloomtutoring@commonwealthu.edu</p>
+            <p>Phone: (570)-389-2720</p>
         </div>
     </div>
 </footer>
