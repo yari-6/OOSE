@@ -35,7 +35,7 @@ public class SessionController {
 
     @GetMapping("schedules/SSC")
     public String SSCSchedule(Model model) {
-        model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
+        model.addAttribute("SSCSchedule", sessionService.getSessionsByType("SSC"));
         return "ssc-math-lab.html";
     }
 }
