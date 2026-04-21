@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -46,10 +47,7 @@ public class TimeSubmissionController {
     public String reviewTimes(HttpSession browserSession, Model model) {
         Tutor tutor = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         Set<Session> sessions = sessionService.getSessionsByTutor(tutor);
-
-        model.addAttribute("tutor", tutor);
-        model.addAttribute("sessions", sessions);
-        model.addAttribute("times", List.of(
+        List<LocalTime> times = List.of(
                 LocalTime.of(9,0),
                 LocalTime.of(9,30),
                 LocalTime.of(10,0),
@@ -58,15 +56,21 @@ public class TimeSubmissionController {
                 LocalTime.of(11,30),
                 LocalTime.of(12,0),
                 LocalTime.of(12,30),
-                LocalTime.of(1,0),
-                LocalTime.of(1,30),
-                LocalTime.of(2,0),
-                LocalTime.of(2,30),
-                LocalTime.of(3,0),
-                LocalTime.of(3,30),
-                LocalTime.of(4,0),
-                LocalTime.of(4,30)
-        ));
+                LocalTime.of(13,0),
+                LocalTime.of(13,30),
+                LocalTime.of(14,0),
+                LocalTime.of(14,30),
+                LocalTime.of(15,0),
+                LocalTime.of(15,30),
+                LocalTime.of(16,0),
+                LocalTime.of(16,30)
+        );
+
+        HashMap<String, Boolean> schedule = sessionService.fillInSessions(sessions, times);
+
+        model.addAttribute("tutor", tutor);
+        model.addAttribute("times", times);
+        model.addAttribute("schedule", schedule);
 
         return "time-submit-confirm";
     }
