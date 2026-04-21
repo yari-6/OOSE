@@ -22,11 +22,11 @@
     <tbody>
     <tr th:each="t : ${times}">
         <th th:text="${t}"></th>
-        <td th:style = "${schedule['M ' + t] == true} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['T ' + t] == true} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['W ' + t] == true} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['R ' + t] == true} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['F ' + t] == true} ? 'background-color: blue' : '' "></td>
+        <td th:style = "${schedule['M ' + t.toString()] == true} ? 'background-color: blue' : '' "></td>
+        <td th:style = "${schedule['T ' + t.toString()] == true} ? 'background-color: blue' : '' "></td>
+        <td th:style = "${schedule['W ' + t.toString()] == true} ? 'background-color: blue' : '' "></td>
+        <td th:style = "${schedule['R ' + t.toString()] == true} ? 'background-color: blue' : '' "></td>
+        <td th:style = "${schedule['F ' + t.toString()] == true} ? 'background-color: blue' : '' "></td>
     </tr>
     </tbody>
   </table>
