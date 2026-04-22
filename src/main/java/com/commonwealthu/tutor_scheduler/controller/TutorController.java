@@ -54,6 +54,22 @@ public class TutorController {
         return "tutor-profile";
     }
 
+    //similar to above but only used for redirecting to the tutors profile
+    @GetMapping("/profile")
+    public String myProfile(HttpSession session, Model model) {
+
+        String tutorID = (String) session.getAttribute("tutorID");
+
+        if (tutorID == null) {
+            return "redirect:/sign-in";
+        }
+
+        model.addAttribute("tutor", tutorService.findTutorByID(tutorID));
+        model.addAttribute("ratings", ratingService.getAllRatings(tutorID));
+
+        return "tutor-profile";
+    }
+
     @PostMapping("/tutors/update-pfp")
     @ResponseBody
     public String updateProfilePicture(@RequestBody Map<String, String> body,
