@@ -10,12 +10,12 @@
 <body>
     <div class="display">
         These are the times you have requested. Does it look right?
-        <div th:replace="~{schedule-view :: scheduleView(${schedule})}">
+        <div th:replace="~{schedule-view :: scheduleView}">
         </div>
     </div>
     <div class="buttons">
         <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">Yes</a>
-        <button name="no" type="submit">No, go back.</button>
+        <a th:href="@{/no}" class="button">No, go back</a>
         <p>Note: If you select 'no', all entered times will be erased.</p>
     </div>
 

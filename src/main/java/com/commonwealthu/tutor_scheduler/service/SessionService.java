@@ -6,6 +6,7 @@ import com.commonwealthu.tutor_scheduler.repository.SessionRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class SessionService {
 
     // Take in a tutor's submitted sessions and the times available from the schedule grid, mark the times that
     // need to be filled in on the schedule grid display
+    // This method could be updated in the future to not use String keys, but they are working for now
     public HashMap<String, Boolean> fillInSessions(Set<Session> sessions, List<LocalTime> times) {
         HashMap<String, Boolean> timeMap = new HashMap<>();
         for (Session s: sessions) {
@@ -48,6 +50,18 @@ public class SessionService {
             }
         }
         return timeMap;
+    }
+
+    public List<LocalTime> generateTimes() {
+        List<LocalTime> times = new ArrayList<>();
+        LocalTime start = LocalTime.of(9, 0);
+        LocalTime end = LocalTime.of(17, 0);
+        LocalTime current = start;
+        while (current.isBefore(end)) {
+            times.add(current);
+            current = current.plusMinutes(30);
+        }
+        return times;
     }
 
 }

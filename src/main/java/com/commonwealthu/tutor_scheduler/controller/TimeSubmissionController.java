@@ -47,25 +47,7 @@ public class TimeSubmissionController {
     public String reviewTimes(HttpSession browserSession, Model model) {
         Tutor tutor = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         Set<Session> sessions = sessionService.getSessionsByTutor(tutor);
-        List<LocalTime> times = List.of(
-                LocalTime.of(9,0),
-                LocalTime.of(9,30),
-                LocalTime.of(10,0),
-                LocalTime.of(10,30),
-                LocalTime.of(11,0),
-                LocalTime.of(11,30),
-                LocalTime.of(12,0),
-                LocalTime.of(12,30),
-                LocalTime.of(13,0),
-                LocalTime.of(13,30),
-                LocalTime.of(14,0),
-                LocalTime.of(14,30),
-                LocalTime.of(15,0),
-                LocalTime.of(15,30),
-                LocalTime.of(16,0),
-                LocalTime.of(16,30)
-        );
-
+        List<LocalTime> times = sessionService.generateTimes();
         HashMap<String, Boolean> schedule = sessionService.fillInSessions(sessions, times);
 
         model.addAttribute("tutor", tutor);
@@ -75,15 +57,9 @@ public class TimeSubmissionController {
         return "time-submit-confirm";
     }
 
-    //sessions should already be created; redirect to the tutor's profile
-    @GetMapping("/yes")
-    public String confirm() {
-        return "tutor-profile";
+    @GetMapping("/no")
+    public String refuse(){
+        return "time-submission-edited";
     }
 
-    //will involve deleting sessions, which requires another repo+service method
-    /*@GetMapping("/no")
-    public String refuse(){
-
-    }*/
 }

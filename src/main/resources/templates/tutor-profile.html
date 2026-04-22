@@ -158,9 +158,11 @@
 
         <section class="schedule-section">
             <h2>Schedule</h2>
-            <div th:unless="${tutor.getSchedule().isEmpty()}"
-                 th:replace="~{schedule-view :: scheduleView(sessionSet=${tutor.getSchedule()})}"></div>
-            <div th:if="${tutor.getSchedule().isEmpty()}">Schedule coming soon.</div>
+            <div th:if="${!schedule.isEmpty()}">
+                <div th:replace="~{schedule-view :: scheduleView}"></div>
+            </div>
+
+            <div th:if="${schedule.isEmpty()}">Schedule coming soon.</div>
         </section>
     </div>
 </div>

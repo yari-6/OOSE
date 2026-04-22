@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 
+import java.time.LocalTime;
+import java.util.List;
+
 @Controller
 public class SessionController {
     private final SessionService sessionService;
@@ -20,19 +23,28 @@ public class SessionController {
 
     @GetMapping("/schedules/drop-in")
     public String dropInSchedule(Model model) {
-        model.addAttribute("dropinSchedule", sessionService.getSessionsByType("Drop-in"));
+        List<LocalTime> times = sessionService.generateTimes();
+        model.addAttribute("times", times);
+        model.addAttribute("schedule",
+                sessionService.fillInSessions(sessionService.getSessionsByType("Drop-in"),  times));
         return "drop-in-schedule";
     }
 
     @GetMapping("/schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
-        model.addAttribute("BFmathLabSchedule", sessionService.getSessionsByType("Math Lab"));
+        List<LocalTime> times = sessionService.generateTimes();
+        model.addAttribute("times", times);
+        model.addAttribute("schedule",
+                sessionService.fillInSessions(sessionService.getSessionsByType("Math Lab"),  times));
         return "ben-frank-math-lab";
     }
 
     @GetMapping("/schedules/SSC")
     public String SSCSchedule(Model model) {
-        model.addAttribute("SSCSchedule", sessionService.getSessionsByType("Math Lab"));
+        List<LocalTime> times = sessionService.generateTimes();
+        model.addAttribute("times", times);
+        model.addAttribute("schedule",
+                sessionService.fillInSessions(sessionService.getSessionsByType("SSC"),  times));
         return "ssc-math-lab";
     }
 }
