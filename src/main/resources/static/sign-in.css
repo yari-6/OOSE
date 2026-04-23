@@ -118,13 +118,17 @@ input:focus {
 
     body {
         align-items: flex-start;
-        padding: 15px 0;
+        padding: 15px;
+        min-height: 100dvh;
+        box-sizing: border-box;
     }
 
     .container {
-        width: 95%;
+        width: 100%;
+        max-width: 420px;
         min-height: auto;
         padding: 15px;
+        margin: 0 auto;
     }
 
     .back-section {
