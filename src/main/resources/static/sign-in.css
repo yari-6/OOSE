@@ -123,14 +123,15 @@ input:focus {
 /*  fixes for viewing on mobile devices   */
 @media (max-width: 768px) {
 
+    body {
+        align-items: flex-start;
+        padding: 15px 0;
+    }
+
     .container {
         width: 95%;
         min-height: auto;
         padding: 15px;
-    }
-
-    body {
-        align-items: center;
     }
 
     .back-section {
