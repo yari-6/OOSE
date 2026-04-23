@@ -24,7 +24,7 @@
 
 <!-- Form was submitting to schedule-builder page, so nothing was being done, now submits to the right page -->
 <!-- Time values also changed, value is updated to be in LocalTime format instead of doubles -->
-<form method="post" th:action="@{/addTimes}">
+<form method="post" th:action="@{/add-times}">
   <div class="selection">
     <label for="day">Select day of week:</label>
     <select id="day" name="day">
@@ -79,11 +79,7 @@
   </div>
 
   <div>
-    <a th:href="@{/review}" class="hero-link">
-      <div class="hero_content box">
-        <input type="button" class="review" value="Review Schedule">
-      </div>
-    </a>
+    <a th:href="@{/review-times}" class="hero-link">Review Schedule</a>
   </div>
 
 </form>

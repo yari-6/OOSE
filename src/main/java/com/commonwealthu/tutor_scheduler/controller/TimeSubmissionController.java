@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,19 +35,25 @@ public class TimeSubmissionController {
         }
     }
 
-    @PostMapping("/addTimes")
+    @PostMapping("/add-times")
     public String addTimes(@RequestParam("day") char day, @RequestParam("start") LocalTime start,
                            @RequestParam("end") LocalTime end, HttpSession browserSession) {
         Tutor loggedIn = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
-        Session submitted = new Session(new SessionID(loggedIn, day, start), end);
-        sessionService.saveSession(submitted);
+        Session addedTime = new Session(new SessionID(loggedIn, day, start), end);
+
+        // Create the Session from the submitted times, and store them inside the browser session for confirmation
+        // in the review page, rather than saving directly after creation
+        Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
+        addedTimes.add(addedTime);
+
         return "time-submission-edited";
     }
 
-    @GetMapping("/review")
+    @GetMapping("/review-times")
     public String reviewTimes(HttpSession browserSession, Model model) {
         Tutor tutor = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
-        Set<Session> sessions = sessionService.getSessionsByTutor(tutor);
+        // Get the Sessions added from addTimes page instead of getting all Sessions
+        Set<Session> sessions = sessionService.getAddedTimes(browserSession);
         List<LocalTime> times = sessionService.generateTimes();
         HashMap<String, Boolean> schedule = sessionService.fillInSessions(sessions, times);
 
@@ -57,9 +64,18 @@ public class TimeSubmissionController {
         return "time-submit-confirm";
     }
 
-    @GetMapping("/no")
-    public String refuse(){
-        return "time-submission-edited";
+    @PostMapping("/confirm-times")
+    public String confirmTimes(HttpSession browserSession) {
+        String tutorID = (String) browserSession.getAttribute("tutorID");
+        Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
+        sessionService.saveAllTimes(addedTimes);
+        return "redirect:/tutors/" + tutorID;
+    }
+
+    @PostMapping("/reject-times")
+    public String rejectTimes(HttpSession browserSession) {
+        browserSession.removeAttribute("addedTimes");
+        return "redirect:/schedule-builder";
     }
 
 }

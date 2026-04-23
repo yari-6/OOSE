@@ -24,7 +24,8 @@ public class TutorController {
     private final RatingService ratingService;
     private final SessionService sessionService;
 
-    public TutorController(TutorService tutorService, RatingService ratingService, SessionService sessionService) {
+    public TutorController(TutorService tutorService,
+                           RatingService ratingService, SessionService sessionService) {
         this.tutorService = tutorService;
         this.ratingService = ratingService;
         this.sessionService = sessionService;

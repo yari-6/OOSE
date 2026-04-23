@@ -3,16 +3,15 @@ package com.commonwealthu.tutor_scheduler.service;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.repository.SessionRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class SessionService {
+
     private final SessionRepository sessionRepo;
 
     public SessionService(SessionRepository sessionRepo) {
@@ -62,6 +61,23 @@ public class SessionService {
             current = current.plusMinutes(30);
         }
         return times;
+    }
+
+    // addedTimes represent times added during the time submission, not actual times saved to the db
+    // Error for unchecked cast seems to be unavoidable because of HttpSession always returning an object
+    public Set<Session> getAddedTimes(HttpSession browserSession) {
+        Set<Session> addedTimes = (Set<Session>) browserSession.getAttribute("addedTimes");
+        if (addedTimes == null) {
+            addedTimes = new HashSet<>();
+            browserSession.setAttribute("addedTimes", addedTimes);
+        }
+        return addedTimes;
+    }
+
+    public void saveAllTimes(Set<Session> addedTimes) {
+        for (Session s: addedTimes) {
+            saveSession(s);
+        }
     }
 
 }
