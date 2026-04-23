@@ -9,6 +9,14 @@
 
   <!-- Can the header be here? Will it display above the schedule view in the profile? -->
   <!-- <div th:replace="headerFragment :: header('Schedule View')"></div> -->
+<head>
+    <meta charset="UTF-8">
+    <title>BloomTutors</title>
+    <link rel="stylesheet" th:href="@{/schedule-view.css}">
+    <link rel="stylesheet" th:href="@{/header.css}">
+
+</head>
+<!--for each entry in the row (except the header (time)), iterate through sessions list and if one matches, change bg color-->
 
   <table class = "schedule-view-table" th:fragment="scheduleView">
     <tr>

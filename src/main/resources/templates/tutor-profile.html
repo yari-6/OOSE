@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div th:replace="headerFragment :: header('Tutor Information')"></div>
+<div th:replace="~{headerFragment :: header('Tutor Information')}"></div>
 
 <div class="stripe-container">
     <img th:src="@{/fadedstripe.svg}" class="stripe">
@@ -27,7 +27,7 @@
                  id="profileImage">
 
             <button th:if="${session.tutorID == tutor.tutorID}"
-                    class="change-btn"
+                    class="submit"
                     id="changePfpBtn">
                 Change PFP
             </button>
