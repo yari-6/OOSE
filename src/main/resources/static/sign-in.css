@@ -1,10 +1,13 @@
 body {
     margin: 0;
+    min-height: 100vh;
     background-color: #921e33;
-    min-height: 100dvh;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 h1 {
@@ -16,10 +19,10 @@ h1 {
     max-width: 420px;
     background: white;
     padding: 20px;
+    height: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    flex-shrink: 0;
     box-sizing: border-box;
 }
 
@@ -96,7 +99,7 @@ input:focus {
 }
 
 .back-section {
-    margin-top: auto;
+    margin-top: 20px;
 }
 
 .back-button {
@@ -115,17 +118,13 @@ input:focus {
 
     body {
         align-items: flex-start;
-        padding: 15px;
-        min-height: 100dvh;
-        box-sizing: border-box;
+        padding: 15px 0;
     }
 
     .container {
-        width: 100%;
-        max-width: 420px;
+        width: 95%;
         min-height: auto;
         padding: 15px;
-        margin: 0 auto;
     }
 
     .back-section {
