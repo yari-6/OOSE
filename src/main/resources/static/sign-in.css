@@ -12,7 +12,8 @@ h1 {
 }
 
 .container {
-    width: 28%;
+    width: 90%;
+    max-width: 500px;
     margin: auto;
     background: white;
     padding: 20px;
@@ -31,12 +32,13 @@ h1 {
 }
 
 .logo {
-    transform: translateY(-20%);
     height: 70px;
+    margin-top: -10px;
 }
 
 .accent-line {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   height: 4px;
   background-color: #f3d03e;
   border: none;
@@ -49,7 +51,7 @@ form {
 }
 
 input {
-    width: 80%;
+    width: 100%;
     border: none;
     border-bottom: 1px solid black;
     padding: 10px;
