@@ -25,13 +25,19 @@ public class RatingService {
         ratingRepo.save(rating);
     }
 
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     public HashMap<String, Double> getAllRatings(String tutorID) {
         HashMap<String, Double> averages = new HashMap<>();
-        averages.put("comm", ratingRepo.findAvgComm(tutorID));
-        averages.put("approach", ratingRepo.findAvgApproach(tutorID));
-        averages.put("effLearn", ratingRepo.findAvgEffLearn(tutorID));
-        averages.put("help", ratingRepo.findAvgHelp(tutorID));
-        averages.put("overall", ratingRepo.findAvgOverall(tutorID));
+
+        averages.put("comm", round(ratingRepo.findAvgComm(tutorID)));
+        averages.put("approach", round(ratingRepo.findAvgApproach(tutorID)));
+        averages.put("effLearn", round(ratingRepo.findAvgEffLearn(tutorID)));
+        averages.put("help", round(ratingRepo.findAvgHelp(tutorID)));
+        averages.put("overall", round(ratingRepo.findAvgOverall(tutorID)));
+
         return averages;
     }
 
