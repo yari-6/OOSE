@@ -5,7 +5,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 0px;
     box-sizing: border-box;
     overflow-x: hidden;
 }
@@ -114,18 +114,18 @@ input:focus {
 
 
 /*  fixes for viewing on mobile devices   */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
 
     body {
         align-items: flex-start;
-        padding: 10px 0;
+        padding: 15px 0;
     }
 
-    width: 100%;
-        max-width: none;
-        min-height: 100vh;
-        padding: 20px;
-        box-sizing: border-box;
+    .container {
+        width: 95%;
+        min-height: auto;
+        padding: 15px;
+        margin 20px auto;
     }
 
     .back-section {
