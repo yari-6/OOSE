@@ -49,7 +49,7 @@
         <h1 th:text="${tutor != null ? tutor.firstName + ' ' + tutor.lastName : 'Unknown'}"></h1>
         <h3 class="tutor-type" th:text="${tutor.type}"></h3>
 
-        <div class="profile-card" th:if="${ratings != null and ratings['overall'] != null}">
+        <div class="profile-card" th:if="${ratings != 0.0 and ratings['overall'] != 0.0}">
             <h3 th:text="'Average Communication: ' + ${ratings['comm']}"></h3>
             <h3 th:text="'Average Approachability: ' + ${ratings['approach']}"></h3>
             <h3 th:text="'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
