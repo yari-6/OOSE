@@ -54,7 +54,7 @@ public class SessionID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SessionID sessionID)) return false;
-        return Objects.equals(tutor, sessionID.tutor) && day == sessionID.day && time==sessionID.time;
+        return Objects.equals(tutor, sessionID.tutor) && day == sessionID.day && Objects.equals(time, sessionID.time);
     }
 
     @Override

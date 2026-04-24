@@ -32,7 +32,7 @@
 </head>
 <body>
 
-<div th:replace="headerFragment :: header('SI Time Submission')"></div>
+<div th:replace="~{headerFragment :: header('SI Time Submission')}"></div>
 
 <div class="stripe-container">
   <img th:src="@{/fadedstripe.svg}" class="stripe">

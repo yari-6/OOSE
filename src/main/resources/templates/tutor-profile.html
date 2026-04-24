@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div th:replace="headerFragment :: header('Tutor Information')"></div>
+<div th:replace="~{headerFragment :: header('Tutor Information')}"></div>
 
 <div class="stripe-container">
     <img th:src="@{/fadedstripe.svg}" class="stripe">
@@ -27,7 +27,7 @@
                  id="profileImage">
 
             <button th:if="${session.tutorID == tutor.tutorID}"
-                    class="change-btn"
+                    class="submit"
                     id="changePfpBtn">
                 Change PFP
             </button>
@@ -158,9 +158,11 @@
 
         <section class="schedule-section">
             <h2>Schedule</h2>
-            <div th:unless="${tutor.getSchedule().isEmpty()}"
-                 th:replace="~{schedule-view :: scheduleView(sessionSet=${tutor.getSchedule()})}"></div>
-            <div th:if="${tutor.getSchedule().isEmpty()}">Schedule coming soon.</div>
+            <div th:if="${!schedule.isEmpty()}">
+                <div th:replace="~{schedule-view :: scheduleView}"></div>
+            </div>
+
+            <div th:if="${schedule.isEmpty()}">Schedule coming soon.</div>
         </section>
     </div>
 </div>

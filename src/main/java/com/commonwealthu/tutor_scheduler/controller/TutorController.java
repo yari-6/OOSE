@@ -1,8 +1,10 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Rating;
+import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.entity.TutorLogin;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
+import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -11,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -18,10 +22,13 @@ public class TutorController {
 
     private final TutorService tutorService;
     private final RatingService ratingService;
+    private final SessionService sessionService;
 
-    public TutorController(TutorService tutorService, RatingService ratingService) {
+    public TutorController(TutorService tutorService,
+                           RatingService ratingService, SessionService sessionService) {
         this.tutorService = tutorService;
         this.ratingService = ratingService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping("/")
@@ -46,11 +53,33 @@ public class TutorController {
     // Uses getAllRatings because rating information is never displayed in individual categories, all categories
     // will be displayed at once every time
     // Possibly update to be a query parameter rather than embedded in the url
+    // Updated to pass times and schedule for the schedule view portion of the profile
+    // Could be changed later, because the same set of times has been passed for everything using the schedule
     @GetMapping("/tutors/{id}")
     public String tutorProfile(Model model, @PathVariable String id, HttpSession session) {
-
-        model.addAttribute("tutor", tutorService.findTutorByID(id));
+        Tutor tutor = tutorService.findTutorByID(id);
+        List<LocalTime> times = sessionService.generateTimes();
+        model.addAttribute("tutor", tutor);
         model.addAttribute("ratings", ratingService.getAllRatings(id));
+        model.addAttribute("times", times);
+        model.addAttribute("schedule",
+                sessionService.fillInSessions(sessionService.getSessionsByTutor(tutor), times));
+        return "tutor-profile";
+    }
+
+    //similar to above but only used for redirecting to the tutors profile
+    @GetMapping("/profile")
+    public String myProfile(HttpSession session, Model model) {
+
+        String tutorID = (String) session.getAttribute("tutorID");
+
+        if (tutorID == null) {
+            return "redirect:/sign-in";
+        }
+
+        model.addAttribute("tutor", tutorService.findTutorByID(tutorID));
+        model.addAttribute("ratings", ratingService.getAllRatings(tutorID));
+
         return "tutor-profile";
     }
 

@@ -5,22 +5,32 @@
     <a th:href="@{/}">
         <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
     </a>
+
     <h1 th:text="${title}">Default Title</h1>
     <hr class="title-line">
 
     <div class="signin-container">
+
         <a th:if="${session.tutorID == null}"
            th:href="@{/sign-in}"
            class="signin-btn">
             Sign In
         </a>
 
+        <!-- Appears when a Tutor is signed in -->
         <div th:if="${session.tutorID != null}" class="user-section">
-            <span class="welcome-text">
-                Welcome, <span th:text="${session.tutorID}"></span>
-            </span>
 
-            <a th:href="@{/logout}" class="logout-btn">Logout</a>
+            <div class="dropdown">
+                <button class="dropbtn">
+                    Welcome, <span th:text="${session.tutorID}"></span> ▼
+                </button>
+
+                <div class="dropdown-content">
+                    <a th:href="@{/tutors/{id}(id=${session.tutorID})}">Profile</a>
+                    <a th:href="@{/logout}">Logout</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </header>

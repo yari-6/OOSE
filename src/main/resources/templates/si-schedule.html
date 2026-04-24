@@ -10,7 +10,7 @@
 
 <body>
 
-<div th:replace="headerFragment :: header('SI Schedule')"></div>
+<div th:replace="~{headerFragment :: header('SI Schedule')}"></div>
 
 <div class="stripe-container">
     <img th:src="@{/fadedstripe.svg}" class="stripe">
