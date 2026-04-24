@@ -25,7 +25,11 @@ public class RatingService {
         ratingRepo.save(rating);
     }
 
-    private double round(double value) {
+    private double round(Double value) {
+        if (value == null) {
+            return 0.0;
+        }
+
         return Math.round(value * 100.0) / 100.0;
     }
 

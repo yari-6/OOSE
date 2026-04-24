@@ -88,6 +88,7 @@ a.hero-link {
   justify-content: center;
   gap: 100px;
   flex-wrap: wrap;
+  background: linear-gradient(to right, #8a1538, #6f263d );
 }
 
 .footer-section h3 {
