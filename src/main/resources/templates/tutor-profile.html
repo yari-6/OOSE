@@ -50,11 +50,11 @@
         <h3 class="tutor-type" th:text="${tutor.type}"></h3>
 
         <div class="profile-card" th:if="${ratings != null and ratings['overall'] != null}">
-            <h3 th:text="'Average Communication: ' + ${ratings['comm']}"></h3>
-            <h3 th:text="'Average Approachability: ' + ${ratings['approach']}"></h3>
-            <h3 th:text="'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
-            <h3 th:text="'Average Helpfulness: ' + ${ratings['help']}"></h3>
-            <h3 th:text="'Average Overall: ' + ${ratings['overall']}"></h3>
+            <h3 th:text="'Average Communication: ' + ${#numbers.formatDecimal(ratings['comm'], 1, 1)}"></h3>
+            <h3 th:text="'Average Approachability: ' + ${#numbers.formatDecimal(ratings['approach'], 1, 1)}"></h3>
+            <h3 th:text="'Average Effective Learning Strategies: ' + ${#numbers.formatDecimal(ratings['effLearn'], 1 ,1)}"></h3>
+            <h3 th:text="'Average Helpfulness: ' + ${#numbers.formatDecimal(ratings['help'], 1, 1)}"></h3>
+            <h3 th:text="'Average Overall: ' + ${#numbers.formatDecimal(ratings['overall'], 1, 1)}"></h3>
         </div>
 
         <div class="profile-card">

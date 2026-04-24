@@ -17,7 +17,7 @@ public class SessionController {
 
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
-        model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
+        model.addAttribute("SISchedule", sessionService.getSessionsByType("SI"));
         return "si-schedule";
     }
 

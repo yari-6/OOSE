@@ -1,14 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-      <meta charset="UTF-8">
-      <title>BloomTutors</title>
-      <link rel="stylesheet" th:href="@{/schedule-view.css}">
-      <link rel="stylesheet" th:href="@{/header.css}">
-  </head>
-
-  <!-- Can the header be here? Will it display above the schedule view in the profile? -->
-  <!-- <div th:replace="headerFragment :: header('Schedule View')"></div> -->
 <head>
     <meta charset="UTF-8">
     <title>BloomTutors</title>
@@ -30,11 +21,21 @@
     <tbody>
     <tr th:each="t : ${times}">
         <th th:text="${t}"></th>
-        <td th:style = "${schedule['M ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['T ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['W ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['R ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['F ' + t.toString()]} ? 'background-color: blue' : '' "></td>
+        <td th:with="cell=${schedule['M '+ t.toString()]}"
+            th:text="${cell != null ? cell.names : ''}"
+            th:style="${cell != null ? 'background-color:' + cell.color : ''}"></td>
+        <td th:with="cell=${schedule['T '+ t.toString()]}"
+            th:text="${cell != null ? cell.names : ''}"
+            th:style="${cell != null ? 'background-color: ' + cell.color : ''}"></td>
+        <td th:with="cell=${schedule['W '+ t.toString()]}"
+            th:text="${cell != null ? cell.names : ''}"
+            th:style="${cell != null ? 'background-color:' + cell.color : ''}"></td>
+        <td th:with="cell=${schedule['R '+ t.toString()]}"
+            th:text="${cell != null ? cell.names : ''}"
+            th:style="${cell != null ? 'background-color:' + cell.color : ''}"></td>
+        <td th:with="cell=${schedule['F '+ t.toString()]}"
+            th:text="${cell != null ? cell.names : ''}"
+            th:style="${cell != null ? 'background-color:' + cell.color : ''}"></td>
     </tr>
     </tbody>
   </table>

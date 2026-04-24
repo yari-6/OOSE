@@ -1,12 +1,12 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
+import com.commonwealthu.tutor_scheduler.entity.ScheduleInfo;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,16 +14,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Controller
 public class TimeSubmissionController {
-    @Autowired
-    private TutorService tutorService;
-    @Autowired
-    private SessionService sessionService;
+
+    private final TutorService tutorService;
+
+    private final SessionService sessionService;
+
+    public TimeSubmissionController(TutorService tutorService, SessionService sessionService) {
+        this.tutorService = tutorService;
+        this.sessionService = sessionService;
+    }
 
     @GetMapping("/schedule-builder")
     public String buildSchedule(HttpSession browserSession) {
@@ -55,7 +59,7 @@ public class TimeSubmissionController {
         // Get the Sessions added from addTimes page instead of getting all Sessions
         Set<Session> sessions = sessionService.getAddedTimes(browserSession);
         List<LocalTime> times = sessionService.generateTimes();
-        HashMap<String, Boolean> schedule = sessionService.fillInSessions(sessions, times);
+        HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(sessions, times);
 
         model.addAttribute("tutor", tutor);
         model.addAttribute("times", times);

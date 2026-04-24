@@ -1,5 +1,6 @@
 package com.commonwealthu.tutor_scheduler.service;
 
+import com.commonwealthu.tutor_scheduler.entity.ScheduleInfo;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.repository.SessionRepository;
@@ -20,32 +21,41 @@ public class SessionService {
 
     public List<Session> getAllSessions() { return sessionRepo.findAll(); }
 
-    //god i hope this is it
-    //https://stackoverflow.com/questions/49435969/how-to-use-part-of-composite-key-in-jpa-repository-methods
     public Set<Session> getSessionsByTutor(Tutor tutor) {return sessionRepo.findBySessionID_Tutor(tutor);}
 
-    //get sessions by tutoring type would require a type class to be able to pass to the method
-    //it may work to have special tutor object for each type of tutoring
-    //or it comes from a specific table, but that table is not made
     public Set<Session> getSessionsByType(String type) { return sessionRepo.findByTutoringType(type); }
 
     public void saveSession(Session session) {
         sessionRepo.save(session);
     }
 
-    // Take in a tutor's submitted sessions and the times available from the schedule grid, mark the times that
-    // need to be filled in on the schedule grid display
-    // This method could be updated in the future to not use String keys, but they are working for now
-    public HashMap<String, Boolean> fillInSessions(Set<Session> sessions, List<LocalTime> times) {
-        HashMap<String, Boolean> timeMap = new HashMap<>();
+    // Take in a tutor's submitted sessions (saved or for confirmation) and a list of the times on the display grid
+    // and returns a map storing the day + time and the tutors working + display color
+    public HashMap<String, ScheduleInfo> fillInSessions(Set<Session> sessions, List<LocalTime> times) {
+        HashMap<String, ScheduleInfo> timeMap = new HashMap<>();
         for (Session s: sessions) {
             char day = s.getSessionID().getDay();
             LocalTime start = s.getSessionID().getTime();
             LocalTime end = s.getEndTime();
+            String name = s.getSessionID().getTutor().getFirstName();
+            String type = s.getSessionID().getTutor().getType();
+
             // Check if the grid time falls within session time range
             for (LocalTime t: times) {
-                if (!t.isBefore(start) && t.isBefore(end))
-                    timeMap.put(day + " " + t, true);
+                if (!t.isBefore(start) && t.isBefore(end)) {
+                    String key = day + " " + t;
+
+                    // Add the second name if one tutor is already on schedule
+                    if (timeMap.containsKey(key)) {
+                        ScheduleInfo existingTutor = timeMap.get(key);
+                        existingTutor.setNames(existingTutor.getNames() + "/" + name);
+                    }
+                    else {
+                        ScheduleInfo display = new ScheduleInfo(name, type);
+                        setDisplayColor(display, type);
+                        timeMap.put(key, display);
+                    }
+                }
             }
         }
         return timeMap;
@@ -74,9 +84,20 @@ public class SessionService {
         return addedTimes;
     }
 
+    // Updated to use repo saveAll
     public void saveAllTimes(Set<Session> addedTimes) {
-        for (Session s: addedTimes) {
-            saveSession(s);
+        sessionRepo.saveAll(addedTimes);
+    }
+
+    public void setDisplayColor(ScheduleInfo display, String type) {
+        if (type.equals("Drop-in")) {
+            display.setColor("crimson");
+        }
+        if (type.equals("Math Lab")) {
+            display.setColor("cornflowerblue");
+        }
+        if (type.equals("SSC")) {
+            display.setColor("forestgreen");
         }
     }
 
