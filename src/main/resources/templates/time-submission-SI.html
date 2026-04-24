@@ -1,88 +1,68 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,width=device-width" />
   <title>SI Schedule Builder</title>
-  <link rel="stylesheet" th:href="@{/time-submisson-SI.css}">
-  <link rel="stylesheet" th:href="@{/header.css}">
-  <style>
-    .session-row {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 12px;
-      padding: 10px;
-      background: #f4f4f4;
-      border-radius: 6px;
-    }
-    .table-input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      text-align: center;
-      padding: 4px;
-    }
-    .table-fill th {
-      background-color: #6f263d;
-      color: white;
-      padding: 10px;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/time-submisson-SI.css}" />
+  <link rel="stylesheet" th:href="@{/header.css}" />
 </head>
 <body>
 
 <div th:replace="~{headerFragment :: header('SI Time Submission')}"></div>
 
 <div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" />
   <div class="stripe-text">
     Blooms Tutors – Making scheduling easy!
-    <hr class="accent-line">
+    <hr class="accent-line" />
   </div>
 </div>
 
 <main class="container" id="app">
-  <div class="form-row">
-    <div class="input-group">
-      <label for="SILeader">SI Leader Name</label>
-      <input type="text" id="SILeader" placeholder="Name">
+  <div class="form-card">
+    <h2>SI Session Builder</h2>
+    <div class="input-grid">
+      <div class="input-group">
+        <label for="SILeader">SI Leader Name</label>
+        <input type="text" id="SILeader" th:value="${siName}" readonly class="readonly-input" />
+      </div>
+      <div class="input-group">
+        <label for="Class">Class / Course</label>
+        <input type="text" id="Class" placeholder="e.g. BIOL 114" required />
+      </div>
+      <div class="input-group">
+        <label for="Professor">Professor</label>
+        <input type="text" id="Professor" placeholder="Name" required />
+      </div>
+      <div class="input-group">
+        <label for="ClassMeetingTimes">Course Meeting Times</label>
+        <input type="text" id="ClassMeetingTimes" placeholder="MWF 10:00AM" required />
+      </div>
     </div>
-    <div class="input-group">
-      <label for="Class">Class / Course</label>
-      <input type="text" id="Class" placeholder="e.g. BIOL 114">
-    </div>
-    <div class="input-group">
-      <label for="Professor">Professor</label>
-      <input type="text" id="Professor" placeholder="Name">
-    </div>
-    <div class="input-group">
-      <label for="ClassMeetingTimes">Course Meeting Times</label>
-      <input type="text" id="ClassMeetingTimes" placeholder="MWF 10:00AM">
+
+    <div class="controls">
+      <div class="input-group">
+        <label for="pattern">Session Pattern</label>
+        <select id="pattern" class="small" required>
+          <option value="4x50">4 × 50 min</option>
+          <option value="3x75">3 × 75 min</option>
+        </select>
+      </div>
+      <div class="button-group">
+        <button id="export" type="button" class="btn-secondary">Review Schedule</button>
+      </div>
     </div>
   </div>
 
-  <div class="controls">
-    <label for="pattern" style="font-weight:bold;">Session Pattern: </label>
-    <select id="pattern" style="padding: 8px; border-radius: 4px;">
-      <option value="4x50">4 × 50 min</option>
-      <option value="3x75">3 × 75 min</option>
-    </select>
-    <button id="generate" type="button">Generate Sessions</button>
-    <button id="export" type="button">Review Schedule</button>
-  </div>
+  <div id="sessionsWrap"></div>
 
-  <div id="sessionsWrap" style="margin-top: 20px;"></div>
   <div id="tableWrap"></div>
 </main>
 
 <script th:inline="javascript">
   (function(){
-    const DAY_START = 660; // 11:00 AM
-    const MAX_START = 1080; // 6:00 PM
-    const STEP = 15;
-
-    const genBtn = document.getElementById('generate');
+    const patternSelect = document.getElementById('pattern');
     const exportBtn = document.getElementById('export');
     const wrap = document.getElementById('sessionsWrap');
     const tableWrap = document.getElementById('tableWrap');
@@ -98,128 +78,220 @@
     function renderSessions() {
       wrap.innerHTML = '';
       tableWrap.innerHTML = '';
-      const [count, dur] = document.getElementById('pattern').value.split('x').map(Number);
+
+      const [count, dur] = patternSelect.value.split('x').map(Number);
 
       for(let i=0; i<count; i++) {
         const div = document.createElement('div');
-        div.className = 'session-row';
+        div.className = 'session-row fade-in';
+        div.innerHTML = `
+          <span style="font-weight:bold; min-width:100px;">Session ${i+1}:</span>
+          <select class="day-select" required>
+            <option value="M">Monday</option><option value="T">Tuesday</option>
+            <option value="W">Wednesday</option><option value="R">Thursday</option>
+            <option value="F">Friday</option>
+          </select>
+          <select class="time-select" required></select>
+          <span class="end-display" style="margin-left: 15px;"></span>
+        `;
 
-        const daySel = document.createElement('select');
-        ['Monday','Tuesday','Wednesday','Thursday','Friday'].forEach(d => {
+        const timeSel = div.querySelector('.time-select');
+        for(let t = 660; t <= 1080; t += 15) {
           const opt = document.createElement('option');
-          opt.value = d; opt.textContent = d;
-          daySel.appendChild(opt);
-        });
-
-        const startSel = document.createElement('select');
-        for(let t = DAY_START; t <= MAX_START; t += STEP) {
-          const opt = document.createElement('option');
-          opt.value = t;
-          opt.textContent = fmt(t);
-          startSel.appendChild(opt);
+          opt.value = t; opt.textContent = fmt(t);
+          timeSel.appendChild(opt);
         }
 
-        const endDisplay = document.createElement('span');
-        endDisplay.style.marginLeft = "15px";
-        endDisplay.style.color = "#666";
-
-        startSel.addEventListener('change', () => {
-          endDisplay.textContent = " — Ends at " + fmt(Number(startSel.value) + dur);
+        timeSel.addEventListener('change', () => {
+          div.querySelector('.end-display').textContent = " — Ends at " + fmt(Number(timeSel.value) + dur);
         });
 
-        div.innerHTML = `<span style="font-weight:bold; min-width:100px;">Session ${i+1}:</span>`;
-        div.appendChild(daySel);
-        div.appendChild(startSel);
-        div.appendChild(endDisplay);
-
-        startSel.dispatchEvent(new Event('change'));
+        timeSel.dispatchEvent(new Event('change'));
         wrap.appendChild(div);
       }
     }
 
-    // Logic to ensure no two sessions overlap on the same day
-    function checkOverlaps() {
-      const sessions = Array.from(wrap.querySelectorAll('.session-row'));
-      const dur = Number(document.getElementById('pattern').value.split('x')[1]);
-      const data = sessions.map(s => ({
-        day: s.querySelectorAll('select')[0].value,
-        start: Number(s.querySelectorAll('select')[1].value),
-        end: Number(s.querySelectorAll('select')[1].value) + dur
-      }));
+    exportBtn.addEventListener('click', async () => {
+      const className = document.getElementById('Class').value.trim();
+      const professor = document.getElementById('Professor').value.trim();
+      const classMeetingTimes = document.getElementById('ClassMeetingTimes').value.trim();
 
-      for (let i = 0; i < data.length; i++) {
-        for (let j = i + 1; j < data.length; j++) {
-          if (data[i].day === data[j].day) {
-            if (data[i].start < data[j].end && data[i].end > data[j].start) {
-              return `Conflict: Session ${i+1} and Session ${j+1} overlap on ${data[i].day}.`;
-            }
-          }
-        }
-      }
-      return null;
-    }
-
-    exportBtn.addEventListener('click', () => {
-      const overlapError = checkOverlaps();
-      if (overlapError) {
-        alert(overlapError);
+      if (!className || !professor || !classMeetingTimes) {
+        alert("Please fill in all required fields: Class, Professor, and Class Meeting Times.");
         return;
       }
 
-      const sessions = Array.from(wrap.querySelectorAll('.session-row'));
-      if (!sessions.length) return;
+      const sessionRows = wrap.querySelectorAll('.session-row');
+      const sessions = [];
+      for (const row of sessionRows) {
+        const day = row.querySelector('.day-select').value;
+        const startMinutes = Number(row.querySelector('.time-select').value);
+        sessions.push({ day, startMinutes });
+      }
 
-      let html = `<table class="table-fill">
-                <thead><tr>
-                    <th>SI LEADER</th><th>CLASS</th><th>DAY</th><th>TIME</th><th>LOCATION</th><th>PROFESSOR</th>
-                </tr></thead><tbody>`;
+      const payload = {
+        siLeader: document.getElementById('SILeader').value,
+        className,
+        professor,
+        classMeetingTimes,
+        pattern: patternSelect.value,
+        sessions
+      };
 
-      sessions.forEach(s => {
-        const day = s.querySelectorAll('select')[0].value;
-        const start = Number(s.querySelectorAll('select')[1].value);
-        const dur = Number(document.getElementById('pattern').value.split('x')[1]);
-        const timeStr = `${fmt(start)} - ${fmt(start + dur)}`;
+      try {
+        exportBtn.disabled = true;
+        exportBtn.textContent = "Validating...";
 
-        html += `<tr>
-                    <td><input class="table-input" value="${document.getElementById('SILeader').value}"></td>
-                    <td><input class="table-input" value="${document.getElementById('Class').value}"></td>
-                    <td><input class="table-input" value="${day}"></td>
-                    <td><input class="table-input" value="${timeStr}"></td>
-                    <td><input class="table-input" value="TBD"></td>
-                    <td><input class="table-input" value="${document.getElementById('Professor').value}"></td>
-                </tr>`;
+        const response = await fetch('/api/si/preview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const validatedData = await response.json();
+          showFinalTable(validatedData);
+        } else {
+          const errors = await response.json();
+          alert("Schedule Conflict:\n" + errors.join("\n"));
+          tableWrap.innerHTML = '';
+        }
+      } catch (err) {
+        alert("Error contacting server.");
+      } finally {
+        exportBtn.disabled = false;
+        exportBtn.textContent = "Review Schedule";
+      }
+    });
+
+    function showFinalTable(data) {
+      const dayMap = {
+        'M': 'Monday',
+        'T': 'Tuesday',
+        'W': 'Wednesday',
+        'R': 'Thursday',
+        'F': 'Friday'
+      };
+
+      const formatTime = (t) => {
+        if (!t || typeof t !== 'string') return t;
+        const [h, m] = t.split(':');
+        let hour = parseInt(h);
+        const suffix = hour >= 12 ? 'PM' : 'AM';
+        const displayH = hour % 12 || 12;
+        return `${displayH}:${m} ${suffix}`;
+      };
+
+      let html = `
+    <table class="table-fill fade-in">
+      <thead>
+        <tr>
+          <th>SI LEADER</th>
+          <th>CLASS</th>
+          <th>DAYS</th>
+          <th>TIMES</th>
+          <th>LOCATION</th>
+          <th>PROFESSOR</th>
+          <th>CLASS MEETING TIMES</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+      data.sessions.forEach(s => {
+        const isPending = s.location && s.location.includes("PENDING");
+
+        const locationMarkup = isPending
+                ? `<span class="location-pending">${s.location}</span>`
+                : s.location;
+
+        html += `
+      <tr>
+        <td>${data.siLeader}</td>
+        <td>${data.className}</td>
+        <td>${dayMap[s.day] || s.day}</td>
+        <td>${formatTime(s.start)} - ${formatTime(s.end)}</td>
+        <td>${locationMarkup}</td>
+        <td>${data.professor}</td>
+        <td>${data.classMeetingTimes}</td>
+      </tr>`;
       });
 
-      html += `</tbody></table>
-                <div style="margin-top:25px; text-align:right;">
-                    <button id="dbSubmit" style="background:#6f263d; color:white; padding:12px 40px; font-size:1.1rem; border:none; cursor:pointer; border-radius:4px;">Submit Final Schedule</button>
-                </div>`;
+      html += `
+      </tbody>
+    </table>
+    <button id="dbSubmit" class="submit fade-in">Save to Database</button>`;
 
       tableWrap.innerHTML = html;
 
       document.getElementById('dbSubmit').addEventListener('click', async () => {
-        const payload = {
-          siLeader: document.getElementById('SILeader').value,
-          className: document.getElementById('Class').value,
-          sessions: Array.from(tableWrap.querySelectorAll('tbody tr')).map(tr => ({
-            day: tr.cells[2].querySelector('input').value,
-            time: tr.cells[3].querySelector('input').value
-          }))
-        };
-
         try {
-          const res = await fetch('/api/schedule/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) alert("Submitted successfully!");
-        } catch(e) { alert("Server error."); }
-      });
-    });
+          const saveBtn = document.getElementById('dbSubmit');
+          saveBtn.disabled = true;
+          saveBtn.textContent = "Saving...";
 
-    genBtn.addEventListener('click', renderSessions);
+          const saveResponse = await fetch('/api/si/save', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+          });
+
+          if (saveResponse.ok) {
+            alert('Schedule saved successfully!');
+            window.location.href = "/";
+          } else {
+            const errorMsg = await saveResponse.text();
+            alert('Failed to save schedule: ' + errorMsg);
+          }
+        } catch (error) {
+          alert('Error saving schedule.');
+        } finally {
+          const saveBtn = document.getElementById('dbSubmit');
+          if(saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save to Database";
+          }
+        }
+      });
+    }
+
+    patternSelect.addEventListener('change', renderSessions);
     renderSessions();
+
+    patternSelect.addEventListener('change', renderSessions);
+    renderSessions();
+
+    // --- Fixed Pre-fill Logic ---
+    const existingData = /*[[${existingSchedule}]]*/ [];
+
+    if (existingData && existingData.length > 0) {
+      // 1. Sync the pattern dropdown to match the number of existing sessions
+      const count = existingData.length;
+      if (count === 3) patternSelect.value = "3x75";
+      if (count === 4) patternSelect.value = "4x50";
+
+      // 2. Re-render rows to match the pattern
+      renderSessions();
+
+      // 3. Fill the rows with database values
+      const rows = wrap.querySelectorAll('.session-row');
+      existingData.forEach((session, index) => {
+        if (rows[index]) {
+          const daySel = rows[index].querySelector('.day-select');
+          const timeSel = rows[index].querySelector('.time-select');
+
+          // Set Day
+          daySel.value = session.sessionID.day;
+
+          // Set Time (convert HH:mm:ss to total minutes)
+          const [h, m] = session.sessionID.time.split(':');
+          const totalMinutes = (parseInt(h) * 60) + parseInt(m);
+          timeSel.value = totalMinutes;
+
+          // Update the "Ends at" text label
+          timeSel.dispatchEvent(new Event('change'));
+        }
+      });
+    }
   })();
 </script>
 

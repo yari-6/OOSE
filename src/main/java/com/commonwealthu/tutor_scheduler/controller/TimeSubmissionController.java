@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,10 +21,14 @@ import java.util.Set;
 
 @Controller
 public class TimeSubmissionController {
-    @Autowired
-    private TutorService tutorService;
-    @Autowired
-    private SessionService sessionService;
+
+    private final TutorService tutorService;
+    private final SessionService sessionService;
+
+    public TimeSubmissionController(TutorService tutorService, SessionService sessionService) {
+        this.tutorService = tutorService;
+        this.sessionService = sessionService;
+    }
 
     @GetMapping("/schedule-builder")
     public String buildSchedule(HttpSession browserSession) {

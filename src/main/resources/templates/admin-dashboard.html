@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Room Oversight</title>
+    <link rel="stylesheet" th:href="@{/time-submisson-SI.css}" />
+    <link rel="stylesheet" th:href="@{/header.css}" />
+</head>
+<body>
+<div th:replace="~{headerFragment :: header('Admin Dashboard')}"></div>
+
+<div class="stripe-container">
+    <img th:src="@{/fadedstripe.svg}" class="stripe" />
+    <div class="stripe-text">
+        Blooms Tutors – Making scheduling easy!
+        <hr class="accent-line" />
+    </div>
+</div>
+
+<main class="container">
+    <div class="form-card">
+        <h2 th:text="'Welcome, ' + ${adminName}">Admin</h2>
+        <p>The following SI sessions currently require room assignments or have conflicts:</p>
+
+        <table class="table-fill">
+            <thead>
+            <tr>
+                <th>Tutor</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Current Status</th>
+                <th>New Assignment</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sess : ${pendingSessions}">
+                <td th:text="${sess.sessionID.tutor.firstName + ' ' + sess.sessionID.tutor.lastName}"></td>
+                <td th:text="${sess.sessionID.day}"></td>
+                <td th:text="${sess.sessionID.time}"></td>
+                <td th:text="${sess.location}"></td>
+                <td>
+                    <form th:action="@{/admin/assign-room}" method="post" style="display: flex; gap: 10px; align-items: center;">
+                        <input type="hidden" name="tutorId" th:value="${sess.sessionID.tutor.tutorID}" />
+                        <input type="hidden" name="day" th:value="${sess.sessionID.day}" />
+                        <input type="hidden" name="time" th:value="${sess.sessionID.time}" />
+
+                        <input type="text" name="room"
+                               placeholder="e.g. BHT 102"
+                               class="admin-room-input" required
+                               style="flex-grow: 1; padding: 5px;" />
+
+                        <button type="submit" class="btn-primary" style="white-space: nowrap;">
+                            Assign
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pendingSessions)}">
+                <td colspan="5" style="text-align: center; padding: 20px;">
+                    All sessions have been assigned! 🥳
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

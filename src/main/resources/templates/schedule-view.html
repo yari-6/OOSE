@@ -1,24 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-  <head>
-      <meta charset="UTF-8">
-      <title>BloomTutors</title>
-      <link rel="stylesheet" th:href="@{/schedule-view.css}">
-      <link rel="stylesheet" th:href="@{/header.css}">
-  </head>
-
-  <!-- Can the header be here? Will it display above the schedule view in the profile? -->
-  <!-- <div th:replace="headerFragment :: header('Schedule View')"></div> -->
-<head>
-    <meta charset="UTF-8">
-    <title>BloomTutors</title>
-    <link rel="stylesheet" th:href="@{/schedule-view.css}">
-    <link rel="stylesheet" th:href="@{/header.css}">
-
-</head>
 <!--for each entry in the row (except the header (time)), iterate through sessions list and if one matches, change bg color-->
 
-  <table class = "schedule-view-table" th:fragment="scheduleView">
+  <table class="schedule-view-table" th:fragment="scheduleView">
     <tr>
         <th>Time</th>
         <th>Monday</th>
@@ -30,11 +14,11 @@
     <tbody>
     <tr th:each="t : ${times}">
         <th th:text="${t}"></th>
-        <td th:style = "${schedule['M ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['T ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['W ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['R ' + t.toString()]} ? 'background-color: blue' : '' "></td>
-        <td th:style = "${schedule['F ' + t.toString()]} ? 'background-color: blue' : '' "></td>
+        <td th:style="${schedule['M ' + t.toString()] == true} ? 'background-color: blue' : ''"></td>
+        <td th:style="${schedule['T ' + t.toString()] == true} ? 'background-color: blue' : ''"></td>
+        <td th:style="${schedule['W ' + t.toString()] == true} ? 'background-color: blue' : ''"></td>
+        <td th:style="${schedule['R ' + t.toString()] == true} ? 'background-color: blue' : ''"></td>
+        <td th:style="${schedule['F ' + t.toString()] == true} ? 'background-color: blue' : ''"></td>
     </tr>
     </tbody>
   </table>

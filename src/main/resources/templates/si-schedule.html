@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/SIschedule.css}">
-    <link rel="stylesheet" th:href="@{/header.css}">
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,width=device-width">
     <title>SI Schedule</title>
+    <link rel="stylesheet" th:href="@{/SIschedule.css}">
+    <link rel="stylesheet" th:href="@{/header.css}">
 </head>
-
 <body>
 
 <div th:replace="~{headerFragment :: header('SI Schedule')}"></div>
@@ -15,83 +14,71 @@
 <div class="stripe-container">
     <img th:src="@{/fadedstripe.svg}" class="stripe">
     <div class="stripe-text">
-        SI
+        SI Schedule
         <hr class="accent-line">
     </div>
-
 </div>
 
-<table class="table-fill">
-    <thead>
-    <tr>
-        <th>SI LEADER</th>
-        <th>CLASS</th>
-        <th>DAYS</th>
-        <th>TIMES</th>
-        <th>LOCATIONS</th>
-        <th>PROFESSOR</th>
-        <th>CLASS MEETING TIMES</th>
-    </tr>
-    </thead>
-    <tbody>
-    <script>
-        function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-        function fmt(m){ if (typeof m!=='number') return String(m); const h=Math.floor(m/60); return `${h}:${String(m%60).padStart(2,'0')}`; }
+<main class="container">
+    <table class="table-fill">
+        <thead>
+        <tr>
+            <th>SI LEADER</th>
+            <th>CLASS</th>
+            <th>DAY</th>
+            <th>TIMES</th>
+            <th>LOCATION</th>
+            <th>PROFESSOR</th>
+            <th>MEETING TIMES</th>
+        </tr>
+        </thead>
+        <tbody id="scheduleBody">
+        <tr th:each="s : ${siSchedule.get('sessions')}">
+            <td th:text="${s.get('siLeader')}">Leader</td>
+            <td th:text="${s.get('className')}">Class</td>
+            <td th:text="${s.get('day')}">Day</td>
+            <td th:text="${s.get('start') + ' - ' + s.get('end')}">Times</td>
+            <td th:text="${s.get('location') ?: 'TBD'}">Location</td>
+            <td th:text="${s.get('professor')}">Professor</td>
+            <td th:text="${s.get('classMeetingTimes')}">Meeting Times</td>
+        </tr>
+        </tbody>
+    </table>
+</main>
 
+<script th:inline="javascript">
+    // This script only runs if the database returns 0 rows (Fallback for URL testing)
+    const tbody = document.getElementById('scheduleBody');
+
+    if (tbody.children.length === 0) {
         const params = new URLSearchParams(window.location.search);
         const raw = params.get('schedule');
-        let data = null;
 
-        if (raw){
-            try { data = JSON.parse(decodeURIComponent(raw)); }
-            catch(e){ console.warn('Invalid schedule payload'); }
+        if (raw) {
+            try {
+                const data = JSON.parse(decodeURIComponent(raw));
+                if (data && data.sessions) {
+                    data.sessions.forEach(s => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${data.siLeader || 'N/A'}</td>
+                            <td>${data.className || 'N/A'}</td>
+                            <td>${s.day}</td>
+                            <td>${s.start} - ${s.end}</td>
+                            <td>${s.location || 'TBD'}</td>
+                            <td>${data.professor || 'N/A'}</td>
+                            <td>${data.classMeetingTimes || 'N/A'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch(e) { console.error("URL Parsing failed", e); }
         } else {
-            // fallback to individual query fields (SILeader, Class, ClassMeetingTimes, sessions as repeating params)
-            const siLeader = params.get('SILeader') || '';
-            const cls = params.get('Class') || '';
-            const pro = params.get('Professor') || '';
-            const cmt = params.get('ClassMeetingTimes') || '';
-            const sessions = [];
-            // support sessions encoded as session0_day, session0_start, session0_end, ... up to 10
-            for (let i=0;i<10;i++){
-                const day = params.get(`session${i}_day`);
-                const start = params.get(`session${i}_start`);
-                const end = params.get(`session${i}_end`);
-                if (!day || !start || !end) continue;
-                sessions.push({day, start: Number(start), end: Number(end)});
-            }
-            if (sessions.length) data = {siLeader, class: cls, professor: pro, classMeetingTimes: cmt, sessions};
-        }
-
-        const tbody = document.getElementById('scheduleBody');
-        if (!data || !Array.isArray(data.sessions) || !data.sessions.length){
-            // show a placeholder row
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="6">No schedule provided.</td>';
+            tr.innerHTML = '<td colspan="7" style="text-align:center;">No sessions currently scheduled.</td>';
             tbody.appendChild(tr);
-        } else {
-            data.sessions.forEach(s => {
-                const tr = document.createElement('tr');
-                const times = (typeof s.start === 'number' && typeof s.end === 'number') ? `${fmt(s.start)} - ${fmt(s.end)}` : `${escapeHtml(s.start)} - ${escapeHtml(s.end)}`;
-                tr.innerHTML =
-                    `<td>${escapeHtml(data.siLeader)}</td>` +
-                    `<td>${escapeHtml(data.class)}</td>` +
-                    `<td>${escapeHtml(s.day)}</td>` +
-                    `<td>${escapeHtml(times)}</td>` +
-                    `<td>${escapeHtml(s.location || 'TBD')}</td>` +
-                    `<td>${escapeHtml(data.professor)}</td>`;
-                `<td>${escapeHtml(data.classMeetingTimes)}</td>`;
-                tbody.appendChild(tr);
-            });
         }
-    </script>
-    </tbody>
-</table>
-
-
+    }
+</script>
 </body>
-
 </html>
-
-
-

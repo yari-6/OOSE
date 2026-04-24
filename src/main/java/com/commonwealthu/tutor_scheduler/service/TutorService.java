@@ -17,9 +17,8 @@ public class TutorService {
     }
 
     public List<Tutor> getAllTutors() {
-        return tutorRepo.findAll();
+        return tutorRepo.findByTypeNotOrderByFirstNameAsc("Admin");
     }
-
     // Updated to use the default Optional<Tutor> return of the TutorRepository
     // Changed from returning error to just returning null if no tutor is found, exceptions to be added
     public Tutor findTutorByID(String id) {
@@ -71,7 +70,7 @@ public class TutorService {
     public List<Tutor> getTutorsForCourse(String courseSearch) {
         // Split search into subject and course number
         String[] searchParts = courseSearch.split(" ");
-        String courseSubject = searchParts[0];
+        String courseSubject = searchParts[0].toUpperCase();
         int courseNumber = Integer.parseInt(searchParts[1]);
         return tutorRepo.findTutorsByCourse(courseSubject, courseNumber);
     }

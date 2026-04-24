@@ -2,22 +2,48 @@ package com.commonwealthu.tutor_scheduler.controller;
 
 
 import com.commonwealthu.tutor_scheduler.service.SessionService;
+import com.commonwealthu.tutor_scheduler.service.TutorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 public class SessionController {
     private final SessionService sessionService;
+    private final TutorService tutorService;
 
-    public SessionController(SessionService sessionService) {this.sessionService = sessionService;}
+    public SessionController(SessionService sessionService, TutorService tutorService) {
+        this.sessionService = sessionService;
+        this.tutorService = tutorService;
+    }
 
     @GetMapping("/schedules/SI")
     public String siSchedule(Model model) {
-        model.addAttribute("SIschedule", sessionService.getSessionsByType("SI"));
+        var sessions = sessionService.getSessionsByType("SI");
+
+        // Flatten to a list of Maps
+        List<Map<String, Object>> simplified = sessions.stream().map(s -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("day", String.valueOf(s.getSessionID().getDay()));
+            // Convert to minutes for your JS fmt() function
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
+            map.put("start", s.getSessionID().getTime().format(timeFormatter));
+            map.put("end", s.getEndTime().format(timeFormatter));
+            map.put("location", s.getLocation());
+            map.put("siLeader", s.getSessionID().getTutor().getFirstName() + " " + s.getSessionID().getTutor().getLastName());
+            map.put("className", s.getClassName());
+            map.put("professor", s.getProfessor());
+            map.put("classMeetingTimes", s.getClassMeetingTimes());
+            return map;
+        }).toList();
+
+        model.addAttribute("siSchedule", Map.of("sessions", simplified));
         return "si-schedule";
     }
 
