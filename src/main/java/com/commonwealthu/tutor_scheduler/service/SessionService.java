@@ -51,8 +51,7 @@ public class SessionService {
                         existingTutor.setNames(existingTutor.getNames() + "/" + name);
                     }
                     else {
-                        ScheduleInfo display = new ScheduleInfo(name, type);
-                        setDisplayColor(display, type);
+                        ScheduleInfo display = new ScheduleInfo(name, setDisplayColor(type));
                         timeMap.put(key, display);
                     }
                 }
@@ -89,16 +88,14 @@ public class SessionService {
         sessionRepo.saveAll(addedTimes);
     }
 
-    public void setDisplayColor(ScheduleInfo display, String type) {
-        if (type.equals("Drop-in")) {
-            display.setColor("crimson");
-        }
-        if (type.equals("Math Lab")) {
-            display.setColor("cornflowerblue");
-        }
-        if (type.equals("SSC")) {
-            display.setColor("forestgreen");
-        }
+    // Set the display color by type, return no color by default
+    public String setDisplayColor(String type) {
+        return switch (type) {
+            case "Drop-in" -> "crimson";
+            case "Math Lab" -> "cornflowerblue";
+            case "SSC" -> "forestgreen";
+            default -> "";
+        };
     }
 
 }

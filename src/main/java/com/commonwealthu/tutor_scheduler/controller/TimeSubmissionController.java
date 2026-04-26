@@ -53,13 +53,14 @@ public class TimeSubmissionController {
         return "time-submission-edited";
     }
 
+    // Review page only shows sessions added during one browser session, existing sessions can be added if wanted
     @GetMapping("/review-times")
     public String reviewTimes(HttpSession browserSession, Model model) {
         Tutor tutor = tutorService.findTutorByID((String) browserSession.getAttribute("tutorID"));
         // Get the Sessions added from addTimes page instead of getting all Sessions
-        Set<Session> sessions = sessionService.getAddedTimes(browserSession);
+        Set<Session> unsavedSessions = sessionService.getAddedTimes(browserSession);
         List<LocalTime> times = sessionService.generateTimes();
-        HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(sessions, times);
+        HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(unsavedSessions, times);
 
         model.addAttribute("tutor", tutor);
         model.addAttribute("times", times);
