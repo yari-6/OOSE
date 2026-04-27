@@ -117,21 +117,23 @@ public class TutorController {
                                BindingResult bindingResult,
                                HttpSession session) {
 
-        // Checks the form data
+        // 1. Validate credentials
         if (bindingResult.hasErrors() ||
                 !tutorService.checkLogin(loginTutor.getTutorID(), loginTutor.getPass())) {
             return "sign-in";
         }
 
-        // create session
+        // 2. Fetch the tutor object NOW (This solves the "Cannot resolve symbol" error)
+        Tutor tutor = tutorService.findTutorByID(loginTutor.getTutorID());
+
+        // 3. Create session attributes using the 'tutor' variable we just created
         session.setAttribute("tutorID", loginTutor.getTutorID());
+        session.setAttribute("isAdmin", tutor != null && tutor.isAdmin());
 
-
-        // Does not redirect to a new page so that the tutorID is kept across pages
+        // 4. Check for first login
         if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
             return "set-new-password";
         }
-
         return "redirect:/";
     }
 

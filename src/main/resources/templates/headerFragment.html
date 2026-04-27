@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <header th:fragment="header(title)" class="header">
-    <a th:href="@{/}">
+    <a th:href="${session.isAdmin == true ? '/admin/dashboard' : '/'}">
         <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
     </a>
 
@@ -24,9 +24,9 @@
                 <button class="dropbtn">
                     Welcome, <span th:text="${session.tutorID}"></span> ▼
                 </button>
-
                 <div class="dropdown-content">
-                    <a th:href="@{/profile}">Profile</a>
+                    <a th:if="${session.isAdmin == true}" th:href="@{/admin/dashboard}" ...>Admin Panel</a>
+                    <a th:if="${session.isAdmin == false}" th:href="@{/tutors/{id}(id=${session.tutorID})}">Profile</a>
                     <a th:href="@{/logout}">Logout</a>
                 </div>
             </div>
