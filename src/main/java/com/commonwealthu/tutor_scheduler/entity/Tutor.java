@@ -106,4 +106,6 @@ public class Tutor {
     public Set<Session> getSchedule() {
         return schedule;
     }
+
+    public boolean isAdmin() { return "Admin".equalsIgnoreCase(this.type); }
 }
