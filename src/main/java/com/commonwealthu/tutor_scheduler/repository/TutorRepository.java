@@ -9,8 +9,14 @@ import java.util.List;
 
 public interface TutorRepository extends JpaRepository<Tutor, String> {
     // Default Hibernate implementation returns Optional<Tutor>
+    List<Tutor> findByTypeNotOrderByFirstNameAsc(String type);
 
     // Check the courses a tutor offers and return the tutors that offer the specific course
-    @Query("SELECT t FROM Tutor t JOIN t.coursesOffered c WHERE c.courseID.courseSubject = :subject AND c.courseID.courseNumber = :number")
+    @Query("SELECT t FROM Tutor t JOIN t.coursesOffered c " +
+            "WHERE c.courseID.courseSubject = :subject " +
+            "AND c.courseID.courseNumber = :number " +
+            "AND t.type != 'Admin' " +
+            "ORDER BY t.firstName ASC")
     List<Tutor> findTutorsByCourse(@Param("subject") String subject, @Param("number") int number);
+
 }

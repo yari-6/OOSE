@@ -9,6 +9,10 @@ body {
 }
 
 /* Table Styles */
+.table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
 
 .table-fill {
     border-radius: 3px;

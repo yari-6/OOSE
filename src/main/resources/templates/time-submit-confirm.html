@@ -9,18 +9,19 @@
 
 <body>
     <div class="display">
-        These are the times you have requested. Does it look right?
-        <div th:replace="~{schedule-view :: scheduleView(${tutor.getSchedule()})}">
+        <p>These are the times you have requested most recently. Does it look right?</p>
+        <div th:replace="~{schedule-view :: scheduleView}">
         </div>
     </div>
     <div class="buttons">
-        <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">Yes</a>
-        <button name="no" type="submit">No, go back.</button>
-        <p>Note: If you select 'no', all entered times will be erased.</p>
+        <form th:action="@{/confirm-times}" method="post">
+            <button type="submit" class="button">Yes</button>
+        </form>
+        <form th:action="@{/reject-times}" method="post">
+            <button type="submit" class="button">No, go back</button>
+        </form>
+        <p>Note: If you select 'no', all times entered most recently will be erased, not your entire schedule.</p>
     </div>
-
-
-
 
 </body>
 

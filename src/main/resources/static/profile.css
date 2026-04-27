@@ -79,7 +79,7 @@ body {
     border: 3px solid #f3d03e;
 }
 
-.change-btn {
+.submit {
     margin-top: 15px;
     padding: 8px 16px;
     border: none;
@@ -164,18 +164,6 @@ body {
 
 .rating input[type="radio"] {
     display: none;
-}
-
-.submit {
-    text-decoration: none;
-    padding: 10px 18px;
-    background-color: #f3d03e;
-    color: black;
-    border-radius: 2px;
-    font-family: sans-serif;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    cursor: pointer;
 }
 
 .submit:hover {

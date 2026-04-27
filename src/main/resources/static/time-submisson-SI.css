@@ -1,4 +1,9 @@
-html,body{height:100%}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body{
     font-family: sans-serif;
     background-color: white;
@@ -10,38 +15,187 @@ body{
     align-content: center;
 }
 
-:root{
-    --bg:#f5f7fa;
-    --accent1:#8a1538;
-    --accent2:#6f263d;
-    --gold:#f3d03e;
-    --muted:#f7f7f7;
-    --text:#111;
-    --max-width:1100px;
+:root {
+    --bg: #f5f7fa;
+    --accent1: #8a1538;
+    --accent2: #6f263d;
+    --gold: #f3d03e;
+    --muted: #f7f7f7;
+    --text: #111;
+    --max-width: 1100px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.container{
-    width:100%;
-    padding:0 16px;
-    box-sizing:border-box
+.container {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 40px auto;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
-.controls{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:12px;
+.form-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
 }
 
-select,input[type="button"],button{padding:6px 10px;border-radius:4px}
-input[type="button"]{background:#fff;border:1px solid #ccc;cursor:pointer}
-input[type="button"]:hover{background:var(--accent1);color:#fff;border-color:var(--accent1)}
-.small{width:140px}
-.session{display:flex;gap:8px;align-items:center;margin:8px 0;flex-wrap:wrap}
-.error{color:#a00;margin-top:8px}
-.warning{color:#b85a00;margin-top:8px}
-.result{white-space:pre-wrap;background:var(--muted);padding:8px;border:1px solid #ddd;margin-top:12px;display:none}
-table{width:80%;border-collapse:collapse;margin-top:12px}
-th,td{border:1px solid #ddd;padding:8px;text-align:left}
-th{background:#f0f0f0}
-.editable input{width:100%;border:none;background:transparent;padding:4px}
+.form-card h2 {
+    color: var(--accent1);
+    margin-top: 0;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Layout Grids */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.controls {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Interactive Elements */
+select, button, input {
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+button, .submit {
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.submit {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background-color: var(--accent2);
+    color: white;
+    border: none;
+}
+
+.btn-secondary {
+    background-color: var(--accent2);
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover { background-color: var(--accent1); }
+
+/* Session Row Styling (The Auto-Generated Parts) */
+.session-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #f4f4f4;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent1);
+}
+
+.end-display {
+    font-weight: 600;
+    color: var(--accent2);
+}
+
+/* Readonly Styling */
+.readonly-input {
+    background-color: #f9f9f9;
+    color: #666;
+    border: 1px dashed #ccc;
+    cursor: not-allowed;
+}
+
+/* Table Design */
+.table-fill {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    background: white;
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table-fill th {
+    background-color: var(--accent2);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.table-fill td {
+    padding: 12px 15px;
+    border: 1px solid #eee;
+    text-align: center;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.location-pending {
+    color: #b91c1c; /* Deep red for readability */
+    font-weight: bold;
+    background-color: #fffbeb; /* Light gold tint to match site theme */
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1.5px solid var(--gold);
+    display: inline-block;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: alert-pulse 2s infinite;
+}
+
+/* Subtle pulse to grab Admin attention without being distracting */
+@keyframes alert-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(243, 208, 62, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(243, 208, 62, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(243, 208, 62, 0); }
+}
+
+/* Responsive Table Adjustments */
+@media (max-width: 768px) {
+    .table-fill {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
