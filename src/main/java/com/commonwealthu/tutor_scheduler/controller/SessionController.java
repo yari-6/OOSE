@@ -1,6 +1,7 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
-
+import com.commonwealthu.tutor_scheduler.entity.Session;
+import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class SessionController {
@@ -27,11 +30,10 @@ public class SessionController {
     public String siSchedule(Model model) {
         var sessions = sessionService.getSessionsByType("SI");
 
-        // Flatten to a list of Maps
-        List<Map<String, Object>> simplified = sessions.stream().map(s -> {
+        List<Map<String, Object>> schedule = sessions.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
+            map.put("tutorId", s.getSessionID().getTutor().getTutorID());
             map.put("day", String.valueOf(s.getSessionID().getDay()));
-            // Convert to minutes for your JS fmt() function
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
             map.put("start", s.getSessionID().getTime().format(timeFormatter));
             map.put("end", s.getEndTime().format(timeFormatter));
@@ -43,14 +45,21 @@ public class SessionController {
             return map;
         }).toList();
 
-        model.addAttribute("siSchedule", Map.of("sessions", simplified));
+        model.addAttribute("schedule", schedule);
         return "si-schedule";
     }
 
     @GetMapping("/schedules/drop-in")
     public String dropInSchedule(Model model) {
+        var sessions = sessionService.getSessionsByType("Drop-in");
         List<LocalTime> times = sessionService.generateTimes();
+
+        Set<Tutor> activeTutors = sessions.stream()
+                .map(s -> s.getSessionID().getTutor())
+                .collect(Collectors.toSet());
+
         model.addAttribute("times", times);
+        model.addAttribute("activeTutors", activeTutors);
         model.addAttribute("schedule",
                 sessionService.fillInSessions(sessionService.getSessionsByType("Drop-in"),  times));
         return "drop-in-schedule";
@@ -58,8 +67,15 @@ public class SessionController {
 
     @GetMapping("/schedules/math-lab")
     public String bfMathLabSchedule(Model model) {
+        var sessions = sessionService.getSessionsByType("Math Lab");
         List<LocalTime> times = sessionService.generateTimes();
+
+        Set<Tutor> activeTutors = sessions.stream()
+                .map(s -> s.getSessionID().getTutor())
+                .collect(Collectors.toSet());
+
         model.addAttribute("times", times);
+        model.addAttribute("activeTutors", activeTutors);
         model.addAttribute("schedule",
                 sessionService.fillInSessions(sessionService.getSessionsByType("Math Lab"),  times));
         return "ben-frank-math-lab";
@@ -67,8 +83,15 @@ public class SessionController {
 
     @GetMapping("/schedules/SSC")
     public String SSCSchedule(Model model) {
+        var sessions = sessionService.getSessionsByType("SSC");
         List<LocalTime> times = sessionService.generateTimes();
+
+        Set<Tutor> activeTutors = sessions.stream()
+                .map(s -> s.getSessionID().getTutor())
+                .collect(Collectors.toSet());
+
         model.addAttribute("times", times);
+        model.addAttribute("activeTutors", activeTutors);
         model.addAttribute("schedule",
                 sessionService.fillInSessions(sessionService.getSessionsByType("SSC"),  times));
         return "ssc-math-lab";

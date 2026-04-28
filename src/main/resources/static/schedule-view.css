@@ -1,21 +1,140 @@
+:root {
+    --primary: #8a1538;
+    --secondary: #f3d03e;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --border-light: #b2bec3;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
 body {
-    font-family: Arial;
-    background-color: white;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
     margin: 0;
-    padding: 0;
+}
+
+.dashboard-wrapper {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    gap: 25px;
+    padding: 30px;
+    max-width: 1600px;
+    margin: 40px auto 0;
+    align-items: flex-start;
 }
 
-table, th, td {
-    border: 3px solid black;
+.schedule-card, .sidebar-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 25px;
 }
 
-table {
+.schedule-card {
+    flex: 3;
+    overflow-x: auto;
+    min-width: 0;
+}
+
+.sidebar-card {
+    flex: 1;
+    min-width: 320px;
+    max-width: 400px;
+    position: sticky;
+    top: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.card-title {
+    color: var(--primary);
+    font-size: 1.4rem;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+}
+
+.gold-divider {
+    border: none;
+    height: 3px;
+    background-color: var(--secondary);
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.schedule-view-table {
+    width: 100%;
     border-collapse: collapse;
+    border: 1.5px solid var(--border-light);
+    table-layout: fixed;
 }
 
-th, td {
-    padding: 5px;
+.schedule-view-table th,
+.schedule-view-table td {
+    border: 1px solid var(--border-light) !important;
+    padding: 12px 4px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.schedule-view-table thead th {
+    background-color: var(--primary) !important;
+    color: white !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.schedule-view-table tbody tr th {
+    background-color: #fdfdfd;
+    color: var(--primary);
+    font-weight: bold;
+    width: 95px;
+    border: 1px solid var(--border-light) !important;
+}
+
+.schedule-cell span {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.85rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.grid-link {
+    color: white !important;
+    text-decoration: none;
+}
+
+.grid-link:hover {
+    text-decoration: underline;
+    color: var(--secondary) !important;
+}
+
+.sidebar-pfp {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 2px solid var(--secondary);
+    object-fit: cover;
+}
+
+.sidebar-tutor-name {
+    font-weight: bold;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.course-badge {
+    display: inline-block;
+    background: #f1f3f5;
+    border: 1px solid #dee2e6;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    margin: 2px;
+    color: #333;
 }
