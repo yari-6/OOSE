@@ -1,8 +1,9 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
+import com.commonwealthu.tutor_scheduler.dto.NewPassword;
 import com.commonwealthu.tutor_scheduler.entity.Rating;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
-import com.commonwealthu.tutor_scheduler.entity.TutorLogin;
+import com.commonwealthu.tutor_scheduler.dto.TutorLogin;
 import com.commonwealthu.tutor_scheduler.service.RatingService;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
@@ -132,18 +133,28 @@ public class TutorController {
 
         // 4. Check for first login
         if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
-            return "set-new-password";
+            return "redirect:/set-new-password";
         }
         return "redirect:/";
     }
 
+    @GetMapping("/set-new-password")
+    public String newPassword(Model model) {
+        NewPassword newPassword = new NewPassword();
+        model.addAttribute("newPassword", newPassword);
+        return "set-new-password";
+    }
+
     @PostMapping("/set-new-password")
-    public String handleNewPassword(@ModelAttribute("loginTutor") TutorLogin loginTutor) {
-        if (!loginTutor.getNewPass().equals(loginTutor.getConfirmPass())) {
+    public String handleNewPassword(@Valid @ModelAttribute("newPassword") NewPassword newPassword,
+                                    BindingResult bindingResult, HttpSession browserSession) {
+        if (bindingResult.hasErrors() || !newPassword.getNewPass().equals(newPassword.getConfirmPass())) {
             return "set-new-password";
         }
 
-        tutorService.updatePassword(loginTutor.getTutorID(), loginTutor.getNewPass());
+        String tutorID = (String) browserSession.getAttribute("tutorID");
+
+        tutorService.updatePassword(tutorID, newPassword.getNewPass());
 
         return "redirect:/sign-in";
     }

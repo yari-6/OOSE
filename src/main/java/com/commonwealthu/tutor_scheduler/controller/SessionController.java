@@ -1,6 +1,5 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
-import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
