@@ -160,7 +160,7 @@
         <section class="schedule-section">
             <h2>Schedule</h2>
             <div th:if="${!schedule.isEmpty()}">
-                <div th:replace="~{schedule-view :: scheduleView}"></div>
+                <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
             </div>
 
             <div th:if="${schedule.isEmpty()}">Schedule coming soon.</div>

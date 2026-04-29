@@ -45,6 +45,7 @@ public class SessionService {
             LocalTime start = s.getSessionID().getTime();
             LocalTime end = s.getEndTime();
             String name = s.getSessionID().getTutor().getFirstName();
+            String tutorID = s.getSessionID().getTutor().getTutorID();
             String type = s.getSessionID().getTutor().getType();
 
             // Check if the grid time falls within session time range
@@ -56,9 +57,10 @@ public class SessionService {
                     if (timeMap.containsKey(key)) {
                         ScheduleInfo existingTutor = timeMap.get(key);
                         existingTutor.setNames(existingTutor.getNames() + "/" + name);
+                        existingTutor.setTutorId(existingTutor.getTutorId() + "/" + tutorID);
                     }
                     else {
-                        ScheduleInfo display = new ScheduleInfo(name, setDisplayColor(type));
+                        ScheduleInfo display = new ScheduleInfo(name, tutorID, setDisplayColor(type));
                         timeMap.put(key, display);
                     }
                 }
@@ -91,7 +93,6 @@ public class SessionService {
         return addedTimes;
     }
 
-
     @Transactional
     public void saveSession(Session session) {
         validateDropInConstraints(session);
@@ -122,14 +123,22 @@ public class SessionService {
         SessionID id = newSess.getSessionID();
         if (id == null || id.getTutor() == null) return;
 
+        // 1. Move your definitions to the TOP
+        LocalTime start = id.getTime();
+        LocalTime end = newSess.getEndTime();
+        char day = id.getDay();
+
+        // 2. Perform the sequence check FIRST
+        if (end != null && !end.isAfter(start)) {
+            throw new IllegalStateException("End time (" + end + ") must be after start time (" + start + ") on " + day);
+        }
+
         Tutor tutor = id.getTutor();
         if (!"Drop-in".equalsIgnoreCase(tutor.getType())) return;
 
-        char day = id.getDay();
-        LocalTime start = id.getTime();
-        LocalTime end = newSess.getEndTime();
         String currentTutorId = tutor.getTutorID();
 
+        // 3. Reuse the variables 'day', 'start', and 'end' for the repository call
         List<Session> overlaps = sessionRepo.findOverlappingSessions(day, start, end).stream()
                 .filter(s -> "Drop-in".equalsIgnoreCase(s.getSessionID().getTutor().getType()))
                 .filter(s -> !s.getSessionID().getTutor().getTutorID().equals(currentTutorId))
@@ -158,7 +167,6 @@ public class SessionService {
     public void replaceSchedule(Tutor tutor, Set<Session> newSessions) {
         Set<Session> currentSchedule = sessionRepo.findBySessionID_Tutor(tutor);
 
-        // Remove old sessions that are not part of the update
         currentSchedule.removeIf(old -> newSessions.stream().anyMatch(n -> n.getSessionID().equals(old.getSessionID())));
         sessionRepo.deleteAll(currentSchedule);
 
@@ -172,8 +180,6 @@ public class SessionService {
         }
         sessionRepo.saveAll(newSessions);
     }
-
-    /* --- ROOM ASSIGNMENT LOGIC --- */
 
     public String autoAssignRoom(char day, LocalTime start, LocalTime end) {
         if (!sessionRepo.existsByRoomConflict(day, start, end, "Soltz 105")) return "Soltz 105";
@@ -195,6 +201,9 @@ public class SessionService {
 
     public List<SessionWithLocation> assignRoomsToSessions(SIScheduleRequest request) {
         List<SessionWithLocation> sessionsWithRooms = new ArrayList<>();
+
+        Set<String> uniqueCheck = new HashSet<>();
+
         int duration = 50;
         if (request.getPattern() != null && request.getPattern().contains("x")) {
             try { duration = Integer.parseInt(request.getPattern().split("x")[1]); } catch (Exception ignored) {}
@@ -203,6 +212,11 @@ public class SessionService {
         for (SIScheduleRequest.SessionEntry s : request.getSessions()) {
             char day = s.getDay().isEmpty() ? '?' : s.getDay().charAt(0);
             LocalTime start = LocalTime.MIDNIGHT.plusMinutes(s.getStartMinutes());
+
+            String key = day + "@" + start.toString();
+            if (!uniqueCheck.add(key)) {
+                throw new IllegalStateException("Duplicate session detected for " + s.getDay() + " at " + start);
+            }
             LocalTime end = start.plusMinutes(duration);
 
             SessionWithLocation swl = new SessionWithLocation();

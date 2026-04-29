@@ -1,65 +1,52 @@
-:root {
-    --bg: #f5f7fa;
-    --accent1: #8a1538;
-    --accent2: #6f263d;
-    --gold: #f3d03e;
-    --muted: #f7f7f7;
-    --text: #111;
-    --max-width: 1100px;
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    font-family: sans-serif;
-    background-color: white;
-    margin: 0;
+/* The container that creates the "Card" effect */
+.display {
+    background: white;
+    margin: 20px auto;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    width: 95%;
+    max-width: var(--max-width);
+    border-radius: 8px;
+    /* This is the shadow used in modern builders */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Clips the table corners to the rounded box */
+    border: 1px solid #ddd;
 }
 
-h3 {
-    font-size: 20px;
-    margin: 5px 20px;
-    padding: 5px;
-    text-decoration-line: underline;
-}
-
-.selection {
-    font-size: 15px;
+.schedule-view-table {
+    border-collapse: collapse;
     width: 100%;
-    padding: 10px 0 15px 5px;
-    margin: 5px 20px;
+    table-layout: fixed;
+    background-color: white;
 }
 
-select[name="dropdown"] {
-    font-size: 15px;
-    border: 1px black solid;
-    background-color: #FFFFFF;
-    cursor: pointer;
+/* Thinner, cleaner borders instead of 3px black */
+.schedule-view-table th,
+.schedule-view-table td {
+    border: 1px solid #e0e0e0;
+    padding: 12px 8px;
+    text-align: center;
 }
 
-input[type="button"] {
-    background-color: #FFFFFF;
-    border: 1px solid;
-    color: #000000;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 15px;
-    margin: 5px 25px;
+/* Target the Time column specifically (Thinner) */
+.schedule-view-table tr th:first-child {
+    width: 90px;
+    background-color: var(--muted);
+    color: var(--accent1);
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
-input[class="review"] {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin: 15px;
+/* The Day Header row */
+.schedule-view-table thead th,
+.schedule-view-table tr:first-child th {
+    background-color: var(--accent1);
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
-input[type="button"]:hover {
-    background-color: #8a1538;
+/* Ensure empty cells don't collapse */
+.schedule-view-table td:empty::before {
+    content: "\00a0";
 }
