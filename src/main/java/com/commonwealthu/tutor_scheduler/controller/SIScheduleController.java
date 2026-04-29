@@ -10,104 +10,103 @@ import com.commonwealthu.tutor_scheduler.service.TutorService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
 import java.util.*;
 
-@RestController
-@RequestMapping("/api/si")
+@Controller
+@RequestMapping("/si-builder")
 public class SIScheduleController {
 
-    private final ScheduleService scheduleService;
     private final SessionService sessionService;
     private final TutorService tutorService;
 
-    public SIScheduleController(ScheduleService scheduleService,
-                                SessionService sessionService,
-                                TutorService tutorService) {
-        this.scheduleService = scheduleService;
+    public SIScheduleController(SessionService sessionService, TutorService tutorService) {
         this.sessionService = sessionService;
         this.tutorService = tutorService;
     }
 
-    @PostMapping("/preview")
-    public ResponseEntity<?> previewSchedule(@Valid @RequestBody SIScheduleRequest request, BindingResult bindingResult) {
-        // ... (keep validation logic as is)
+    @GetMapping
+    public String showBuilder(HttpSession session, Model model) {
+        String tutorID = (String) session.getAttribute("tutorID");
+        if (tutorID == null) return "redirect:/sign-in";
 
-        List<SessionService.SessionWithLocation> sessionsWithLocations = sessionService.assignRoomsToSessions(request);
+        Tutor tutor = tutorService.findTutorByID(tutorID);
+        // Add the full name to the model so the input can find it
+        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
 
-        // CRITICAL: Convert complex objects to a simple List of Maps
-        List<Map<String, Object>> cleanSessions = sessionsWithLocations.stream().map(s -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("day", s.getDay());
-            map.put("start", s.getStart().toString()); // Convert LocalTime to String
-            map.put("end", s.getEnd().toString());
-            map.put("location", s.getLocation());
-            return map;
-        }).toList();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("siLeader", request.getSiLeader());
-        response.put("className", request.getClassName());
-        response.put("professor", request.getProfessor());
-        response.put("classMeetingTimes", request.getClassMeetingTimes());
-        response.put("pattern", request.getPattern());
-
-        // Use the clean list here
-        response.put("sessions", cleanSessions);
-
-        return ResponseEntity.ok(response);
+        return "time-submission-SI";
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<?> saveSchedule(@RequestBody Map<String, Object> payload, HttpSession browserSession) {
-        try {
-            String tutorID = (String) browserSession.getAttribute("tutorID");
-            if (tutorID == null) {
-                return ResponseEntity.status(401).body("Session expired. Please log in again.");
+    @PostMapping("/preview")
+    public String previewSchedule(@ModelAttribute SIScheduleRequest request,
+                                  HttpSession session,
+                                  Model model) {
+        String tutorID = (String) session.getAttribute("tutorID");
+        if (tutorID == null) return "redirect:/sign-in";
+
+        Tutor tutor = tutorService.findTutorByID(tutorID);
+        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
+
+        // 1. Logic check: Prevent internal overlaps
+        Set<String> checkSet = new HashSet<>();
+        for (var s : request.getSessions()) {
+            String key = s.getDay() + "-" + s.getStartMinutes();
+            if (!checkSet.add(key)) {
+                model.addAttribute("error", "You cannot select the same day and time for multiple sessions.");
+                model.addAttribute("info", request); // Keep their form data filled
+                return "time-submission-SI";
             }
-
-            Tutor tutor = tutorService.findTutorByID(tutorID);
-
-            // 1. Extract the class-level info from the payload (passed from the JS 'data' object)
-            String className = (String) payload.get("className");
-            String professor = (String) payload.get("professor");
-            String classMeetingTimes = (String) payload.get("classMeetingTimes");
-
-            List<Map<String, Object>> sessionsData = (List<Map<String, Object>>) payload.get("sessions");
-            Set<Session> sessionsToSave = new HashSet<>();
-
-            for (Map<String, Object> s : sessionsData) {
-                char day = s.get("day").toString().charAt(0);
-                LocalTime start = LocalTime.parse((String) s.get("start"));
-                LocalTime end = LocalTime.parse((String) s.get("end"));
-                String room = (String) s.get("location");
-
-                if (room == null || room.isEmpty()) {
-                    room = "PENDING: Needs Assignment";
-                }
-
-                SessionID id = new SessionID(tutor, day, start);
-                Session sessionEntity = new Session(id, end);
-                sessionEntity.setLocation(room);
-
-                // 2. Set the new fields on the entity before adding to the set
-                sessionEntity.setClassName(className);
-                sessionEntity.setProfessor(professor);
-                sessionEntity.setClassMeetingTimes(classMeetingTimes);
-
-                sessionsToSave.add(sessionEntity);
-            }
-
-            sessionService.replaceSchedule(tutor, sessionsToSave);
-            return ResponseEntity.ok(Map.of("message", "Success"));
-
-        } catch (IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
+
+        // 2. Generate the actual session times/locations via Service
+        // Note: Ensure assignRoomsToSessions exists in your SessionService
+        List<SessionService.SessionWithLocation> previewSessions = sessionService.assignRoomsToSessions(request);
+
+        // 3. Store in Model so Thymeleaf shows the table
+        model.addAttribute("sessions", previewSessions);
+        model.addAttribute("info", request);
+
+        // 4. Store in Session so the /confirm method can access it later
+        session.setAttribute("siPreview", previewSessions);
+        session.setAttribute("siClassInfo", request);
+
+        return "time-submission-SI";
+    }
+
+    @PostMapping("/confirm")
+    public String confirmSchedule(HttpSession session) {
+        String tutorID = (String) session.getAttribute("tutorID");
+        List<SessionService.SessionWithLocation> preview = (List<SessionService.SessionWithLocation>) session.getAttribute("siPreview");
+        SIScheduleRequest info = (SIScheduleRequest) session.getAttribute("siClassInfo");
+
+        if (tutorID == null || preview == null) {
+            return "redirect:/si-builder";
+        }
+
+        Tutor tutor = tutorService.findTutorByID(tutorID);
+        Set<Session> sessionsToSave = new HashSet<>();
+
+        for (var s : preview) {
+            SessionID id = new SessionID(tutor, s.getDay(), s.getStart());
+            Session entity = new Session(id, s.getEnd());
+            entity.setLocation(s.getLocation());
+            entity.setClassName(info.getClassName());
+            entity.setProfessor(info.getProfessor());
+            entity.setClassMeetingTimes(info.getClassMeetingTimes());
+            sessionsToSave.add(entity);
+        }
+
+        sessionService.replaceSchedule(tutor, sessionsToSave);
+
+        // Clean up
+        session.removeAttribute("siPreview");
+        session.removeAttribute("siClassInfo");
+
+        return "redirect:/tutors/" + tutorID;
     }
 }

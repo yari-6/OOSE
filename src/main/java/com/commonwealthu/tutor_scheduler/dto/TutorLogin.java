@@ -1,4 +1,4 @@
-package com.commonwealthu.tutor_scheduler.entity;
+package com.commonwealthu.tutor_scheduler.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -18,10 +18,6 @@ public class TutorLogin {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String pass;
 
-    private String newPass;
-
-    private String confirmPass;
-
     public TutorLogin() {}
 
     public String getTutorID() {
@@ -40,19 +36,4 @@ public class TutorLogin {
         this.pass = pass;
     }
 
-    public String getNewPass() {
-        return newPass;
-    }
-
-    public void setNewPass(String newPass) {
-        this.newPass = newPass;
-    }
-
-    public String getConfirmPass() {
-        return confirmPass;
-    }
-
-    public void setConfirmPass(String confirmPass) {
-        this.confirmPass = confirmPass;
-    }
 }

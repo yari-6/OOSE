@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <header th:fragment="header(title)" class="header">
-    <a th:href="${session.isAdmin == true ? '/admin/dashboard' : '/'}">
+    <a th:href="@{/}">
         <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
     </a>
 

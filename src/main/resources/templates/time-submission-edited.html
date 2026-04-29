@@ -83,6 +83,20 @@
   </div>
 
 </form>
+<script>
+  const form = document.querySelector('form');
+  const startSelect = document.getElementById('start');
+  const endSelect = document.getElementById('end');
 
+  form.addEventListener('submit', (e) => {
+      const start = startSelect.value; // e.g., "09:00"
+      const end = endSelect.value;     // e.g., "10:00"
+
+      if (start >= end) {
+          e.preventDefault();
+          alert("Oops! The end time must be later than the start time.");
+      }
+  });
+</script>
 </body>
 </html>

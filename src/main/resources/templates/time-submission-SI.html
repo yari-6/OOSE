@@ -20,53 +20,104 @@
 </div>
 
 <main class="container" id="app">
-  <div class="form-card">
-    <h2>SI Session Builder</h2>
-    <div class="input-grid">
-      <div class="input-group">
-        <label for="SILeader">SI Leader Name</label>
-        <input type="text" id="SILeader" th:value="${siName}" readonly class="readonly-input" />
+  <form th:action="@{/si-builder/preview}" method="post" id="siForm">
+    <div class="form-card">
+      <h2>SI Session Builder</h2>
+
+      <div th:if="${error}" class="error-banner" style="color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #f87171;">
+        <p th:text="${error}"></p>
       </div>
-      <div class="input-group">
-        <label for="Class">Class / Course</label>
-        <input type="text" id="Class" placeholder="e.g. BIOL 114" required />
+
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="SILeader">SI Leader Name</label>
+          <input type="text" id="SILeader" name="siLeader" th:value="${siName}" readonly class="readonly-input" />
+        </div>
+        <div class="input-group">
+          <label for="Class">Class / Course</label>
+          <input type="text" id="Class" name="className" th:value="${info?.className}" placeholder="e.g. BIOL 114" required />
+        </div>
+        <div class="input-group">
+          <label for="Professor">Professor</label>
+          <input type="text" id="Professor" name="professor" th:value="${info?.professor}" placeholder="Name" required />
+        </div>
+        <div class="input-group">
+          <label for="ClassMeetingTimes">Course Meeting Times</label>
+          <input type="text" id="ClassMeetingTimes" name="classMeetingTimes" th:value="${info?.classMeetingTimes}" placeholder="MWF 10:00AM" required />
+        </div>
       </div>
-      <div class="input-group">
-        <label for="Professor">Professor</label>
-        <input type="text" id="Professor" placeholder="Name" required />
-      </div>
-      <div class="input-group">
-        <label for="ClassMeetingTimes">Course Meeting Times</label>
-        <input type="text" id="ClassMeetingTimes" placeholder="MWF 10:00AM" required />
+
+      <div class="controls">
+        <div class="input-group">
+          <label for="pattern">Session Pattern</label>
+          <select id="pattern" name="pattern" class="small" required>
+            <option value="4x50" th:selected="${info?.pattern == '4x50'}">4 × 50 min</option>
+            <option value="3x75" th:selected="${info?.pattern == '3x75'}">3 × 75 min</option>
+          </select>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn-secondary">Review Schedule</button>
+        </div>
       </div>
     </div>
 
-    <div class="controls">
-      <div class="input-group">
-        <label for="pattern">Session Pattern</label>
-        <select id="pattern" class="small" required>
-          <option value="4x50">4 × 50 min</option>
-          <option value="3x75">3 × 75 min</option>
-        </select>
-      </div>
-      <div class="button-group">
-        <button id="export" type="button" class="btn-secondary">Review Schedule</button>
-      </div>
-    </div>
+    <div id="sessionsWrap"></div>
+  </form>
+
+  <div id="tableWrap" th:if="${sessions != null}">
+    <hr class="section-divider" />
+    <h3 class="preview-title">Review Generated Schedule</h3>
+
+    <table class="table-fill fade-in">
+      <thead>
+      <tr>
+        <th>SI LEADER</th>
+        <th>CLASS</th>
+        <th>DAY</th>
+        <th>TIMES</th>
+        <th>LOCATION</th>
+        <th>PROFESSOR</th>
+        <th>MEETING TIMES</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="s : ${sessions}">
+        <td th:text="${info.siLeader}"></td>
+        <td th:text="${info.className}"></td>
+        <td>
+          <span th:switch="${s.day}">
+            <span th:case="'M'">Monday</span>
+            <span th:case="'T'">Tuesday</span>
+            <span th:case="'W'">Wednesday</span>
+            <span th:case="'R'">Thursday</span>
+            <span th:case="'F'">Friday</span>
+            <span th:case="*" th:text="${s.day}"></span>
+          </span>
+        </td>
+        <td th:text="${s.start + ' - ' + s.end}"></td>
+        <td th:classappend="${#strings.contains(s.location, 'PENDING')} ? 'location-pending'"
+            th:text="${s.location}">
+        </td>
+        <td th:text="${info.professor}"></td>
+        <td th:text="${info.classMeetingTimes}"></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <form th:action="@{/si-builder/confirm}" method="post" class="confirm-container">
+      <button type="submit" class="submit fade-in">Save to Database</button>
+      <p class="helper-text">Everything looks correct? Click save to publish this schedule.</p>
+    </form>
   </div>
-
-  <div id="sessionsWrap"></div>
-
-  <div id="tableWrap"></div>
 </main>
 
 <script th:inline="javascript">
   (function(){
     const patternSelect = document.getElementById('pattern');
-    const exportBtn = document.getElementById('export');
     const wrap = document.getElementById('sessionsWrap');
-    const tableWrap = document.getElementById('tableWrap');
+    const siForm = document.getElementById('siForm');
 
+    // 1. Define Helper functions first to avoid reference errors
     const fmt = m => {
       let h = Math.floor(m / 60);
       let mm = String(m % 60).padStart(2, '0');
@@ -77,25 +128,26 @@
 
     function renderSessions() {
       wrap.innerHTML = '';
-      tableWrap.innerHTML = '';
-
       const [count, dur] = patternSelect.value.split('x').map(Number);
 
       for(let i=0; i<count; i++) {
         const div = document.createElement('div');
         div.className = 'session-row fade-in';
+
         div.innerHTML = `
           <span style="font-weight:bold; min-width:100px;">Session ${i+1}:</span>
-          <select class="day-select" required>
+          <select name="sessions[${i}].day" class="day-select" required>
             <option value="M">Monday</option><option value="T">Tuesday</option>
             <option value="W">Wednesday</option><option value="R">Thursday</option>
             <option value="F">Friday</option>
           </select>
-          <select class="time-select" required></select>
-          <span class="end-display" style="margin-left: 15px;"></span>
+          <select name="sessions[${i}].startMinutes" class="time-select" required></select>
+          <span class="end-display" style="margin-left: 15px; font-size: 0.9em; color: #666;"></span>
         `;
 
         const timeSel = div.querySelector('.time-select');
+        const endDisp = div.querySelector('.end-display');
+
         for(let t = 660; t <= 1080; t += 15) {
           const opt = document.createElement('option');
           opt.value = t; opt.textContent = fmt(t);
@@ -103,7 +155,7 @@
         }
 
         timeSel.addEventListener('change', () => {
-          div.querySelector('.end-display').textContent = " — Ends at " + fmt(Number(timeSel.value) + dur);
+          endDisp.textContent = " — Ends at " + fmt(Number(timeSel.value) + dur);
         });
 
         timeSel.dispatchEvent(new Event('change'));
@@ -111,184 +163,47 @@
       }
     }
 
-    exportBtn.addEventListener('click', async () => {
-      const className = document.getElementById('Class').value.trim();
-      const professor = document.getElementById('Professor').value.trim();
-      const classMeetingTimes = document.getElementById('ClassMeetingTimes').value.trim();
+    // 2. Set up event listeners
+    siForm.addEventListener('submit', (e) => {
+        const rows = wrap.querySelectorAll('.session-row');
+        const seen = new Set();
 
-      if (!className || !professor || !classMeetingTimes) {
-        alert("Please fill in all required fields: Class, Professor, and Class Meeting Times.");
-        return;
-      }
+        for (const row of rows) {
+            const day = row.querySelector('.day-select').value;
+            const time = row.querySelector('.time-select').value;
+            const comboKey = `${day}-${time}`;
 
-      const sessionRows = wrap.querySelectorAll('.session-row');
-      const sessions = [];
-      for (const row of sessionRows) {
-        const day = row.querySelector('.day-select').value;
-        const startMinutes = Number(row.querySelector('.time-select').value);
-        sessions.push({ day, startMinutes });
-      }
-
-      const payload = {
-        siLeader: document.getElementById('SILeader').value,
-        className,
-        professor,
-        classMeetingTimes,
-        pattern: patternSelect.value,
-        sessions
-      };
-
-      try {
-        exportBtn.disabled = true;
-        exportBtn.textContent = "Validating...";
-
-        const response = await fetch('/api/si/preview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-          const validatedData = await response.json();
-          showFinalTable(validatedData);
-        } else {
-          const errors = await response.json();
-          alert("Schedule Conflict:\n" + errors.join("\n"));
-          tableWrap.innerHTML = '';
+            if (seen.has(comboKey)) {
+                e.preventDefault();
+                const dayName = row.querySelector('.day-select').selectedOptions[0].text;
+                alert(`Overlap Error: You have multiple sessions scheduled for ${dayName} at ${fmt(Number(time))}.`);
+                return;
+            }
+            seen.add(comboKey);
         }
-      } catch (err) {
-        alert("Error contacting server.");
-      } finally {
-        exportBtn.disabled = false;
-        exportBtn.textContent = "Review Schedule";
-      }
     });
 
-    function showFinalTable(data) {
-      const dayMap = {
-        'M': 'Monday',
-        'T': 'Tuesday',
-        'W': 'Wednesday',
-        'R': 'Thursday',
-        'F': 'Friday'
-      };
-
-      const formatTime = (t) => {
-        if (!t || typeof t !== 'string') return t;
-        const [h, m] = t.split(':');
-        let hour = parseInt(h);
-        const suffix = hour >= 12 ? 'PM' : 'AM';
-        const displayH = hour % 12 || 12;
-        return `${displayH}:${m} ${suffix}`;
-      };
-
-      let html = `
-    <table class="table-fill fade-in">
-      <thead>
-        <tr>
-          <th>SI LEADER</th>
-          <th>CLASS</th>
-          <th>DAYS</th>
-          <th>TIMES</th>
-          <th>LOCATION</th>
-          <th>PROFESSOR</th>
-          <th>CLASS MEETING TIMES</th>
-        </tr>
-      </thead>
-      <tbody>`;
-
-      data.sessions.forEach(s => {
-        const isPending = s.location && s.location.includes("PENDING");
-
-        const locationMarkup = isPending
-                ? `<span class="location-pending">${s.location}</span>`
-                : s.location;
-
-        html += `
-      <tr>
-        <td>${data.siLeader}</td>
-        <td>${data.className}</td>
-        <td>${dayMap[s.day] || s.day}</td>
-        <td>${formatTime(s.start)} - ${formatTime(s.end)}</td>
-        <td>${locationMarkup}</td>
-        <td>${data.professor}</td>
-        <td>${data.classMeetingTimes}</td>
-      </tr>`;
-      });
-
-      html += `
-      </tbody>
-    </table>
-    <button id="dbSubmit" class="submit fade-in">Save to Database</button>`;
-
-      tableWrap.innerHTML = html;
-
-      document.getElementById('dbSubmit').addEventListener('click', async () => {
-        try {
-          const saveBtn = document.getElementById('dbSubmit');
-          saveBtn.disabled = true;
-          saveBtn.textContent = "Saving...";
-
-          const saveResponse = await fetch('/api/si/save', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-          });
-
-          if (saveResponse.ok) {
-            alert('Schedule saved successfully!');
-            window.location.href = "/";
-          } else {
-            const errorMsg = await saveResponse.text();
-            alert('Failed to save schedule: ' + errorMsg);
-          }
-        } catch (error) {
-          alert('Error saving schedule.');
-        } finally {
-          const saveBtn = document.getElementById('dbSubmit');
-          if(saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.textContent = "Save to Database";
-          }
-        }
-      });
-    }
-
     patternSelect.addEventListener('change', renderSessions);
+
+    // 3. Initial execution
     renderSessions();
 
-    patternSelect.addEventListener('change', renderSessions);
-    renderSessions();
-
-    // --- Fixed Pre-fill Logic ---
+    // 4. Pre-fill logic for existing data
     const existingData = /*[[${existingSchedule}]]*/ [];
-
     if (existingData && existingData.length > 0) {
-      // 1. Sync the pattern dropdown to match the number of existing sessions
       const count = existingData.length;
       if (count === 3) patternSelect.value = "3x75";
       if (count === 4) patternSelect.value = "4x50";
 
-      // 2. Re-render rows to match the pattern
       renderSessions();
 
-      // 3. Fill the rows with database values
       const rows = wrap.querySelectorAll('.session-row');
       existingData.forEach((session, index) => {
         if (rows[index]) {
-          const daySel = rows[index].querySelector('.day-select');
-          const timeSel = rows[index].querySelector('.time-select');
-
-          // Set Day
-          daySel.value = session.sessionID.day;
-
-          // Set Time (convert HH:mm:ss to total minutes)
+          rows[index].querySelector('.day-select').value = session.sessionID.day;
           const [h, m] = session.sessionID.time.split(':');
-          const totalMinutes = (parseInt(h) * 60) + parseInt(m);
-          timeSel.value = totalMinutes;
-
-          // Update the "Ends at" text label
-          timeSel.dispatchEvent(new Event('change'));
+          rows[index].querySelector('.time-select').value = (parseInt(h) * 60) + parseInt(m);
+          rows[index].querySelector('.time-select').dispatchEvent(new Event('change'));
         }
       });
     }
