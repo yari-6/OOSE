@@ -1,6 +1,6 @@
 package com.commonwealthu.tutor_scheduler.service;
 
-import com.commonwealthu.tutor_scheduler.entity.ScheduleInfo;
+import com.commonwealthu.tutor_scheduler.dto.ScheduleInfo;
 import com.commonwealthu.tutor_scheduler.dto.SIScheduleRequest;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
@@ -46,7 +46,7 @@ public class SessionService {
             LocalTime end = s.getEndTime();
             String name = s.getSessionID().getTutor().getFirstName();
             String tutorID = s.getSessionID().getTutor().getTutorID();
-            String type = s.getSessionID().getTutor().getType();
+            String color = ColorService.getColor(tutorID);
 
             // Check if the grid time falls within session time range
             for (LocalTime t: times) {
@@ -60,7 +60,7 @@ public class SessionService {
                         existingTutor.setTutorId(existingTutor.getTutorId() + "/" + tutorID);
                     }
                     else {
-                        ScheduleInfo display = new ScheduleInfo(name, tutorID, setDisplayColor(type));
+                        ScheduleInfo display = new ScheduleInfo(name, tutorID, ColorService.getColor(tutorID));
                         timeMap.put(key, display);
                     }
                 }
@@ -106,15 +106,6 @@ public class SessionService {
         }
     }
 
-    // Set the display color by type, return no color by default
-    public String setDisplayColor(String type) {
-        return switch (type) {
-            case "Drop-in" -> "crimson";
-            case "Math Lab" -> "cornflowerblue";
-            case "SSC" -> "forestgreen";
-            default -> "";
-        };
-    }
 
     /**
      * Enforces Drop-in Hub capacity and subject conflict rules.

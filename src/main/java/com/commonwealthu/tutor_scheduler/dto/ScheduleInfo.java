@@ -1,4 +1,6 @@
-package com.commonwealthu.tutor_scheduler.entity;
+package com.commonwealthu.tutor_scheduler.dto;
+
+import java.util.List;
 
 /**
  * Class for storing the information needed in each cell of the schedule display grid
