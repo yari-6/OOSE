@@ -209,3 +209,40 @@ body {
 .schedule-section {
     margin-top: 40px;
 }
+
+.schedule-section div[style*="display: flex"] {
+    align-items: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.schedule-section .submit {
+    margin-top: 0
+    background: #f3d03e;
+    color: #111;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.schedule-section .submit:hover {
+    background: white;
+    color: #8a1538;
+    border: 2px solid #8a1538;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.lock-message {
+    background-color: #fff5f5;
+    color: #c53030;
+    border-left: 4px solid #f56565;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    display: inline-block;
+}

@@ -24,11 +24,21 @@
 <div class="main-section">
     <div class="left-side">
 
-            <a th:if="${session.tutorID != null}" th:href="@{/schedule-builder}" class="hero-link">
-                <div class="hero_content box">
-                    <p>Build Your Schedule</p>
-                </div>
-            </a>
+            <th:block th:if="${session.tutorID != null}">
+                <a th:if="${session.isAdmin}" th:href="@{/admin/dashboard}" class="hero-link">
+                    <div class="hero_content box">
+                        <p>Admin Dashboard</p>
+                        <span style="font-size: 0.7rem; color: #8a1538; font-weight: bold; text-transform: uppercase; display: block; margin-top: -10px;">
+                    ● System Oversight
+                </span>
+                    </div>
+                </a>
+                <a th:if="${!session.isAdmin}" th:href="@{/schedule-builder}" class="hero-link">
+                    <div class="hero_content box">
+                        <p>Build Your Schedule</p>
+                    </div>
+                </a>
+            </th:block>
 
             <a th:href="@{/schedules/drop-in}" class="hero-link">
                 <div class="hero_content box">
