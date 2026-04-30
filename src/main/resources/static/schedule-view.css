@@ -5,7 +5,7 @@
     --text-muted: #636e72;
     --bg-body: #f8f9fa;
     --bg-card: #ffffff;
-    --border-light: #b2bec3;
+    --border-color: #b2bec3;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
@@ -42,9 +42,9 @@ body {
 .sidebar-card {
     flex: 1;
     min-width: 320px;
-    max-width: 400px;
+    max-width: 380px;
     position: sticky;
-    top: 20px;
+    top: 10px;
     max-height: 90vh;
     overflow-y: auto;
 }
@@ -113,28 +113,54 @@ body {
     color: var(--secondary) !important;
 }
 
+.tutor-entry-container {
+    margin: 10px;
+}
+
+.tutor-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
 .sidebar-pfp {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: 2px solid var(--secondary);
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .sidebar-tutor-name {
-    font-weight: bold;
+    font-weight: 700;
     color: var(--primary);
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+}
+
+.tutor-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--secondary);
+    margin: 10px 0 10px 0;
+    width: 100%;
+    opacity: 0.7;
+}
+
+.tutor-courses-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 .course-badge {
-    display: inline-block;
     background: #f1f3f5;
     border: 1px solid #dee2e6;
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 0.7rem;
-    margin: 2px;
-    color: #333;
+    font-weight: 600;
+    color: var(--text-muted);
 }

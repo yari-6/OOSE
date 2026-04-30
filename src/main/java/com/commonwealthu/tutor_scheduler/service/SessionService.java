@@ -10,6 +10,8 @@ import com.commonwealthu.tutor_scheduler.repository.TutorRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.commonwealthu.tutor_scheduler.entity.SystemSetting;
+import com.commonwealthu.tutor_scheduler.repository.SystemSettingRepository;
 
 import java.time.LocalTime;
 import java.util.*;
@@ -20,10 +22,51 @@ public class SessionService {
 
     private final SessionRepository sessionRepo;
     private final TutorRepository tutorRepo;
+    private final SystemSettingRepository settingRepo;
 
-    public SessionService(SessionRepository sessionRepo, TutorRepository tutorRepo) {
+    public SessionService(SessionRepository sessionRepo,
+                          TutorRepository tutorRepo,
+                          SystemSettingRepository settingRepo) {
         this.sessionRepo = sessionRepo;
         this.tutorRepo = tutorRepo;
+        this.settingRepo = settingRepo;
+    }
+
+    public boolean isSubmissionWindowOpen() {
+        return settingRepo.findById("SUBMISSION_WINDOW_OPEN")
+                .map(SystemSetting::isValue)
+                .orElse(false);
+    }
+
+    @Transactional
+    public void toggleSubmissionWindow(boolean open) {
+        SystemSetting setting = settingRepo.findById("SUBMISSION_WINDOW_OPEN")
+                .orElse(new SystemSetting("SUBMISSION_WINDOW_OPEN", false));
+        setting.setValue(open);
+        settingRepo.save(setting);
+    }
+
+    @Transactional
+    public void replaceSchedule(Tutor tutor, Set<Session> newSessions) {
+        if (!isSubmissionWindowOpen() && !tutor.isAdmin()) {
+            throw new IllegalStateException("The submission window is currently closed. Changes cannot be saved.");
+        }
+
+        Set<Session> currentSchedule = sessionRepo.findBySessionID_Tutor(tutor);
+
+        currentSchedule.removeIf(old -> newSessions.stream().anyMatch(n -> n.getSessionID().equals(old.getSessionID())));
+        sessionRepo.deleteAll(currentSchedule);
+
+        for (Session newSess : newSessions) {
+            validateDropInConstraints(newSess);
+
+            sessionRepo.findById(newSess.getSessionID()).ifPresent(existing -> {
+                if (existing.getLocation() != null && !existing.getLocation().contains("PENDING")) {
+                    newSess.setLocation(existing.getLocation());
+                }
+            });
+        }
+        sessionRepo.saveAll(newSessions);
     }
 
     public List<Session> getSessionsByLocationContaining(String keyword) {
@@ -116,38 +159,49 @@ public class SessionService {
         };
     }
 
-    /**
-     * Enforces Drop-in Hub capacity and subject conflict rules.
-     */
+    //Drop in rules for Learning Center
     public void validateDropInConstraints(Session newSess) {
         SessionID id = newSess.getSessionID();
         if (id == null || id.getTutor() == null) return;
 
-        // 1. Move your definitions to the TOP
         LocalTime start = id.getTime();
         LocalTime end = newSess.getEndTime();
         char day = id.getDay();
+        Tutor tutor = id.getTutor();
 
-        // 2. Perform the sequence check FIRST
+        //End after Start
         if (end != null && !end.isAfter(start)) {
             throw new IllegalStateException("End time (" + end + ") must be after start time (" + start + ") on " + day);
         }
 
-        Tutor tutor = id.getTutor();
+        //No double sessions
+        boolean isTutorOverloaded = sessionRepo.findBySessionID_Tutor(tutor).stream()
+                .anyMatch(existing ->
+                        existing.getSessionID().getDay() == day &&
+                                start.isBefore(existing.getEndTime()) &&
+                                end.isAfter(existing.getSessionID().getTime())
+                );
+
+        if (isTutorOverloaded) {
+            throw new IllegalStateException("Double-Entry: You are already scheduled for a session during this timeframe.");
+        }
+
+        //No more than two tutors at a time
         if (!"Drop-in".equalsIgnoreCase(tutor.getType())) return;
 
         String currentTutorId = tutor.getTutorID();
 
-        // 3. Reuse the variables 'day', 'start', and 'end' for the repository call
         List<Session> overlaps = sessionRepo.findOverlappingSessions(day, start, end).stream()
                 .filter(s -> "Drop-in".equalsIgnoreCase(s.getSessionID().getTutor().getType()))
                 .filter(s -> !s.getSessionID().getTutor().getTutorID().equals(currentTutorId))
                 .toList();
 
+        // Capacity Check
         if (overlaps.size() >= 2) {
-            throw new IllegalStateException("Drop-in Hub is at capacity (max 2) for " + start + " on " + day);
+            throw new IllegalStateException("The Learning Center Drop-in is at capacity for " + start + " on " + day);
         }
 
+        // One person at a time per major subject area
         Set<String> newSubjects = tutor.getCoursesOffered().stream()
                 .map(c -> c.getCourseID().getCourseSubject())
                 .collect(Collectors.toSet());
@@ -163,24 +217,6 @@ public class SessionService {
         }
     }
 
-    @Transactional
-    public void replaceSchedule(Tutor tutor, Set<Session> newSessions) {
-        Set<Session> currentSchedule = sessionRepo.findBySessionID_Tutor(tutor);
-
-        currentSchedule.removeIf(old -> newSessions.stream().anyMatch(n -> n.getSessionID().equals(old.getSessionID())));
-        sessionRepo.deleteAll(currentSchedule);
-
-        for (Session newSess : newSessions) {
-            validateDropInConstraints(newSess);
-            sessionRepo.findById(newSess.getSessionID()).ifPresent(existing -> {
-                if (existing.getLocation() != null && !existing.getLocation().contains("PENDING")) {
-                    newSess.setLocation(existing.getLocation());
-                }
-            });
-        }
-        sessionRepo.saveAll(newSessions);
-    }
-
     public String autoAssignRoom(char day, LocalTime start, LocalTime end) {
         if (!sessionRepo.existsByRoomConflict(day, start, end, "Soltz 105")) return "Soltz 105";
         if (!sessionRepo.existsByRoomConflict(day, start, end, "SSC 021")) return "PENDING: Admin Assignment (SSC 021 Available)";
@@ -190,9 +226,17 @@ public class SessionService {
     @Transactional
     public void updateSessionLocation(String tutorId, char day, String time, String newRoom) {
         LocalTime startTime = LocalTime.parse(time);
+
+        // find session and end time for room check
         tutorRepo.findById(tutorId).ifPresent(tutor -> {
             SessionID id = new SessionID(tutor, day, startTime);
             sessionRepo.findById(id).ifPresent(session -> {
+
+                // Is entered room booked
+                if (sessionRepo.existsByRoomConflict(day, startTime, session.getEndTime(), newRoom)) {
+                    throw new IllegalStateException("Room Conflict: " + newRoom + " is already occupied on " + day + " at " + time);
+                }
+
                 session.setLocation(newRoom);
                 sessionRepo.save(session);
             });

@@ -2,14 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SI Schedule</title>
     <link rel="stylesheet" th:href="@{/SIschedule.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
 </head>
-<body>
 
+<body>
 <div th:replace="~{headerFragment :: header('SI Schedule')}"></div>
+<div class="stripe-container">
+    <img th:src="@{/fadedstripe.svg}" class="stripe">
+    <div class="stripe-text">
+        Blooms Tutors – Making scheduling easy!
+        <hr class="accent-line">
+    </div>
+</div>
 <main class="schedule-wrapper">
     <table class="si-table">
         <thead>
@@ -30,7 +35,6 @@
 
         <tr th:each="s, iterStat : ${schedule}"
             th:classappend="${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')} ? 'group-start' : ''">
-
             <td class="cell-shared leader-col">
                 <th:block th:if="${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')}">
                     <a th:if="${s.get('tutorId') != null}"
@@ -51,7 +55,6 @@
             </td>
             <td class="cell-session" th:text="${s.get('start') + ' - ' + s.get('end')}"></td>
             <td class="cell-session" th:text="${s.get('location') ?: 'TBD'}"></td>
-
             <td class="cell-shared" th:text="${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')} ? ${s.get('professor')} : ''"></td>
             <td class="cell-shared" th:text="${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')} ? ${s.get('classMeetingTimes')} : ''"></td>
         </tr>

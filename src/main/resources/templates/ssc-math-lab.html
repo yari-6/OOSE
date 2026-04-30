@@ -4,51 +4,55 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/schedule-view.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
-    <title>SSC Math Lab Schedule</title>
 </head>
 
 <body>
-<div th:replace="~{headerFragment :: header('Math Lab Schedule')}"></div>
+<div th:replace="~{headerFragment :: header('SSC Math Lab')}"></div>
+
+<div class="stripe-container">
+    <img th:src="@{/fadedstripe.svg}" class="stripe">
+    <div class="stripe-text">
+        Blooms Tutors – Making scheduling easy!
+        <hr class="accent-line">
+    </div>
+</div>
 
 <div class="dashboard-wrapper">
 
     <main class="schedule-card">
-        <h2 class="card-title">SSC Weekly Grid</h2>
+        <h2 class="card-title">Weekly Schedule</h2>
         <hr class="gold-divider">
         <div th:replace="~{schedule-view :: scheduleView(true)}"></div>
     </main>
 
     <aside class="sidebar-card">
-        <h2 class="card-title">SSC Math Tutors</h2>
+        <h2 class="card-title">Math Lab Tutors</h2>
         <hr class="gold-divider">
 
         <div class="tutor-scroll-list">
-            <div th:each="tutor : ${activeTutors}" class="directory-card">
+            <div th:each="tutor : ${activeTutors}" class="tutor-entry-container">
 
-                <div class="directory-header">
+                <div class="tutor-profile-header">
                     <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
                          alt="pfp" class="sidebar-pfp">
-                    <div class="directory-info">
-                        <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}"
-                           th:text="${tutor.firstName + ' ' + tutor.lastName}"
-                           class="sidebar-tutor-name"></a>
-                        <p class="tutor-type-label" th:text="${tutor.type}"></p>
-                    </div>
+                    <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}"
+                       th:text="${tutor.firstName + ' ' + tutor.lastName}"
+                       class="sidebar-tutor-name"></a>
                 </div>
 
-                <div class="directory-courses">
-                    <span class="course-label">Proficiencies:</span>
-                    <div class="course-badge-container">
-                                <span th:each="course : ${tutor.coursesOffered}"
-                                      th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
-                                      class="course-badge"></span>
-                    </div>
+                <div class="tutor-courses-list">
+                <span th:each="course : ${tutor.coursesOffered}"
+                      th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
+                      class="course-badge"></span>
                 </div>
+
+                <hr class="tutor-divider">
+
             </div>
         </div>
 
         <div th:if="${#lists.isEmpty(activeTutors)}" class="empty-msg">
-            No tutors currently listed for this lab.
+            No tutor info available.
         </div>
     </aside>
 </div>

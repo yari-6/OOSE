@@ -33,7 +33,8 @@ public class TutorController {
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(Model model) {
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         return "front-page";
     }
 
@@ -42,7 +43,9 @@ public class TutorController {
     public String tutorList(Model model, @RequestParam(required = false) String courseSearch) {
         // Basically if params are null, do service get all, if params are not call service get tutor courses
         if (courseSearch == null) {
-            model.addAttribute("tutors", tutorService.getAllTutors());
+            List<Tutor> allTutors = tutorService.getAllTutors();
+            allTutors.removeIf(Tutor::isAdmin);
+            model.addAttribute("tutors", allTutors);
         }
         else {
             model.addAttribute("tutors", tutorService.getTutorsForCourse(courseSearch));
@@ -59,12 +62,16 @@ public class TutorController {
     @GetMapping("/tutors/{id}")
     public String tutorProfile(Model model, @PathVariable String id, HttpSession session) {
         Tutor tutor = tutorService.findTutorByID(id);
+        if (tutor == null || tutor.isAdmin()) {
+            return "redirect:/tutors";
+        }
         List<LocalTime> times = sessionService.generateTimes();
         model.addAttribute("tutor", tutor);
         model.addAttribute("ratings", ratingService.getAllRatings(id));
         model.addAttribute("times", times);
         model.addAttribute("schedule",
                 sessionService.fillInSessions(sessionService.getSessionsByTutor(tutor), times));
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         return "tutor-profile";
     }
 
@@ -73,9 +80,14 @@ public class TutorController {
     public String myProfile(HttpSession session, Model model) {
 
         String tutorID = (String) session.getAttribute("tutorID");
+        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 
         if (tutorID == null) {
             return "redirect:/sign-in";
+        }
+
+        if (isAdmin != null && isAdmin) {
+            return "redirect:/admin/dashboard";
         }
 
         model.addAttribute("tutor", tutorService.findTutorByID(tutorID));
@@ -118,20 +130,16 @@ public class TutorController {
                                BindingResult bindingResult,
                                HttpSession session) {
 
-        // 1. Validate credentials
         if (bindingResult.hasErrors() ||
                 !tutorService.checkLogin(loginTutor.getTutorID(), loginTutor.getPass())) {
             return "sign-in";
         }
 
-        // 2. Fetch the tutor object NOW (This solves the "Cannot resolve symbol" error)
         Tutor tutor = tutorService.findTutorByID(loginTutor.getTutorID());
 
-        // 3. Create session attributes using the 'tutor' variable we just created
         session.setAttribute("tutorID", loginTutor.getTutorID());
         session.setAttribute("isAdmin", tutor != null && tutor.isAdmin());
 
-        // 4. Check for first login
         if (tutorService.checkFirstLogin(loginTutor.getTutorID())) {
             return "redirect:/set-new-password";
         }

@@ -18,9 +18,43 @@
 </div>
 
 <main class="container">
+    <div class="form-card" style="margin-bottom: 20px; border-left: 5px solid;"
+         th:styleappend="${isWindowOpen ? 'border-color: #28a745;' : 'border-color: #dc3545;'}">
+
+        <h3>System Submission Control</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div>
+                <p style="margin: 0;">
+                    The global submission window is currently:
+                    <strong th:text="${isWindowOpen ? 'OPEN' : 'LOCKED'}"
+                            th:style="${isWindowOpen ? 'color: #28a745;' : 'color: #dc3545;'}">
+                    </strong>
+                </p>
+                <p class="lock-note" style="margin: 5px 0 0 0;">
+                    * Locking prevents tutors from saving new schedules. Admins retain full access.
+                </p>
+            </div>
+
+            <form th:action="@{/admin/toggle-window}" method="post">
+                <input type="hidden" name="open" th:value="${!isWindowOpen}" />
+                <button type="submit"
+                        th:class="${isWindowOpen ? 'btn-lock' : 'btn-open'}"
+                        style="padding: 12px 24px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white;"
+                        th:styleappend="${isWindowOpen ? 'background-color: #dc3545;' : 'background-color: #28a745;'}"
+                        th:text="${isWindowOpen ? 'Lock All Submissions' : 'Open Submission Window'}"
+                        onclick="return confirm('Are you sure you want to change the submission status for all tutors?');">
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="form-card">
-        <h2 th:text="'Welcome, ' + ${adminName}">Admin</h2>
-        <p>The following SI sessions currently require room assignments or have conflicts:</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 th:text="'Welcome, ' + ${adminName}" style="margin: 0; color: var(--primary);">Admin</h2>
+            <span class="status-badge success" th:text="${pendingSessions.size() + ' Pending Requests'}"></span>
+        </div>
+
+        <p>The following SI sessions currently require room assignments:</p>
 
         <table class="table-fill">
             <thead>
@@ -28,41 +62,51 @@
                 <th>Tutor</th>
                 <th>Day</th>
                 <th>Time</th>
-                <th>Current Status</th>
+                <th>Status</th>
                 <th>New Assignment</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="sess : ${pendingSessions}">
+            <tr th:each="sess : ${pendingSessions}" class="fade-in">
                 <td th:text="${sess.sessionID.tutor.firstName + ' ' + sess.sessionID.tutor.lastName}"></td>
-                <td th:text="${sess.sessionID.day}"></td>
-                <td th:text="${sess.sessionID.time}"></td>
-                <td th:text="${sess.location}"></td>
                 <td>
-                    <form th:action="@{/admin/assign-room}" method="post" style="display: flex; gap: 10px; align-items: center;">
+                        <span th:switch="${sess.sessionID.day}">
+                            <span th:case="'M'">Monday</span>
+                            <span th:case="'T'">Tuesday</span>
+                            <span th:case="'W'">Wednesday</span>
+                            <span th:case="'R'">Thursday</span>
+                            <span th:case="'F'">Friday</span>
+                            <span th:case="*" th:text="${sess.sessionID.day}"></span>
+                        </span>
+                </td>
+                <td th:text="${sess.sessionID.time}"></td>
+                <td>
+                    <span class="location-pending" th:text="${sess.location}"></span>
+                </td>
+                <td>
+                    <form th:action="@{/admin/assign-room}" method="post" style="display: flex; gap: 8px;">
                         <input type="hidden" name="tutorId" th:value="${sess.sessionID.tutor.tutorID}" />
                         <input type="hidden" name="day" th:value="${sess.sessionID.day}" />
                         <input type="hidden" name="time" th:value="${sess.sessionID.time}" />
 
                         <input type="text" name="room"
                                placeholder="e.g. BHT 102"
-                               class="admin-room-input" required
-                               style="flex-grow: 1; padding: 5px;" />
+                               required
+                               style="flex: 1; padding: 8px; border: 1px solid var(--border-light); border-radius: 4px;" />
 
-                        <button type="submit" class="btn-primary" style="white-space: nowrap;">
+                        <button type="submit" class="btn-secondary" style="padding: 8px 15px; font-size: 0.85rem;">
                             Assign
                         </button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(pendingSessions)}">
-                <td colspan="5" style="text-align: center; padding: 20px;">
-                    All sessions have been assigned!
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🎉</div>
+                    <strong>All caught up!</strong> All SI sessions have been assigned rooms.
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
 </main>
-</body>
-</html>

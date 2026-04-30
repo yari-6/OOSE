@@ -36,9 +36,12 @@ public class SIScheduleController {
         if (tutorID == null) return "redirect:/sign-in";
 
         Tutor tutor = tutorService.findTutorByID(tutorID);
-        // Add the full name to the model so the input can find it
-        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
+        if (tutor.isAdmin()) {
+            return "redirect:/admin/dashboard";
+        }
 
+        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         return "time-submission-SI";
     }
 
@@ -50,30 +53,43 @@ public class SIScheduleController {
         if (tutorID == null) return "redirect:/sign-in";
 
         Tutor tutor = tutorService.findTutorByID(tutorID);
-        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
 
-        // 1. Logic check: Prevent internal overlaps
-        Set<String> checkSet = new HashSet<>();
-        for (var s : request.getSessions()) {
-            String key = s.getDay() + "-" + s.getStartMinutes();
-            if (!checkSet.add(key)) {
-                model.addAttribute("error", "You cannot select the same day and time for multiple sessions.");
-                model.addAttribute("info", request); // Keep their form data filled
-                return "time-submission-SI";
-            }
+        // --- ADMIN BLOCK ---
+        if (tutor.isAdmin()) {
+            return "redirect:/admin/dashboard";
         }
 
-        // 2. Generate the actual session times/locations via Service
-        // Note: Ensure assignRoomsToSessions exists in your SessionService
-        List<SessionService.SessionWithLocation> previewSessions = sessionService.assignRoomsToSessions(request);
+        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
 
-        // 3. Store in Model so Thymeleaf shows the table
-        model.addAttribute("sessions", previewSessions);
-        model.addAttribute("info", request);
+        try {
+            // no duplicate sessions
+            Set<String> checkSet = new HashSet<>();
+            for (var s : request.getSessions()) {
+                String key = s.getDay() + "-" + s.getStartMinutes();
+                if (!checkSet.add(key)) {
+                    throw new IllegalStateException("You cannot select the same day and time for multiple sessions.");
+                }
+            }
+            //preview sessions
+            List<SessionService.SessionWithLocation> previewSessions = sessionService.assignRoomsToSessions(request);
 
-        // 4. Store in Session so the /confirm method can access it later
-        session.setAttribute("siPreview", previewSessions);
-        session.setAttribute("siClassInfo", request);
+            for (var ps : previewSessions) {
+                Session temp = new Session(new SessionID(tutor, ps.getDay(), ps.getStart()), ps.getEnd());
+                sessionService.validateDropInConstraints(temp);
+            }
+
+            model.addAttribute("sessions", previewSessions);
+            model.addAttribute("info", request);
+            session.setAttribute("siPreview", previewSessions);
+            session.setAttribute("siClassInfo", request);
+
+        } catch (IllegalStateException e) {
+            //avoid duplicate database entries
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("info", request);
+            return "time-submission-SI";
+        }
 
         return "time-submission-SI";
     }
@@ -84,13 +100,20 @@ public class SIScheduleController {
         List<SessionService.SessionWithLocation> preview = (List<SessionService.SessionWithLocation>) session.getAttribute("siPreview");
         SIScheduleRequest info = (SIScheduleRequest) session.getAttribute("siClassInfo");
 
-        if (tutorID == null || preview == null) {
+        if (tutorID == null || preview == null || info == null) {
+            return "redirect:/si-builder";
+        }
+        Tutor tutor = tutorService.findTutorByID(tutorID);
+
+        if (!sessionService.isSubmissionWindowOpen() && (tutor == null || !tutor.isAdmin())) {
             return "redirect:/si-builder";
         }
 
-        Tutor tutor = tutorService.findTutorByID(tutorID);
-        Set<Session> sessionsToSave = new HashSet<>();
+        if (tutor != null && tutor.isAdmin()) {
+            return "redirect:/admin/dashboard";
+        }
 
+        Set<Session> sessionsToSave = new HashSet<>();
         for (var s : preview) {
             SessionID id = new SessionID(tutor, s.getDay(), s.getStart());
             Session entity = new Session(id, s.getEnd());
@@ -103,7 +126,6 @@ public class SIScheduleController {
 
         sessionService.replaceSchedule(tutor, sessionsToSave);
 
-        // Clean up
         session.removeAttribute("siPreview");
         session.removeAttribute("siClassInfo");
 

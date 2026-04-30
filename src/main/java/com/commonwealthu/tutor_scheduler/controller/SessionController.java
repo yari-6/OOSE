@@ -3,6 +3,7 @@ package com.commonwealthu.tutor_scheduler.controller;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
@@ -18,11 +19,10 @@ import java.util.stream.Collectors;
 @Controller
 public class SessionController {
     private final SessionService sessionService;
-    private final TutorService tutorService;
 
     public SessionController(SessionService sessionService, TutorService tutorService) {
         this.sessionService = sessionService;
-        this.tutorService = tutorService;
+        // TutorService can be removed if not used for specific logic here
     }
 
     @GetMapping("/schedules/SI")
@@ -43,46 +43,29 @@ public class SessionController {
             map.put("classMeetingTimes", s.getClassMeetingTimes());
             return map;
         }).toList();
-
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         model.addAttribute("schedule", schedule);
         return "si-schedule";
     }
 
     @GetMapping("/schedules/drop-in")
     public String dropInSchedule(Model model) {
-        var sessions = sessionService.getSessionsByType("Drop-in");
-        List<LocalTime> times = sessionService.generateTimes();
-
-        Set<Tutor> activeTutors = sessions.stream()
-                .map(s -> s.getSessionID().getTutor())
-                .collect(Collectors.toSet());
-
-        model.addAttribute("times", times);
-        model.addAttribute("activeTutors", activeTutors);
-        model.addAttribute("schedule",
-                sessionService.fillInSessions(sessionService.getSessionsByType("Drop-in"),  times));
-        return "drop-in-schedule";
+        return populateGridModel(model, "Drop-in", "drop-in-schedule");
     }
 
     @GetMapping("/schedules/math-lab")
-    public String bfMathLabSchedule(Model model) {
-        var sessions = sessionService.getSessionsByType("Math Lab");
-        List<LocalTime> times = sessionService.generateTimes();
-
-        Set<Tutor> activeTutors = sessions.stream()
-                .map(s -> s.getSessionID().getTutor())
-                .collect(Collectors.toSet());
-
-        model.addAttribute("times", times);
-        model.addAttribute("activeTutors", activeTutors);
-        model.addAttribute("schedule",
-                sessionService.fillInSessions(sessionService.getSessionsByType("Math Lab"),  times));
-        return "ben-frank-math-lab";
+    public String mathLabSchedule(Model model) {
+        return populateGridModel(model, "Math Lab", "ben-frank-math-lab");
     }
 
     @GetMapping("/schedules/SSC")
-    public String SSCSchedule(Model model) {
-        var sessions = sessionService.getSessionsByType("SSC");
+    public String sscSchedule(Model model) {
+        return populateGridModel(model, "SSC", "ssc-math-lab");
+    }
+
+    //instead of repeating same thing for drop-in, math lab and ssc for schedule view
+    private String populateGridModel(Model model, String type, String viewName) {
+        var sessions = sessionService.getSessionsByType(type);
         List<LocalTime> times = sessionService.generateTimes();
 
         Set<Tutor> activeTutors = sessions.stream()
@@ -91,8 +74,8 @@ public class SessionController {
 
         model.addAttribute("times", times);
         model.addAttribute("activeTutors", activeTutors);
-        model.addAttribute("schedule",
-                sessionService.fillInSessions(sessionService.getSessionsByType("SSC"),  times));
-        return "ssc-math-lab";
+        model.addAttribute("schedule", sessionService.fillInSessions(sessions, times));
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+        return viewName;
     }
 }

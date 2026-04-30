@@ -158,12 +158,35 @@
         </section>
 
         <section class="schedule-section">
-            <h2>Schedule</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2>Schedule</h2>
+
+                <a th:if="${session.tutorID == tutor.tutorID and isWindowOpen}"
+                   th:href="@{/schedule-builder}"
+                   class="submit"
+                   style="text-decoration: none; font-size: 0.9rem; padding: 8px 15px;">
+                    Edit Schedule
+                </a>
+
+                <span th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
+                      class="status-badge"
+                      style="background-color: #fee2e2; color: #b91c1c; border: 1px solid #f87171; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
+            Submissions Locked
+        </span>
+            </div>
+
+            <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
+                 style="font-size: 0.85rem; color: #666; margin-bottom: 15px; font-style: italic;">
+                * The administrator has closed the submission window. You cannot modify your times until it is reopened.
+            </div>
+
             <div th:if="${!schedule.isEmpty()}">
                 <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
             </div>
 
-            <div th:if="${schedule.isEmpty()}">Schedule coming soon.</div>
+            <div th:if="${schedule.isEmpty()}" style="padding: 20px; background: #f8f9fa; border-radius: 6px; text-align: center; color: #636e72;">
+                Schedule coming soon.
+            </div>
         </section>
     </div>
 </div>

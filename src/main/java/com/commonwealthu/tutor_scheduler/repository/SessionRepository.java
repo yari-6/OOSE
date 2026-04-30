@@ -21,6 +21,17 @@ public interface SessionRepository extends JpaRepository<Session, SessionID> {
                                           @Param("startTime") LocalTime startTime,
                                           @Param("endTime") LocalTime endTime);
 
+    //prevent duplicate sessions
+    @Query("SELECT COUNT(s) > 0 FROM Session s WHERE s.sessionID.tutor = :tutor " +
+            "AND s.sessionID.day = :day " +
+            "AND s.sessionID.time < :endTime " +
+            "AND s.endTime > :startTime")
+    boolean existsByTutorConflict(@Param("tutor") Tutor tutor,
+                                  @Param("day") char day,
+                                  @Param("startTime") LocalTime startTime,
+                                  @Param("endTime") LocalTime endTime);
+
+    //prevent double assigned rooms
     @Query("SELECT COUNT(s) > 0 FROM Session s WHERE s.sessionID.day = :day " +
             "AND s.location = :room " +
             "AND s.sessionID.time < :endTime " +
