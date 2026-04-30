@@ -99,11 +99,11 @@ public class SessionService {
                     // Add the second name if one tutor is already on schedule
                     if (timeMap.containsKey(key)) {
                         ScheduleInfo existingTutor = timeMap.get(key);
-                        existingTutor.setNames(existingTutor.getNames() + "/" + name);
-                        existingTutor.setTutorId(existingTutor.getTutorId() + "/" + tutorID);
+                        existingTutor.addTutor(name, tutorID, color);
                     }
                     else {
-                        ScheduleInfo display = new ScheduleInfo(name, tutorID, color);
+                        ScheduleInfo display = new ScheduleInfo();
+                        display.addTutor(name, tutorID, color);
                         timeMap.put(key, display);
                     }
                 }

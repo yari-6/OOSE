@@ -25,11 +25,11 @@
 
             <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
                 th:with="cell=${schedule[dayCode + ' ' + t.toString()]}"
-                th:style="${cell != null ? 'background-color:' + cell.color : ''}"
+                th:style="${cell != null ? cell.getBackgroundStyle() : ''}"
                 class="schedule-cell">
 
                 <th:block th:if="${cell != null}">
-                    <th:block th:if="${showLinks}" th:with="nameArray=${#strings.arraySplit(cell.names, '/')}, idArray=${#strings.arraySplit(cell.tutorId, '/')}">
+                    <th:block th:if="${showLinks}" th:with="nameArray=${cell.names}, idArray=${cell.tutorIDs}">
                                 <span th:each="name, iterStat : ${nameArray}" class="tutor-entry">
                                     <a th:href="@{/tutors/{id}(id=${idArray[iterStat.index]})}" th:text="${name}" class="grid-link"></a>
                                     <span th:if="${!iterStat.last}" class="separator">/</span>
@@ -37,7 +37,7 @@
                     </th:block>
 
                     <th:block th:unless="${showLinks}">
-                        <span th:text="${cell.names}" style="color: white; font-weight: bold;"></span>
+                        <span th:text="${cell.names[0]}" style="color: white; font-weight: bold;"></span>
                     </th:block>
                 </th:block>
             </td>

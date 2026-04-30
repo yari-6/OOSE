@@ -1,43 +1,63 @@
 package com.commonwealthu.tutor_scheduler.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class for storing the information needed in each cell of the schedule display grid
  * (name(s), tutorId(s), and color)
  */
 public class ScheduleInfo {
 
-    private String names;
-    private String tutorId;
-    private String color;
+    private List<String> names;
+    private List<String> tutorIDs;
+    private List<String> colors;
 
     // Fixed the constructor parameters and logic
-    public ScheduleInfo(String names, String tutorId, String color) {
-        this.names = names;
-        this.tutorId = tutorId; // Case-sensitive: must match the field name
-        this.color = color;
+    public ScheduleInfo() {
+        this.names = new ArrayList<>();
+        this.tutorIDs = new ArrayList<>(); // Case-sensitive: must match the field name
+        this.colors = new ArrayList<>();
     }
 
-    public String getTutorId() {
-        return tutorId;
+    public List<String> getTutorIDs() {
+        return tutorIDs;
     }
 
-    public void setTutorId(String tutorId) {
-        this.tutorId = tutorId;
+    public void setTutorIDs(List<String> tutorIDs) {
+        this.tutorIDs = tutorIDs;
     }
 
-    public String getNames() {
+    public List<String> getNames() {
         return names;
     }
 
-    public void setNames(String names) {
+    public void setNames(List<String> names) {
         this.names = names;
     }
 
-    public String getColor() {
-        return color;
+    public List<String> getColors() {
+        return colors;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColors(List<String> colors) {
+        this.colors = colors;
+    }
+
+    public void addTutor(String name, String tutorID, String color) {
+        names.add(name);
+        tutorIDs.add(tutorID);
+        colors.add(color);
+    }
+
+    // Gets the cell styling based on how many tutors are in a grid cell, no color styling if no tutors
+    public String getBackgroundStyle() {
+        if (colors.size() == 1) {
+            return "background-color: " + colors.getFirst();
+        }
+        if (colors.size() == 2) {
+            return "background: linear-gradient(to right, " + colors.getFirst() + " 50%, " + colors.get(1) + " 50%)";
+        }
+        return "";
     }
 }

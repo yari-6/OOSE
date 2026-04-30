@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.Duration;
 import java.time.LocalTime;
@@ -97,14 +96,13 @@ public class TimeSubmissionController {
             return "redirect:/schedule-builder";
         }
 
-        com.commonwealthu.tutor_scheduler.entity.Session stagedSession =
-                new com.commonwealthu.tutor_scheduler.entity.Session(new SessionID(loggedIn, day, start), end);
+        Session stagedSession = new Session(new SessionID(loggedIn, day, start), end);
 
         try {
             sessionService.validateDropInConstraints(stagedSession);
 
             //overwrite overlaps
-            Set<com.commonwealthu.tutor_scheduler.entity.Session> currentStaged = sessionService.getAddedTimes(browserSession);
+            Set<Session> currentStaged = sessionService.getAddedTimes(browserSession);
 
             currentStaged.removeIf(existing ->
                     existing.getSessionID().getDay() == day &&
