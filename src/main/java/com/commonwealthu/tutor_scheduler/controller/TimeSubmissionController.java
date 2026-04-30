@@ -1,6 +1,6 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
-import com.commonwealthu.tutor_scheduler.entity.ScheduleInfo;
+import com.commonwealthu.tutor_scheduler.dto.ScheduleInfo;
 import com.commonwealthu.tutor_scheduler.entity.Session;
 import com.commonwealthu.tutor_scheduler.entity.SessionID;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
