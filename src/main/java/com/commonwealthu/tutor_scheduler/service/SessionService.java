@@ -60,7 +60,7 @@ public class SessionService {
                         existingTutor.setTutorId(existingTutor.getTutorId() + "/" + tutorID);
                     }
                     else {
-                        ScheduleInfo display = new ScheduleInfo(name, tutorID, ColorService.getColor(tutorID));
+                        ScheduleInfo display = new ScheduleInfo(name, tutorID, color);
                         timeMap.put(key, display);
                     }
                 }

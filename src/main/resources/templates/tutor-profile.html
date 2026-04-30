@@ -159,11 +159,17 @@
 
         <section class="schedule-section">
             <h2>Schedule</h2>
+            <div th:if="${tutor.type == 'Tutor'}">
+                No schedule available, book an appointment on CU Succeed.
+            </div>
+
             <div th:if="${!schedule.isEmpty()}">
                 <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
             </div>
 
-            <div th:if="${schedule.isEmpty()}">Schedule coming soon.</div>
+            <div th:if="${schedule.isEmpty() AND tutor.type != 'Tutor'}">
+                Schedule coming soon.
+            </div>
         </section>
     </div>
 </div>
