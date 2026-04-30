@@ -50,14 +50,11 @@ public class ScheduleInfo {
         colors.add(color);
     }
 
-    // Gets the cell styling based on how many tutors are in a grid cell, no color styling if no tutors
+    // Gets the cell styling based on how many tutors are in a grid cell
     public String getBackgroundStyle() {
         if (colors.size() == 1) {
             return "background-color: " + colors.getFirst();
         }
-        if (colors.size() == 2) {
-            return "background: linear-gradient(to right, " + colors.getFirst() + " 50%, " + colors.get(1) + " 50%)";
-        }
-        return "";
+        return "background: linear-gradient(to right, " + colors.getFirst() + " 50%, " + colors.get(1) + " 50%)";
     }
 }
