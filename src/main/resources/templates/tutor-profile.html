@@ -180,8 +180,9 @@
                 * The administrator has closed the submission window. You cannot modify your times until it is reopened.
             </div>
 
-            <h2>Schedule</h2>
+
             <div th:if="${tutor.type == 'Tutor'}">
+                <h2>Schedule</h2>
                 No schedule available, book an appointment on CU Succeed.
             </div>
 
@@ -190,6 +191,7 @@
             </div>
 
             <div th:if="${schedule.isEmpty()}" style="padding: 20px; background: #f8f9fa; border-radius: 6px; text-align: center; color: #636e72;">
+                <h2>Schedule</h2>
                 Schedule coming soon.
             </div>
         </section>
