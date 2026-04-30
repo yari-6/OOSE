@@ -46,6 +46,7 @@ h3 {
 
 .tutor-table-header-row {
     background: linear-gradient(to right, #6f263d, #8a1538);
+    color: white;
 }
 
 .tutor-table th {

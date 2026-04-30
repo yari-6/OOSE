@@ -12,11 +12,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +24,7 @@ import java.util.Set;
 public class TimeSubmissionController {
 
     private final TutorService tutorService;
+
     private final SessionService sessionService;
 
     public TimeSubmissionController(TutorService tutorService, SessionService sessionService) {
@@ -133,8 +134,6 @@ public class TimeSubmissionController {
         }
         Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
         sessionService.saveAllTimes(addedTimes);
-        browserSession.removeAttribute("addedTimes");
-
         return "redirect:/tutors/" + tutorID;
     }
 
@@ -143,4 +142,5 @@ public class TimeSubmissionController {
         browserSession.removeAttribute("addedTimes");
         return "redirect:/schedule-builder";
     }
+
 }
