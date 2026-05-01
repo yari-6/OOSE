@@ -31,36 +31,52 @@ public class SIScheduleController {
     }
 
     @GetMapping
-    public String showBuilder(HttpSession session, Model model) {
-        String tutorID = (String) session.getAttribute("tutorID");
-        if (tutorID == null) return "redirect:/sign-in";
+    public String showBuilder(@RequestParam(required = false) String targetTutorID,
+                              HttpSession session,
+                              Model model) {
+        String currentUserID = (String) session.getAttribute("tutorID");
+        if (currentUserID == null) return "redirect:/sign-in";
 
-        Tutor tutor = tutorService.findTutorByID(tutorID);
-        if (tutor.isAdmin()) {
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+
+        String effectiveTutorID = (currentUser.isAdmin() && targetTutorID != null)
+                ? targetTutorID
+                : currentUserID;
+
+        Tutor tutor = tutorService.findTutorByID(effectiveTutorID);
+
+        model.addAttribute("tutorCourses", tutor.getCoursesOffered());
+
+        if (currentUser.isAdmin() && targetTutorID == null) {
             return "redirect:/admin/dashboard";
         }
 
+        model.addAttribute("tutorID", effectiveTutorID);
         model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+
         return "time-submission-SI";
     }
 
     @PostMapping("/preview")
     public String previewSchedule(@ModelAttribute SIScheduleRequest request,
+                                  @RequestParam String effectiveTutorID,
                                   HttpSession session,
                                   Model model) {
-        String tutorID = (String) session.getAttribute("tutorID");
-        if (tutorID == null) return "redirect:/sign-in";
+        String currentUserID = (String) session.getAttribute("tutorID");
+        if (currentUserID == null) return "redirect:/sign-in";
 
-        Tutor tutor = tutorService.findTutorByID(tutorID);
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+        Tutor targetTutor = tutorService.findTutorByID(effectiveTutorID);
 
-        // --- ADMIN BLOCK ---
-        if (tutor.isAdmin()) {
-            return "redirect:/admin/dashboard";
+        if (!currentUser.isAdmin() && !currentUserID.equals(effectiveTutorID)) {
+            return "redirect:/";
         }
 
-        model.addAttribute("siName", tutor.getFirstName() + " " + tutor.getLastName());
+        model.addAttribute("siName", targetTutor.getFirstName() + " " + targetTutor.getLastName());
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+        model.addAttribute("tutorID", effectiveTutorID);
 
         try {
             // no duplicate sessions
@@ -71,21 +87,22 @@ public class SIScheduleController {
                     throw new IllegalStateException("You cannot select the same day and time for multiple sessions.");
                 }
             }
-            //preview sessions
             List<SessionService.SessionWithLocation> previewSessions = sessionService.assignRoomsToSessions(request);
 
+            //preview sessions
             for (var ps : previewSessions) {
-                Session temp = new Session(new SessionID(tutor, ps.getDay(), ps.getStart()), ps.getEnd());
+                Session temp = new Session(new SessionID(targetTutor, ps.getDay(), ps.getStart()), ps.getEnd());
                 sessionService.validateDropInConstraints(temp);
             }
 
             model.addAttribute("sessions", previewSessions);
             model.addAttribute("info", request);
+
             session.setAttribute("siPreview", previewSessions);
             session.setAttribute("siClassInfo", request);
+            session.setAttribute("targetTutorID", effectiveTutorID);
 
         } catch (IllegalStateException e) {
-            //avoid duplicate database entries
             model.addAttribute("error", e.getMessage());
             model.addAttribute("info", request);
             return "time-submission-SI";
@@ -96,26 +113,25 @@ public class SIScheduleController {
 
     @PostMapping("/confirm")
     public String confirmSchedule(HttpSession session) {
-        String tutorID = (String) session.getAttribute("tutorID");
+        String currentUserID = (String) session.getAttribute("tutorID");
+        String targetTutorID = (String) session.getAttribute("targetTutorID");
         List<SessionService.SessionWithLocation> preview = (List<SessionService.SessionWithLocation>) session.getAttribute("siPreview");
         SIScheduleRequest info = (SIScheduleRequest) session.getAttribute("siClassInfo");
 
-        if (tutorID == null || preview == null || info == null) {
-            return "redirect:/si-builder";
-        }
-        Tutor tutor = tutorService.findTutorByID(tutorID);
-
-        if (!sessionService.isSubmissionWindowOpen() && (tutor == null || !tutor.isAdmin())) {
+        if (currentUserID == null || preview == null || info == null || targetTutorID == null) {
             return "redirect:/si-builder";
         }
 
-        if (tutor != null && tutor.isAdmin()) {
-            return "redirect:/admin/dashboard";
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+        Tutor targetTutor = tutorService.findTutorByID(targetTutorID);
+
+        if (!sessionService.isSubmissionWindowOpen() && !currentUser.isAdmin()) {
+            return "redirect:/si-builder";
         }
 
         Set<Session> sessionsToSave = new HashSet<>();
         for (var s : preview) {
-            SessionID id = new SessionID(tutor, s.getDay(), s.getStart());
+            SessionID id = new SessionID(targetTutor, s.getDay(), s.getStart());
             Session entity = new Session(id, s.getEnd());
             entity.setLocation(s.getLocation());
             entity.setClassName(info.getClassName());
@@ -124,11 +140,12 @@ public class SIScheduleController {
             sessionsToSave.add(entity);
         }
 
-        sessionService.replaceSchedule(tutor, sessionsToSave);
+        sessionService.replaceSchedule(targetTutor, sessionsToSave);
 
         session.removeAttribute("siPreview");
         session.removeAttribute("siClassInfo");
+        session.removeAttribute("targetTutorID");
 
-        return "redirect:/tutors/" + tutorID;
+        return currentUser.isAdmin() ? "redirect:/admin/dashboard" : "redirect:/tutors/" + targetTutorID;
     }
 }

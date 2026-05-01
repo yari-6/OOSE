@@ -81,29 +81,46 @@ public class SessionService {
 
     // Take in a tutor's submitted sessions (saved or for confirmation) and a list of the times on the display grid
     // and returns a map storing the day + time and the tutors working + display color
-    public HashMap<String, ScheduleInfo> fillInSessions(Set<Session> sessions, List<LocalTime> times) {
+    public HashMap<String, ScheduleInfo> fillInSessions(Collection<Session> sessions, List<LocalTime> times) {
+        return fillInSessions(sessions, times, s -> ColorService.getColor(s.getSessionID().getTutor().getTutorID()));
+    }
+
+    public HashMap<String, ScheduleInfo> fillInSessions(Collection<Session> sessions,
+                                                        List<LocalTime> times,
+                                                        java.util.function.Function<Session, String> colorFn) {
         HashMap<String, ScheduleInfo> timeMap = new HashMap<>();
         for (Session s: sessions) {
-            char day = s.getSessionID().getDay();
+            String rawDay = s.getSessionID().getDay();
+            if (rawDay == null) continue;
+
+            // Normalize day to M, T, W, R, F
+            String dayCode = rawDay.trim().toUpperCase();
+            if (dayCode.startsWith("MON")) dayCode = "M";
+            else if (dayCode.startsWith("TUE")) dayCode = "T";
+            else if (dayCode.startsWith("WED")) dayCode = "W";
+            else if (dayCode.startsWith("THU")) dayCode = "R";
+            else if (dayCode.startsWith("FRI")) dayCode = "F";
+            else if (dayCode.length() > 0) dayCode = dayCode.substring(0, 1);
+
             LocalTime start = s.getSessionID().getTime();
-            LocalTime end = s.getEndTime();
-            String name = s.getSessionID().getTutor().getFirstName();
+            LocalTime end = (s.getEndTime() != null) ? s.getEndTime() : start.plusMinutes(50);
+            String name = s.getSessionID().getTutor().getFirstName() + " " + s.getSessionID().getTutor().getLastName();
             String tutorID = s.getSessionID().getTutor().getTutorID();
-            String color = ColorService.getColor(tutorID);
+            String color = colorFn.apply(s);
 
             // Check if the grid time falls within session time range
             for (LocalTime t: times) {
                 if (!t.isBefore(start) && t.isBefore(end)) {
-                    String key = day + " " + t;
+                    String timeStr = t.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"));
+                    String key = dayCode + " " + timeStr;
 
-                    // Add the second name if one tutor is already on schedule
                     if (timeMap.containsKey(key)) {
-                        ScheduleInfo existingTutor = timeMap.get(key);
-                        existingTutor.setNames(existingTutor.getNames() + "/" + name);
-                        existingTutor.setTutorId(existingTutor.getTutorId() + "/" + tutorID);
-                    }
-                    else {
-                        ScheduleInfo display = new ScheduleInfo(name, tutorID, color);
+                        // If the slot exists, we just add the NEW tutor to the existing lists
+                        timeMap.get(key).addTutor(name, tutorID, color);
+                    } else {
+                        // If the slot is empty, create a new DTO and add the first tutor
+                        ScheduleInfo display = new ScheduleInfo();
+                        display.addTutor(name, tutorID, color);
                         timeMap.put(key, display);
                     }
                 }
@@ -149,6 +166,13 @@ public class SessionService {
         }
     }
 
+    @Transactional
+    public void updateSession(String oldTutorId, String oldDay, String oldTime,
+                              String newTutorId, String newRoom) {
+        deleteSession(oldTutorId, oldDay, oldTime);
+
+        adminSaveSession(newTutorId, oldDay, oldTime, newRoom);
+    }
 
     //Drop in rules for Learning Center
     public void validateDropInConstraints(Session newSess) {
@@ -157,7 +181,7 @@ public class SessionService {
 
         LocalTime start = id.getTime();
         LocalTime end = newSess.getEndTime();
-        char day = id.getDay();
+        String day = id.getDay();
         Tutor tutor = id.getTutor();
 
         //End after Start
@@ -168,7 +192,7 @@ public class SessionService {
         //No double sessions
         boolean isTutorOverloaded = sessionRepo.findBySessionID_Tutor(tutor).stream()
                 .anyMatch(existing ->
-                        existing.getSessionID().getDay() == day &&
+                        existing.getSessionID().getDay().equals(day) &&
                                 start.isBefore(existing.getEndTime()) &&
                                 end.isAfter(existing.getSessionID().getTime())
                 );
@@ -208,14 +232,14 @@ public class SessionService {
         }
     }
 
-    public String autoAssignRoom(char day, LocalTime start, LocalTime end) {
+    public String autoAssignRoom(String day, LocalTime start, LocalTime end) {
         if (!sessionRepo.existsByRoomConflict(day, start, end, "Soltz 105")) return "Soltz 105";
         if (!sessionRepo.existsByRoomConflict(day, start, end, "SSC 021")) return "PENDING: Admin Assignment (SSC 021 Available)";
         return "PENDING: Conflict (No Standard Rooms Available)";
     }
 
     @Transactional
-    public void updateSessionLocation(String tutorId, char day, String time, String newRoom) {
+    public void updateSessionLocation(String tutorId, String day, String time, String newRoom) {
         LocalTime startTime = LocalTime.parse(time);
 
         // find session and end time for room check
@@ -245,7 +269,7 @@ public class SessionService {
         }
 
         for (SIScheduleRequest.SessionEntry s : request.getSessions()) {
-            char day = s.getDay().isEmpty() ? '?' : s.getDay().charAt(0);
+            String day = s.getDay().isEmpty() ? "?" : s.getDay();
             LocalTime start = LocalTime.MIDNIGHT.plusMinutes(s.getStartMinutes());
 
             String key = day + "@" + start.toString();
@@ -265,18 +289,49 @@ public class SessionService {
     }
 
     public static class SessionWithLocation {
-        private char day;
+        private String day;
         private LocalTime start;
         private LocalTime end;
         private String location;
 
-        public char getDay() { return day; }
-        public void setDay(char day) { this.day = day; }
+        public String getDay() { return day; }
+        public void setDay(String day) { this.day = day; }
         public LocalTime getStart() { return start; }
         public void setStart(LocalTime start) { this.start = start; }
         public LocalTime getEnd() { return end; }
         public void setEnd(LocalTime end) { this.end = end; }
         public String getLocation() { return location; }
         public void setLocation(String location) { this.location = location; }
+    }
+
+    public void deleteSession(String tutorId, String day, String time) {
+        Tutor tutor = tutorRepo.findById(tutorId).orElse(null);
+
+        if (tutor != null) {
+            LocalTime startTime = LocalTime.parse(time);
+
+            SessionID id = new SessionID(tutor, day, startTime);
+
+            sessionRepo.deleteById(id);
+        }
+    }
+
+    @Transactional
+    public void adminSaveSession(String tutorId, String day, String time, String room) {
+        Tutor tutor = tutorRepo.findById(tutorId)
+                .orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
+
+        LocalTime startTime = LocalTime.parse(time);
+
+        LocalTime endTime = startTime.plusMinutes(50);
+
+        SessionID id = new SessionID(tutor, day, startTime);
+
+        Session session = sessionRepo.findById(id).orElse(new Session(id, endTime));
+
+        session.setLocation(room);
+        session.setEndTime(endTime);
+
+        sessionRepo.save(session);
     }
 }

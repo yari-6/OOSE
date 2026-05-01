@@ -2,50 +2,46 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
     <link rel="stylesheet" th:href="@{/sign-in.css}">
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky Logo" class="logo">
-        <h1>Bloom Tutors</h1>
-    </div>
+<main class="auth-shell">
+    <div class="container">
+        <div class="header">
+            <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky Logo" class="logo">
+            <h1>Bloom Tutors</h1>
+        </div>
 
-    <div>
         <hr class="accent-line">
-    </div>
 
-    <h1>Sign in</h1>
+        <h2>Sign In</h2>
 
-    <form th:action="@{/sign-in}" th:object="${loginTutor}" method="post">
-        <div class="input-section">
-            <label>Username: </label>
-            <input type="text" th:field="*{tutorID}" placeholder="Username">
-            <div th:if="${#fields.hasErrors('tutorID')}" th:errors="*{tutorID}"></div>
-            <label>Password: </label>
-            <input type="password" th:field="*{pass}" placeholder="Password">
-            <div th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
+        <form th:action="@{/sign-in}" th:object="${loginTutor}" method="post">
+            <div class="input-section">
+                <label for="tutorID">Username</label>
+                <input type="text" th:field="*{tutorID}" id="tutorID" placeholder="Username">
+                <div class="error-message" th:if="${#fields.hasErrors('tutorID')}" th:errors="*{tutorID}"></div>
+
+                <label for="pass">Password</label>
+                <input type="password" th:field="*{pass}" id="pass" placeholder="Password">
+                <div class="error-message" th:if="${#fields.hasErrors('pass')}" th:errors="*{pass}"></div>
+            </div>
+
+            <div class="button-section">
+                <button type="submit" class="btn-primary">Enter</button>
+            </div>
+        </form>
+
+        <div class="info-box">
+            <p>This is a private system for use of Bloomsburg University tutors only.</p>
         </div>
-        <div class="button-section">
-            <button type="submit">Enter</button>
+
+        <div class="back-section">
+            <a th:href="@{/}" class="back-button">Back</a>
         </div>
-    </form>
-
-
-
-    <div class="info-box">
-        <p>
-            This is a private system for use of Bloomsburg University Tutors only.
-        </p>
     </div>
-
-    <div class="back-section">
-        <a th:href="@{/}" class="back-button">Back</a>
-    </div>
-
-</div>
-
-
+</main>
 </body>
 </html>

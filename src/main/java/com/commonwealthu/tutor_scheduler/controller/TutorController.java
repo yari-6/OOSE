@@ -33,7 +33,26 @@ public class TutorController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpSession session,
+                       @RequestParam(value = "mode", required = false) String mode,
+                       Model model) {
+
+        String tutorID = (String) session.getAttribute("tutorID");
+        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+
+        if (tutorID == null) {
+            model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+            return "front-page";
+        }
+
+        if (isAdmin != null && isAdmin) {
+            if ("standard".equals(mode)) {
+                model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+                return "front-page";
+            }
+            return "redirect:/admin/dashboard";
+        }
+
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         return "front-page";
     }
@@ -41,16 +60,12 @@ public class TutorController {
     // All tutors will display if no search has been made
     @GetMapping("/tutors")
     public String tutorList(Model model, @RequestParam(required = false) String courseSearch) {
-        // Basically if params are null, do service get all, if params are not call service get tutor courses
-        if (courseSearch == null) {
+        if (courseSearch == null || courseSearch.trim().isEmpty()) {
             List<Tutor> allTutors = tutorService.getAllTutors();
-            allTutors.removeIf(Tutor::isAdmin);
             model.addAttribute("tutors", allTutors);
-        }
-        else {
+        } else {
             model.addAttribute("tutors", tutorService.getTutorsForCourse(courseSearch));
         }
-
         return "tutors-list";
     }
 
@@ -62,23 +77,29 @@ public class TutorController {
     @GetMapping("/tutors/{id}")
     public String tutorProfile(Model model, @PathVariable String id, HttpSession session) {
         Tutor tutor = tutorService.findTutorByID(id);
-        if (tutor == null || tutor.isAdmin()) {
+
+        if (tutor == null) return "redirect:/tutors";
+
+        if (tutor.isAdmin()) {
             return "redirect:/tutors";
         }
+
         List<LocalTime> times = sessionService.generateTimes();
         model.addAttribute("tutor", tutor);
         model.addAttribute("ratings", ratingService.getAllRatings(id));
         model.addAttribute("times", times);
-        model.addAttribute("schedule",
-                sessionService.fillInSessions(sessionService.getSessionsByTutor(tutor), times));
+        model.addAttribute("schedule", sessionService.fillInSessions(sessionService.getSessionsByTutor(tutor), times));
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+
+        Boolean userIsAdmin = (Boolean) session.getAttribute("isAdmin");
+        model.addAttribute("userIsAdmin", userIsAdmin != null && userIsAdmin);
+
         return "tutor-profile";
     }
 
     //similar to above but only used for redirecting to the tutors profile
     @GetMapping("/profile")
-    public String myProfile(HttpSession session, Model model) {
-
+    public String myProfile(HttpSession session) {
         String tutorID = (String) session.getAttribute("tutorID");
         Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
 
@@ -90,10 +111,7 @@ public class TutorController {
             return "redirect:/admin/dashboard";
         }
 
-        model.addAttribute("tutor", tutorService.findTutorByID(tutorID));
-        model.addAttribute("ratings", ratingService.getAllRatings(tutorID));
-
-        return "tutor-profile";
+        return "redirect:/tutors/" + tutorID;
     }
 
     @PostMapping("/tutors/update-pfp")
@@ -156,14 +174,20 @@ public class TutorController {
     @PostMapping("/set-new-password")
     public String handleNewPassword(@Valid @ModelAttribute("newPassword") NewPassword newPassword,
                                     BindingResult bindingResult, HttpSession browserSession) {
-        if (bindingResult.hasErrors() || !newPassword.getNewPass().equals(newPassword.getConfirmPass())) {
+        String tutorID = (String) browserSession.getAttribute("tutorID");
+
+        if (tutorID == null) {
+            return "redirect:/sign-in";
+        }
+        if (!newPassword.getNewPass().equals(newPassword.getConfirmPass())) {
+            bindingResult.rejectValue("confirmPass", "error.confirmPass", "Passwords do not match!");
+        }
+
+        if (bindingResult.hasErrors()) {
             return "set-new-password";
         }
 
-        String tutorID = (String) browserSession.getAttribute("tutorID");
-
         tutorService.updatePassword(tutorID, newPassword.getNewPass());
-
         return "redirect:/sign-in";
     }
 

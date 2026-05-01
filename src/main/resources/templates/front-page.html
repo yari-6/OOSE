@@ -2,88 +2,74 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BloomTutors</title>
-    <link rel="stylesheet" th:href="@{/Style.css}">
+    <link rel="stylesheet" th:href="@{/style.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
 </head>
-
-<body >
+<body>
 <div th:replace="~{headerFragment :: header('Welcome to Bloom Tutors')}"></div>
 
 <div class="stripe-container">
-
-    <img th:src="@{/fadedstripe.svg}" class="stripe">
-
+    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
     <div class="stripe-text">
         Blooms Tutors – Making scheduling easy!
         <hr class="accent-line">
     </div>
-
 </div>
 
-<div class="main-section">
+<main class="main-section">
     <div class="left-side">
-
-            <th:block th:if="${session.tutorID != null}">
-                <a th:if="${session.isAdmin}" th:href="@{/admin/dashboard}" class="hero-link">
-                    <div class="hero_content box">
-                        <p>Admin Dashboard</p>
-                        <span style="font-size: 0.7rem; color: #8a1538; font-weight: bold; text-transform: uppercase; display: block; margin-top: -10px;">
-                    ● System Oversight
-                </span>
-                    </div>
-                </a>
-                <a th:if="${!session.isAdmin}" th:href="@{/schedule-builder}" class="hero-link">
-                    <div class="hero_content box">
-                        <p>Build Your Schedule</p>
-                    </div>
-                </a>
-            </th:block>
-
-            <a th:href="@{/schedules/drop-in}" class="hero-link">
+        <th:block th:if="${session.tutorID != null}">
+            <a th:if="${session.isAdmin}" th:href="@{/admin/dashboard}" class="hero-link">
                 <div class="hero_content box">
-                    <p>View Drop-In Schedule</p>
+                    <p>Admin Dashboard</p>
                 </div>
             </a>
-
-            <a th:href="@{/schedules/SSC}" class="hero-link">
+            <a th:if="${!session.isAdmin}" th:href="@{/schedule-builder}" class="hero-link">
                 <div class="hero_content box">
-                    <p>View SSC Math Lab Schedule</p>
+                    <p>Build Your Schedule</p>
                 </div>
             </a>
+        </th:block>
 
-            <a th:href="@{/schedules/math-lab}" class="hero-link">
-                <div class="hero_content box">
-                    <p>View Ben Frank Math Lab Schedule</p>
-                </div>
-            </a>
+        <a th:href="@{/schedules/drop-in}" class="hero-link">
+            <div class="hero_content box">
+                <p>View Drop-In Schedule</p>
+            </div>
+        </a>
 
-            <a th:href="@{/schedules/SI}" class="hero-link">
-                <div class="hero_content box">
-                    <p>View SI Schedule</p>
-                </div>
-            </a>
+        <a th:href="@{/schedules/SSC}" class="hero-link">
+            <div class="hero_content box">
+                <p>View SSC Math Lab Schedule</p>
+            </div>
+        </a>
 
-            <a th:href="@{/tutors}" class="hero-link">
-                <div class="hero_content box">
-                    <p>Click here to search for a tutor</p>
-                </div>
-            </a>
+        <a th:href="@{/schedules/math-lab}" class="hero-link">
+            <div class="hero_content box">
+                <p>View Ben Frank Math Lab Schedule</p>
+            </div>
+        </a>
+
+        <a th:href="@{/schedules/SI}" class="hero-link">
+            <div class="hero_content box">
+                <p>View SI Schedule</p>
+            </div>
+        </a>
+
+        <a th:href="@{/tutors}" class="hero-link">
+            <div class="hero_content box">
+                <p>Click here to search for a tutor</p>
+            </div>
+        </a>
     </div>
 
     <div class="image-side">
-        <img src="tutor_center.jpg" alt="Tutor Center" width="500" height="300">
+        <img th:src="@{/tutor_center.jpg}" alt="Bloomsburg Tutor Center" class="hero-image">
     </div>
-</div>
+</main>
 
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <p>Contact Us</p>
-            <p>Email: bloomtutoring@commonwealthu.edu</p>
-            <p>Phone: (570)-389-2720</p>
-        </div>
-    </div>
-</footer>
+<div th:replace="~{footerFragment :: footer}"></div>
+
 </body>
 </html>

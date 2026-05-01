@@ -1,55 +1,61 @@
-.header {
-    position: relative;
-    padding: 30px 20px;
-    text-align: center;
-    background: linear-gradient(to right, #6f263d, #8a1538);
+
+:root {
+    --primary-maroon: #6f263d;
+    --secondary-maroon: #8a1538;
+    --accent-gold: #f3d03e;
+    --font-header: franklin-gothic-urw, sans-serif;
+    --shadow-main: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-h1 {
-    background-color:#6f263d;
-    color:white;
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 20px;
+    background: linear-gradient(to right, var(--primary-maroon), var(--secondary-maroon));
+    min-height: 120px;
+}
+
+.logo-link {
+    flex: 0.75;
+    display: flex;
+    justify-content: flex-start;
+    order: 1;
+}
+
+.logo {
+    height: 125px;
+    display: block;
+}
+
+.header-title-group{
+    flex: 2.5;
     text-align: center;
-    font-size: 300%;
-    font-family: franklin-gothic-urw, sans-serif;
-    padding: 20px;
+    order: 2;
 }
 
 .header h1 {
     margin: 0;
     color: white;
     font-size: 300%;
-    font-family: franklin-gothic-urw, sans-serif;
-    background: linear-gradient(to right, #6f263d, #8a1538);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-family: var(--font-header);
+    text-shadow: 2px 2px 4px var(--shadow-main);
 }
 
-
 .title-line {
-    width: 600px;
+    width: 90%;
+    max-width: 600px;
     height: 4px;
-    background-color: #f3d03e;
-    border: none;
+    background-color: var(--accent-gold);
     margin: 20px auto;
 }
 
-.logo {
-    position: absolute;
-    left: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 150px;
-}
-
-
 .signin-container {
-     position: absolute;
-     right: 30px;
-     top: 50%;
-     transform: translateY(-50%);
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     gap: 6px;
+    flex: 0.75;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    order: 3;
 }
 
 .signin-text {
@@ -64,14 +70,14 @@ h1 {
     padding: 8px 16px;
     background-color: #f3d03e;
     color: black;
-    border-radius: 2px;
+    border-radius: 4px;
     font-weight: bold;
     transition: all 0.2s ease;
 }
 
 .signin-btn:hover {
-    background: linear-gradient(to right, #6f263d, #8a1538);
-    color: white;
+    background: var(--accent-gold);
+    color: var(--primary-maroon);
 }
 
 .accent-line {
@@ -79,14 +85,12 @@ h1 {
     height: 4px;
     background-color: #f3d03e;
     border: none;
-    left: 10 px;
 }
 
 .stripe-container {
     position: relative;
     width: 100%;
     height: 70px;
-
 }
 
 .stripe {
@@ -108,7 +112,6 @@ h1 {
 
 .user-section {
     position: relative;
-    display: inline-block;
 }
 
 .dropbtn {
@@ -124,10 +127,8 @@ h1 {
     border-radius: 4px;
 }
 
-.dropbtn:hover,
-.dropdown-content a:hover {
-    background: linear-gradient(to right, #6f263d, #8a1538);
-    color: white;
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 .dropdown-content {
@@ -152,6 +153,98 @@ h1 {
     transition: 0.5s;
 }
 
-.dropdown:hover .dropdown-content {
+
+
+.main-footer {
+    background-color: #2d2d2d;
+    color: white;
+    padding: 40px 20px;
+    border-top: 5px solid var(--primary-maroon);
+    margin-top: 40px;
+    font-family: var(--font-header);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.footer-heading {
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: white;
+    text-decoration: none;
     display: block;
+    margin-bottom: 10px;
+    transition: 0.2s ease;
+}
+
+.footer-link:hover {
+    color: var(--accent-gold);
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+    .header {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 16px;
+        text-align: center;
+    }
+
+    .logo-link,
+    .header-title-group,
+    .signin-container {
+        flex: none;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo {
+        height: 90px;
+    }
+
+    .header h1 {
+        font-size: clamp(2rem, 6vw, 2.6rem);
+    }
+
+    .title-line {
+        margin: 14px auto 0;
+    }
+
+    .signin-container {
+        align-items: center;
+    }
+
+    .dropdown-content {
+        right: 50%;
+        transform: translateX(50%);
+    }
+
+    .stripe-container,
+    .stripe {
+        height: 56px;
+    }
+
+    .stripe-text {
+        left: 8px;
+        right: 8px;
+        bottom: 6px;
+        font-size: 0.95rem;
+        line-height: 1.2;
+    }
+
+    .main-footer {
+        padding: 28px 16px;
+    }
 }

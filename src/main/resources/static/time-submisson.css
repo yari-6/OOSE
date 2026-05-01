@@ -88,40 +88,6 @@ select, .btn-add, .btn-save, .btn-clear {
 
 .btn-add { background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: 700; }
 
-.schedule-view-table {
-    width: 100%;
-    border-collapse: collapse;
-    border: 2px solid var(--border-distinct);
-    table-layout: fixed;
-}
-
-.schedule-view-table thead th {
-    background-color: var(--primary);
-    color: white;
-    font-size: 0.7rem;
-    padding: 10px 2px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.schedule-view-table th:first-child {
-    width: 80px;
-}
-
-.schedule-view-table td {
-    border: 1px solid var(--border-distinct) !important;
-    padding: 4px;
-    text-align: center;
-    height: 22px;
-}
-
-.schedule-view-table tbody tr th {
-    background-color: #f8f9fa;
-    color: var(--primary);
-    font-size: 0.8rem;
-    font-weight: 700;
-    border: 1px solid var(--border-distinct) !important;
-}
-
 .builder-note {
     background-color: #fff9db;
     border-left: 5px solid var(--secondary);
@@ -207,4 +173,20 @@ fieldset:disabled .btn-add {
 
 .form-card:has(fieldset:disabled) {
     border-top: 4px solid var(--border-distinct);
+}
+
+@media (max-width: 1024px) {
+    .builder-grid {
+        flex-direction: column !important;
+        align-items: stretch;
+    }
+
+    .form-card {
+        flex: none;
+        width: 95%;
+    }
+
+    .display {
+        width: 95%;
+    }
 }

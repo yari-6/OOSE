@@ -2,16 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,width=device-width">
-  <title>Drop-in Schedule Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Times</title>
   <link rel="stylesheet" th:href="@{/time-submisson.css}">
+  <link rel="stylesheet" th:href="@{/schedule-view.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
 </head>
 <body>
-<div th:replace="~{headerFragment :: header('Enter Session Times')}"></div>
+<div th:replace="~{headerFragment :: header('Enter Your Session Times')}"></div>
 
 <div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
   <div class="stripe-text">
     Blooms Tutors – Making scheduling easy!
     <hr class="accent-line">
@@ -19,14 +20,13 @@
 </div>
 
 <main class="container">
-  <div th:if="${!isWindowOpen}" class="error-banner" style="margin-bottom: 20px; background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+  <div th:if="${!isWindowOpen}" class="error-banner">
     <p><strong>Submissions Closed:</strong> The administrator has locked the scheduling window. You can view your current schedule, but changes cannot be saved at this time.</p>
   </div>
 
   <div class="builder-grid">
-
     <div class="form-card">
-      <fieldset th:disabled="${!isWindowOpen}" style="border: none; padding: 0; margin: 0;">
+      <fieldset th:disabled="${!isWindowOpen}">
         <div th:if="${error}" class="error-banner">
           <p th:text="${error}"></p>
         </div>
@@ -34,46 +34,47 @@
           <p th:text="${success}"></p>
         </div>
 
-      <form method="post" th:action="@{/add-times}" id="dropInForm">
-        <div class="input-stack">
-          <div class="input-group">
-            <label for="day">Select Day</label>
-            <select id="day" name="day" required>
-              <option value="M">Monday</option>
-              <option value="T">Tuesday</option>
-              <option value="W">Wednesday</option>
-              <option value="R">Thursday</option>
-              <option value="F">Friday</option>
-            </select>
-          </div>
-
-          <div class="time-row">
+        <form method="post" th:action="@{/add-times}" id="dropInForm">
+          <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
+          <div class="input-stack">
             <div class="input-group">
-              <label for="start">Start Time</label>
-              <select id="start" name="start" required>
-                <option value="" disabled selected>Select Start Time</option>
-                <option th:each="t : ${times}"
-                        th:value="${#temporals.format(t, 'HH:mm')}"
-                        th:text="${#temporals.format(t, 'h:mm a')}">
-                </option>
+              <label for="day">Select Day</label>
+              <select id="day" name="day" required>
+                <option value="M">Monday</option>
+                <option value="T">Tuesday</option>
+                <option value="W">Wednesday</option>
+                <option value="R">Thursday</option>
+                <option value="F">Friday</option>
               </select>
             </div>
 
-            <div class="input-group">
-              <label for="end">End Time</label>
-              <select id="end" name="end" required>
-                <option value="" disabled selected>Select End Time</option>
-                <option th:each="t : ${times}"
-                        th:value="${#temporals.format(t, 'HH:mm')}"
-                        th:text="${#temporals.format(t, 'h:mm a')}">
-                </option>
-              </select>
-            </div>
-          </div>
+            <div class="time-row">
+              <div class="input-group">
+                <label for="start">Start Time</label>
+                <select id="start" name="start" required>
+                  <option value="" disabled selected>Select Start Time</option>
+                  <option th:each="t : ${times}"
+                          th:value="${#temporals.format(t, 'HH:mm')}"
+                          th:text="${#temporals.format(t, 'h:mm a')}">
+                  </option>
+                </select>
+              </div>
 
-          <button type="submit" class="btn-add">Add to List</button>
-        </div>
-      </form>
+              <div class="input-group">
+                <label for="end">End Time</label>
+                <select id="end" name="end" required>
+                  <option value="" disabled selected>Select End Time</option>
+                  <option th:each="t : ${times}"
+                          th:value="${#temporals.format(t, 'HH:mm')}"
+                          th:text="${#temporals.format(t, 'h:mm a')}">
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-add">Add to List</button>
+          </div>
+        </form>
 
         <div class="confirm-section">
           <hr>
@@ -81,11 +82,12 @@
             <p><strong>Note:</strong> Saving or clearing here only affects times added during this session.</p>
           </div>
 
-          <p th:if="${isWindowOpen}">Review the submitted session times, if they are correct select 'Save All Changes'</p>
-          <p th:unless="${isWindowOpen}" style="color: #b91c1c; font-weight: bold;">Submissions are currently locked.</p>
+          <p th:if="${isWindowOpen}" class="confirm-instruction">Review your session times below, then select 'Save All Changes'.</p>
+          <p th:unless="${isWindowOpen}" class="locked-text">Submissions are currently locked.</p>
 
           <div class="confirm-buttons">
             <form th:action="@{/confirm-times}" method="post">
+              <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
               <button type="submit" class="btn-save"
                       th:disabled="${!hasUnsavedChanges or !isWindowOpen}">
                 Save All Changes
@@ -113,8 +115,9 @@
   </div>
 </main>
 
+<div th:replace="~{footerFragment :: footer}"></div>
+
 <script>
-  // Frontend Validation: Sequence and Duration Check
   document.getElementById('dropInForm').addEventListener('submit', function(e) {
       const start = document.getElementById('start').value;
       const end = document.getElementById('end').value;

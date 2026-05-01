@@ -3,6 +3,7 @@ body {
     background-color: white;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .profile {
@@ -39,17 +40,19 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(111, 38, 61, 0.7);
+    backdrop-filter: blur(8px);
     padding: 0;
     border-radius: 8px;
 }
 
 .modal-content {
     background: white;
-    width: 400px;
-    margin: 10% auto;
+    width: min(400px, calc(100vw - 32px));
+    margin: 5% auto;
     padding: 25px;
     border-radius: 8px;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .close {
@@ -89,15 +92,10 @@ body {
     border-radius: 4px;
 }
 
-.change-btn:hover {
-    background: linear-gradient(to right, #6f263d, #8a1538);
-    color: white;
-}
-
 .profile-container {
     display: flex;
-    width: 85%;
-    margin: 60px auto;
+    width: min(97%, 1400px);
+    margin: 10px auto;
     background: white;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -125,10 +123,9 @@ body {
 }
 
 .rating {
-    direction: rtl;
-    margin-top: 15px;
-    text-align: center;
-    font-family: sans-serif;
+    display: flex;
+    justify-content: center; 
+    flex-direction: row-reverse;
 }
 
 .rating input {
@@ -181,6 +178,7 @@ body {
 .profile-right {
     width: 70%;
     padding: 40px;
+    box-sizing: border-box;
 }
 
 .profile-right h2 {
@@ -206,35 +204,6 @@ body {
     margin-bottom: 5px;
 }
 
-.schedule-section {
-    margin-top: 40px;
-}
-
-.schedule-section div[style*="display: flex"] {
-    align-items: center;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-
-.schedule-section .submit {
-    margin-top: 0
-    background: #f3d03e;
-    color: #111;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
-}
-
-.schedule-section .submit:hover {
-    background: white;
-    color: #8a1538;
-    border: 2px solid #8a1538;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
 .lock-message {
     background-color: #fff5f5;
     color: #c53030;
@@ -245,4 +214,110 @@ body {
     margin-bottom: 15px;
     border-radius: 4px;
     display: inline-block;
+}
+
+.feedback input, .feedback textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white; 
+}
+
+.feedback input::placeholder, .feedback textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+
+.schedule-actions {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end; 
+}
+
+.btn-edit {
+    background-color: var(--secondary, #f3d03e);
+    color: black;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.btn-edit:hover {
+    background-color: #860037;
+    color: white;
+    border-color: #6f263d;
+}
+
+
+.status-badge-locked {
+    background-color: #fff5f5;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+    padding: 6px 12px;
+    border-radius: 20px; 
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+
+.lock-notice {
+    font-size: 0.8rem;
+    color: #718096;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+
+.empty-schedule-msg {
+    text-align: center;
+    padding: 40px;
+    background: #f8f9fa;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+    .profile-container {
+        flex-direction: column;
+        width: calc(100% - 20px);
+    }
+
+    .profile-left,
+    .profile-right {
+        width: 100%;
+        padding: 24px 18px;
+    }
+
+    .profile-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .schedule-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .avatar-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rating label {
+        font-size: 28px;
+    }
+
+    .empty-schedule-msg {
+        padding: 24px 16px;
+    }
 }

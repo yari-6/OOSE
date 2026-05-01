@@ -76,7 +76,7 @@ public class Tutor {
     }
 
     public String getType() {
-        return type;
+        return type != null ? type.trim() : null;
     }
 
     public void setType(String type) {

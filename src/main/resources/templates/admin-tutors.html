@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutor Editor</title>
+  <link rel="stylesheet" th:href="@{/admin.css}">
+  <link rel="stylesheet" th:href="@{/header.css}">
+</head>
+<body>
+<div th:replace="~{headerFragment :: header('Tutor Editor')}"></div>
+
+<div class="stripe-container">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
+  <div class="stripe-text">
+    Blooms Tutors – Making scheduling easy!
+    <hr class="accent-line">
+  </div>
+</div>
+
+<main class="container">
+  <div class="form-card">
+    <div class="card-header">
+      <h2>Tutor Roster</h2>
+      <button onclick="openModal()" class="btn-open">+ Register Tutor</button>
+    </div>
+
+    <div class="tutor-search-box">
+      <label for="tutorSearch" class="search-label">Search Tutors:</label>
+      <input type="text" id="tutorSearch" placeholder="Search by name or ID..." class="tutor-search-input" onkeyup="filterTutors()">
+    </div>
+
+    <div class="table-responsive">
+      <table class="table-fill" id="tutorTable">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>ID</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${tutors}" class="fade-in tutor-row" th:attr="data-name=${t.firstName + ' ' + t.lastName}, data-id=${t.tutorID}">
+          <td th:text="${t.firstName + ' ' + t.lastName}" class="tutor-name-cell"></td>
+          <td><span class="status-badge" th:text="${t.type}"></span></td>
+          <td th:text="${t.tutorID}"></td>
+          <td>
+            <div class="action-group">
+              <form th:action="@{/admin/tutors/reset/{id}(id=${t.tutorID})}" method="post">
+                <button type="submit" class="btn-secondary btn-small">Reset Pass</button>
+              </form>
+              <form th:action="@{/admin/tutors/delete/{id}(id=${t.tutorID})}" method="post">
+                <button type="submit" class="btn-delete"
+                        onclick="return confirm('Are you sure? This will delete all their sessions and ratings.')">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <tr id="noResults" class="results-empty-row">
+          <td colspan="4" class="results-empty-cell">No tutors match your search.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div id="tutorModal" class="modal">
+  <div class="modal-content">
+    <h3>Register New Tutor</h3>
+    <form th:action="@{/admin/tutors/add}" method="post" class="modal-form">
+      <input type="text" name="tutorID" placeholder="Tutor ID" required>
+      <input type="text" name="firstName" placeholder="First Name" required>
+      <input type="text" name="lastName" placeholder="Last Name" required>
+      <select name="type">
+        <option value="SI">SI</option>
+        <option value="Drop-in">Drop-in</option>
+      </select>
+      <div class="modal-buttons">
+        <button type="submit" class="btn-open">Create Account</button>
+        <button type="button" onclick="closeModal()" class="btn-clear">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div th:replace="~{footerFragment :: footer}"></div>
+
+<script>
+  const modal = document.getElementById('tutorModal');
+
+  function openModal() { modal.classList.add('show'); }
+  function closeModal() { modal.classList.remove('show'); }
+
+  window.onclick = function(event) {
+      if (event.target == modal) closeModal();
+  }
+
+  // Search functionality
+  function filterTutors() {
+    const searchInput = document.getElementById('tutorSearch').value.toLowerCase();
+    const table = document.getElementById('tutorTable');
+    const rows = table.querySelectorAll('tbody .tutor-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const name = row.getAttribute('data-name').toLowerCase();
+      const id = row.getAttribute('data-id').toLowerCase();
+      
+      if (name.includes(searchInput) || id.includes(searchInput)) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    // Show "no results" message if no tutors match
+    document.getElementById('noResults').style.display = visibleCount === 0 ? '' : 'none';
+  }
+</script>
+
+</body>
+</html>

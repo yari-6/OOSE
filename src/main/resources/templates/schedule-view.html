@@ -2,48 +2,53 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>BloomTutors</title>
-    <link rel="stylesheet" th:href="@{/header.css}">
-
+    <link rel="stylesheet" th:href="@{/schedule-view.css}">
 </head>
 <body>
 <div class="display" th:fragment="scheduleView(showLinks)">
-    <table class="schedule-view-table">
-        <thead>
-        <tr>
-            <th>Time</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="t : ${times}">
-            <th th:text="${#temporals.format(t, 'h:mm a')}"></th>
+    <div class="table-responsive">
+        <table class="schedule-view-table">
+            <thead>
+            <tr>
+                <th class="time-column-header">Time</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${times}">
+                <th th:text="${#temporals.format(t, 'h:mm a')}" class="time-cell"></th>
 
-            <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
-                th:with="cell=${schedule[dayCode + ' ' + t.toString()]}"
-                th:style="${cell != null ? 'background-color:' + cell.color : ''}"
-                class="schedule-cell">
+                <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
+                    th:with="cell=${schedule[dayCode + ' ' + t.toString()]}"
+                    th:style="${cell != null ? cell.backgroundStyle : ''}"
+                    class="schedule-cell">
 
-                <th:block th:if="${cell != null}">
-                    <th:block th:if="${showLinks}" th:with="nameArray=${#strings.arraySplit(cell.names, '/')}, idArray=${#strings.arraySplit(cell.tutorId, '/')}">
+                    <th:block th:if="${cell != null}">
+                        <th:block th:if="${showLinks}"
+                                  th:with="nameArray=${#strings.arraySplit(cell.namesString, '/')},
+                                               idArray=${#strings.arraySplit(cell.tutorIdsString, '/')}">
                                 <span th:each="name, iterStat : ${nameArray}" class="tutor-entry">
-                                    <a th:href="@{/tutors/{id}(id=${idArray[iterStat.index]})}" th:text="${name}" class="grid-link"></a>
+                                    <a th:href="@{/tutors/{id}(id=${idArray[iterStat.index]})}"
+                                       th:text="${name}"
+                                       class="grid-link"></a>
                                     <span th:if="${!iterStat.last}" class="separator">/</span>
                                 </span>
-                    </th:block>
+                        </th:block>
 
-                    <th:block th:unless="${showLinks}">
-                        <span th:text="${cell.names}" style="color: white; font-weight: bold;"></span>
+                        <th:block th:unless="${showLinks}">
+                            <span th:text="${cell.namesString}" class="static-name"></span>
+                        </th:block>
                     </th:block>
-                </th:block>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+
 </body>
 </html>

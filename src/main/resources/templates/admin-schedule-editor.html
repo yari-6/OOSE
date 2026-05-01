@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Editor</title>
+    <link rel="stylesheet" th:href="@{/admin.css}">
+    <link rel="stylesheet" th:href="@{/header.css}">
+</head>
+<body>
+<div th:replace="~{headerFragment :: header('Schedule Editor')}"></div>
+
+<div class="stripe-container">
+    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
+    <div class="stripe-text">
+        Blooms Tutors – Making scheduling easy!
+        <hr class="accent-line">
+    </div>
+</div>
+
+<div class="container fade-in">
+    <div class="admin-editor-header">
+        <div class="filter-controls editor-filter-controls">
+            <div class="btn-group">
+                <a th:href="@{/admin/schedule(type='Drop-in')}" th:classappend="${currentFilter == 'Drop-in'} ? 'active' : ''" class="btn-filter">Drop-In</a>
+                <a th:href="@{/admin/schedule(type='SSC Andruss Library')}" th:classappend="${currentFilter == 'SSC Andruss Library'} ? 'active' : ''" class="btn-filter">SSC</a>
+                <a th:href="@{/admin/schedule(type='Math Lab')}" th:classappend="${currentFilter == 'Math Lab'} ? 'active' : ''" class="btn-filter">Math Lab</a>
+                <a th:href="@{/admin/schedule(type='SI')}" th:classappend="${currentFilter == 'SI'} ? 'active' : ''" class="btn-filter">SI Table</a>
+            </div>
+        </div>
+
+        <div class="editor-search-container">
+            <label for="tutorSearchInput" class="editor-search-label">Individual Editor:</label>
+            <input type="text" id="tutorSearchInput" list="tutorOptions" class="editor-search-input" placeholder="Type a name...">
+            <datalist id="tutorOptions">
+                <option th:each="t : ${tutors}"
+                        th:value="${t.firstName + ' ' + t.lastName + ' (' + t.type + ')'}"
+                        th:data-id="${t.tutorID}">
+                </option>
+            </datalist>
+            <button onclick="goToTutor()" class="btn-filter active">Go</button>
+        </div>
+    </div>
+
+    <div th:if="${currentFilter != 'SI'}" class="schedule-grid-container">
+        <table class="schedule-grid">
+            <thead>
+            <tr>
+                <th class="time-cell-header">Time</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${times}">
+                <td th:text="${#temporals.format(t, 'h:mm a')}" class="time-row-label"></td>
+                <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
+                    th:with="cellKey=${dayCode + ' ' + #temporals.format(t, 'HH:mm')},
+                             cell=${schedule.get(cellKey)}"
+                    class="day-cell">
+
+                    <div class="session-chip-container" th:if="${cell != null}">
+                        <div th:each="name, iter : ${cell.names}"
+                             class="session-chip-inline"
+                             th:style="'background-color:' + ${cell.colors[iter.index]}">
+                            <span class="session-chip-text" th:text="${name}"></span>
+                            <div class="chip-actions chip-actions-inline">
+                                <button class="edit-btn" th:onclick="openEditModal([[${cell.tutorIDs[iter.index]}]], [[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]])">E</button>
+                                <form th:action="@{/admin/delete-session}" method="post" class="inline-form">
+                                    <input type="hidden" name="tutorId" th:value="${cell.tutorIDs[iter.index]}">
+                                    <input type="hidden" name="day" th:value="${dayCode}">
+                                    <input type="hidden" name="time" th:value="${#temporals.format(t, 'HH:mm')}">
+                                    <input type="hidden" name="currentFilter" th:value="${currentFilter}">
+                                    <button type="submit" class="delete-btn" onclick="return confirm('Delete?')">X</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="add-session-btn" th:onclick="openModal([[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]])">+</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${currentFilter == 'SI'}" class="form-card si-table-card">
+        <table class="table-fill">
+            <thead>
+            <tr>
+                <th>SI Leader</th>
+                <th>Day</th>
+                <th>Time</th>
+                <th class="actions-header">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${siTableData}">
+                <td th:text="${s.sessionID.tutor.firstName + ' ' + s.sessionID.tutor.lastName}"></td>
+                <td th:text="${s.sessionID.day}"></td>
+                <td th:text="${#temporals.format(s.sessionID.time, 'h:mm a')}"></td>
+                <td class="actions-cell">
+                    <button type="button" class="btn-filter btn-filter-compact"
+                            th:onclick="openEditModal([[${s.sessionID.tutor.tutorID}]], [[${s.sessionID.day}]], [[${#temporals.format(s.sessionID.time, 'HH:mm')}]])">Edit</button>
+                    <form th:action="@{/admin/delete-session}" method="post" class="inline-form">
+                        <input type="hidden" name="tutorId" th:value="${s.sessionID.tutor.tutorID}">
+                        <input type="hidden" name="day" th:value="${s.sessionID.day}">
+                        <input type="hidden" name="time" th:value="${#temporals.format(s.sessionID.time, 'HH:mm')}">
+                        <input type="hidden" name="currentFilter" value="SI">
+                        <button type="submit" class="btn-filter btn-filter-compact btn-filter-danger"
+                                onclick="return confirm('Delete session?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="sessionModal" class="modal-overlay">
+    <div class="modal">
+        <h2 id="modalTitle">Manage Session</h2>
+        <form id="sessionForm" method="post">
+            <input type="hidden" name="currentFilter" th:value="${currentFilter}">
+            <input type="hidden" name="oldTutorId" id="oldTutorId">
+            <div class="form-group">
+                <label>Day & Time</label>
+                <div class="modal-day-time-row">
+                    <input type="text" name="day" id="modalDay" readonly class="modal-readonly-day">
+                    <input type="text" name="time" id="modalTime" readonly class="modal-readonly-time">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Tutor</label>
+                <select name="tutorId" id="modalTutorSelect" required>
+                    <option th:each="t : ${tutors}" th:value="${t.tutorID}" th:text="${t.firstName + ' ' + t.lastName}"></option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="save-btn">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    function goToTutor() {
+        const val = document.getElementById('tutorSearchInput').value;
+        const opts = document.getElementById('tutorOptions').childNodes;
+        let id = null;
+
+        for (let i = 0; i < opts.length; i++) {
+            if (opts[i].value === val) {
+                id = opts[i].getAttribute('data-id');
+                break;
+            }
+        }
+
+        if (id) {
+            window.location.href = '/schedule-builder?targetTutorID=' + id;
+        } else {
+            alert("Please select a valid tutor from the list.");
+        }
+    }
+    function openModal(day, time) {
+        document.getElementById('modalTitle').innerText = "Add Session";
+        document.getElementById('sessionForm').action = /*[[ @{/admin/save-master-session} ]]*/ '';
+        document.getElementById('modalDay').value = day;
+        document.getElementById('modalTime').value = time;
+        document.getElementById('sessionModal').style.display = 'block';
+    }
+    function openEditModal(tutorId, day, time) {
+        document.getElementById('modalTitle').innerText = "Edit Session";
+        document.getElementById('sessionForm').action = /*[[ @{/admin/save-master-session} ]]*/ '';
+        document.getElementById('oldTutorId').value = tutorId;
+        document.getElementById('modalTutorSelect').value = tutorId;
+        document.getElementById('modalDay').value = day;
+        document.getElementById('modalTime').value = time;
+        document.getElementById('sessionModal').style.display = 'block';
+    }
+    function closeModal() { document.getElementById('sessionModal').style.display = 'none'; }
+</script>
+<div th:replace="~{footerFragment :: footer}"></div>
+</body>
+</html>

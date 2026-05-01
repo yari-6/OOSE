@@ -1,0 +1,125 @@
+.container {
+  display: flex;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: white;
+}
+
+.box p {
+  text-align: center;
+  color: white;
+  font-size: 150%;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.link-btn {
+  color: #f3d03e;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+  text-decoration-color: #f3d03e;
+}
+
+.main-section {
+  display: flex;
+  flex-direction:row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 40px auto;
+  width: 95%;
+  max-width: 1400px;
+}
+
+.left-side {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: min(100%, 450px);
+}
+
+
+.box {
+  background: linear-gradient(to right, #6f263d, #8a1538);
+  border: 1px solid black;
+  padding: 5px;
+  color: white;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+a.hero-link {
+  display: block;
+  text-decoration: none;
+}
+
+.image-side {
+    flex: 1;
+    max-width: 800px;
+}
+
+.image-side img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (max-width: 1400px) {
+    .main-section {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 700px) {
+    .main-section {
+        width: calc(100% - 24px);
+        margin: 24px auto;
+        gap: 16px;
+    }
+
+    .left-side,
+    .image-side {
+        width: 100%;
+        max-width: none;
+    }
+
+    .box {
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+    }
+
+    .box p {
+        font-size: 1.05rem;
+        margin: 0;
+    }
+}
+
+

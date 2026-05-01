@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 public class SessionController {
     private final SessionService sessionService;
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("h:mm a");
+
     public SessionController(SessionService sessionService, TutorService tutorService) {
         this.sessionService = sessionService;
         // TutorService can be removed if not used for specific logic here
@@ -31,18 +33,20 @@ public class SessionController {
 
         List<Map<String, Object>> schedule = sessions.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("tutorId", s.getSessionID().getTutor().getTutorID());
-            map.put("day", String.valueOf(s.getSessionID().getDay()));
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
-            map.put("start", s.getSessionID().getTime().format(timeFormatter));
-            map.put("end", s.getEndTime().format(timeFormatter));
+            Tutor tutor = s.getSessionID().getTutor();
+
+            map.put("tutorId", tutor.getTutorID());
+            map.put("day", s.getSessionID().getDay());
+            map.put("start", s.getSessionID().getTime().format(TIME_FORMATTER));
+            map.put("end", s.getEndTime().format(TIME_FORMATTER));
             map.put("location", s.getLocation());
-            map.put("siLeader", s.getSessionID().getTutor().getFirstName() + " " + s.getSessionID().getTutor().getLastName());
+            map.put("siLeader", tutor.getFirstName() + " " + tutor.getLastName());
             map.put("className", s.getClassName());
             map.put("professor", s.getProfessor());
             map.put("classMeetingTimes", s.getClassMeetingTimes());
             return map;
         }).toList();
+
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         model.addAttribute("schedule", schedule);
         return "si-schedule";
@@ -70,6 +74,7 @@ public class SessionController {
 
         Set<Tutor> activeTutors = sessions.stream()
                 .map(s -> s.getSessionID().getTutor())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
         model.addAttribute("times", times);

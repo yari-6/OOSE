@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.*;
 
 @Controller
 public class TimeSubmissionController {
 
     private final TutorService tutorService;
-
     private final SessionService sessionService;
 
     public TimeSubmissionController(TutorService tutorService, SessionService sessionService) {
@@ -34,80 +34,89 @@ public class TimeSubmissionController {
     }
 
     @GetMapping("/schedule-builder")
-    public String buildSchedule(HttpSession browserSession, Model model) {
-        String tutorID = (String) browserSession.getAttribute("tutorID");
-        if (tutorID == null) return "redirect:/sign-in";
+    public String buildSchedule(@RequestParam(required = false) String targetTutorID,
+                                HttpSession browserSession,
+                                Model model) {
+        String currentUserID = (String) browserSession.getAttribute("tutorID");
+        if (currentUserID == null) return "redirect:/sign-in";
 
-        Tutor loggedIn = tutorService.findTutorByID(tutorID);
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
 
-        //admin redirect
-        if (loggedIn.isAdmin()) {
+        // Determine who we are actually editing
+        String effectiveTutorID = (currentUser.isAdmin() && targetTutorID != null)
+                ? targetTutorID
+                : currentUserID;
+
+        Tutor tutor = tutorService.findTutorByID(effectiveTutorID);
+
+        // Admin safety: if they hit the builder without a target, send them back
+        if (currentUser.isAdmin() && targetTutorID == null) {
             return "redirect:/admin/dashboard";
         }
 
-        // SI redirect
-        if ("SI".equals(loggedIn.getType())) {
-            return "redirect:/si-builder";
+        // Redirect SI tutors to their specific builder
+        if ("SI".equals(tutor.getType())) {
+            return "redirect:/si-builder?targetTutorID=" + effectiveTutorID;
         }
 
-        //show previously entered sessions
-        Set<Session> savedSessions = sessionService.getSessionsByTutor(loggedIn);
+        Set<Session> savedSessions = sessionService.getSessionsByTutor(tutor);
         Set<Session> addedSessions = sessionService.getAddedTimes(browserSession);
 
-        //preview with entries
         Set<Session> combinedSessions = new HashSet<>(savedSessions);
         combinedSessions.addAll(addedSessions);
 
         List<LocalTime> times = sessionService.generateTimes();
         HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(combinedSessions, times);
 
-        model.addAttribute("tutor", loggedIn);
+        model.addAttribute("tutor", tutor);
+        model.addAttribute("tutorID", effectiveTutorID);
         model.addAttribute("times", times);
         model.addAttribute("schedule", schedule);
         model.addAttribute("hasUnsavedChanges", !addedSessions.isEmpty());
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+        model.addAttribute("isAdmin", currentUser.isAdmin());
+
         return "time-submission-edited";
     }
 
     @PostMapping("/add-times")
-    public String addTimes(@RequestParam("day") char day,
+    public String addTimes(@RequestParam("day") String day,
                            @RequestParam("start") LocalTime start,
                            @RequestParam("end") LocalTime end,
+                           @RequestParam("effectiveTutorID") String effectiveTutorID,
                            HttpSession browserSession,
                            RedirectAttributes ra) {
 
-        String tutorID = (String) browserSession.getAttribute("tutorID");
-        if (tutorID == null) return "redirect:/sign-in";
+        String currentUserID = (String) browserSession.getAttribute("tutorID");
+        if (currentUserID == null) return "redirect:/sign-in";
 
-        Tutor loggedIn = tutorService.findTutorByID(tutorID);
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+        Tutor targetTutor = tutorService.findTutorByID(effectiveTutorID);
 
-        if (loggedIn.isAdmin()) {
-            return "redirect:/admin/dashboard";
+        // Security: Admin or self only
+        if (!currentUser.isAdmin() && !currentUserID.equals(effectiveTutorID)) {
+            return "redirect:/";
         }
 
-        //no entry if window closed
-        if (!sessionService.isSubmissionWindowOpen()) {
+        // Admin bypasses window lock
+        if (!sessionService.isSubmissionWindowOpen() && !currentUser.isAdmin()) {
             ra.addFlashAttribute("error", "The submission window is currently locked.");
             return "redirect:/schedule-builder";
         }
-        // limit to 5 hours
-        long minutes = Duration.between(start, end).toMinutes();
-        if (minutes > 300) {
+
+        if (Duration.between(start, end).toMinutes() > 300) {
             ra.addFlashAttribute("error", "Error: A single session cannot exceed 5 hours.");
-            return "redirect:/schedule-builder";
+            return "redirect:/schedule-builder?targetTutorID=" + effectiveTutorID;
         }
 
-        com.commonwealthu.tutor_scheduler.entity.Session stagedSession =
-                new com.commonwealthu.tutor_scheduler.entity.Session(new SessionID(loggedIn, day, start), end);
+        Session stagedSession = new Session(new SessionID(targetTutor, day, start), end);
 
         try {
             sessionService.validateDropInConstraints(stagedSession);
-
-            //overwrite overlaps
-            Set<com.commonwealthu.tutor_scheduler.entity.Session> currentStaged = sessionService.getAddedTimes(browserSession);
+            Set<Session> currentStaged = sessionService.getAddedTimes(browserSession);
 
             currentStaged.removeIf(existing ->
-                    existing.getSessionID().getDay() == day &&
+                    existing.getSessionID().getDay().equals(day) &&
                             start.isBefore(existing.getEndTime()) &&
                             end.isAfter(existing.getSessionID().getTime())
             );
@@ -119,29 +128,27 @@ public class TimeSubmissionController {
             ra.addFlashAttribute("error", e.getMessage());
         }
 
-        return "redirect:/schedule-builder";
+        return "redirect:/schedule-builder?targetTutorID=" + effectiveTutorID;
     }
 
     @PostMapping("/confirm-times")
-    public String confirmTimes(HttpSession browserSession) {
-        String tutorID = (String) browserSession.getAttribute("tutorID");
-        if (tutorID == null) return "redirect:/sign-in";
-        Tutor tutor = tutorService.findTutorByID(tutorID);
-        if (tutor.isAdmin()) {
-            return "redirect:/admin/dashboard";
-        }
-        if (!sessionService.isSubmissionWindowOpen() && !tutor.isAdmin()) {
+    public String confirmTimes(@RequestParam("effectiveTutorID") String effectiveTutorID,
+                               HttpSession browserSession) {
+        String currentUserID = (String) browserSession.getAttribute("tutorID");
+        if (currentUserID == null) return "redirect:/sign-in";
+
+        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+
+        if (!sessionService.isSubmissionWindowOpen() && !currentUser.isAdmin()) {
             return "redirect:/schedule-builder";
         }
+
         Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
         sessionService.saveAllTimes(addedTimes);
-        return "redirect:/tutors/" + tutorID;
-    }
 
-    @PostMapping("/reject-times")
-    public String rejectTimes(HttpSession browserSession) {
         browserSession.removeAttribute("addedTimes");
-        return "redirect:/schedule-builder";
-    }
 
+        return currentUser.isAdmin() ? "redirect:/admin/dashboard" : "redirect:/tutors/" + effectiveTutorID;
+    }
 }
+
