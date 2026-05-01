@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class TimeSubmissionController {
@@ -49,16 +46,21 @@ public class TimeSubmissionController {
             return "redirect:/si-builder";
         }
 
+        List<LocalTime> times = sessionService.generateTimes();
         //show previously entered sessions
         Set<Session> savedSessions = sessionService.getSessionsByTutor(loggedIn);
         Set<Session> addedSessions = sessionService.getAddedTimes(browserSession);
 
-        //preview with entries
-        Set<Session> combinedSessions = new HashSet<>(savedSessions);
-        combinedSessions.addAll(addedSessions);
+        // Create Maps to fill in both saved and added (unsaved) times
+        HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(savedSessions, times);
+        HashMap<String, ScheduleInfo> addedTimeSchedule = sessionService.fillInSessions(addedSessions, times);
+        // Take each session in the saved and change its color only for this display
+        schedule.forEach((k, v) -> {
+            List<String> colors = v.getColors();
+            Collections.fill(colors, "#9CA3AF");
 
-        List<LocalTime> times = sessionService.generateTimes();
-        HashMap<String, ScheduleInfo> schedule = sessionService.fillInSessions(combinedSessions, times);
+        });
+        schedule.putAll(addedTimeSchedule);
 
         model.addAttribute("tutor", loggedIn);
         model.addAttribute("times", times);
@@ -133,6 +135,7 @@ public class TimeSubmissionController {
         }
         Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
         sessionService.saveAllTimes(addedTimes);
+        browserSession.removeAttribute("addedTimes"); // Clear after saving
         return "redirect:/tutors/" + tutorID;
     }
 
