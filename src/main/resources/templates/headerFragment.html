@@ -3,7 +3,7 @@
 
 <header th:fragment="header(title)" class="header">
     <a th:href="@{/}" class="logo-link">
-        <img src="/Husky-Clip-Art-Transparent-File.png" alt="Husky" class="logo">
+        <img th:src="@{/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo">
     </a>
 
     <div class="header-title-group">
@@ -21,10 +21,10 @@
         <div th:if="${session.tutorID != null}" class="user-section">
             <div class="dropdown">
                 <button class="dropbtn">
-                    Welcome, <span th:text="${session.tutorID}"></span> v
+                    Welcome, <span th:text="${session.firstName}">User</span> &#9662;
                 </button>
                 <div class="dropdown-content">
-                    <a th:if="${session.isAdmin == true}" th:href="@{/(mode='standard')}">Standard Mode</a>
+                    <a th:if="${session.isAdmin == true}" th:href="@{/admin/dashboard}">Admin Dashboard</a>
                     <a th:if="${session.isAdmin == false}" th:href="@{/tutors/{id}(id=${session.tutorID})}">Profile</a>
                     <a th:href="@{/logout}">Logout</a>
                 </div>

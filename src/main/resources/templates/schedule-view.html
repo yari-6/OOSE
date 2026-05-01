@@ -28,19 +28,17 @@
                     class="schedule-cell">
 
                     <th:block th:if="${cell != null}">
-                        <th:block th:if="${showLinks}"
-                                  th:with="nameArray=${#strings.arraySplit(cell.namesString, '/')},
-                                               idArray=${#strings.arraySplit(cell.tutorIdsString, '/')}">
-                                <span th:each="name, iterStat : ${nameArray}" class="tutor-entry">
-                                    <a th:href="@{/tutors/{id}(id=${idArray[iterStat.index]})}"
-                                       th:text="${name}"
-                                       class="grid-link"></a>
-                                    <span th:if="${!iterStat.last}" class="separator">/</span>
-                                </span>
+                        <th:block th:if="${showLinks}">
+                            <span th:each="name, iterStat : ${cell.names}" class="tutor-entry">
+                                <a th:href="@{/tutors/{id}(id=${cell.tutorIDs[iterStat.index]})}"
+                                   th:text="${name}"
+                                   class="grid-link"></a>
+                                <span th:if="${!iterStat.last}" class="separator">/</span>
+                            </span>
                         </th:block>
 
                         <th:block th:unless="${showLinks}">
-                            <span th:text="${cell.namesString}" class="static-name"></span>
+                            <span th:text="${#strings.arrayJoin(cell.names, '/')}"></span>
                         </th:block>
                     </th:block>
                 </td>
@@ -49,6 +47,5 @@
         </table>
     </div>
 </div>
-
 </body>
 </html>

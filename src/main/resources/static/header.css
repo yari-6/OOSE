@@ -1,4 +1,3 @@
-
 :root {
     --primary-maroon: #6f263d;
     --secondary-maroon: #8a1538;
@@ -8,6 +7,9 @@
 }
 
 .header {
+    position: relative;
+    overflow: visible;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -136,11 +138,11 @@
     position: absolute;
     right: 0;
     top: 100%;
-    margin-top: 0px;
     background: white;
-    min-width: 150px;
-    border-radius: 2px;
+    min-width: 160px;
+    border-radius: 4px;
     box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
 .dropdown-content a {
@@ -153,7 +155,10 @@
     transition: 0.5s;
 }
 
-
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    color: var(--secondary-maroon);
+}
 
 .main-footer {
     background-color: #2d2d2d;
@@ -226,9 +231,18 @@
         align-items: center;
     }
 
+    .user-section {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
     .dropdown-content {
-        right: 50%;
-        transform: translateX(50%);
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        top: 110%;
+        width: 200px;
     }
 
     .stripe-container,
