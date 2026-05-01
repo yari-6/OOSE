@@ -81,7 +81,7 @@ public class TimeSubmissionController {
     }
 
     @PostMapping("/add-times")
-    public String addTimes(@RequestParam("day") char day,
+    public String addTimes(@RequestParam("day") String day,
                            @RequestParam("start") LocalTime start,
                            @RequestParam("end") LocalTime end,
                            @RequestParam("effectiveTutorID") String effectiveTutorID,
@@ -110,14 +110,15 @@ public class TimeSubmissionController {
             return "redirect:/schedule-builder?targetTutorID=" + effectiveTutorID;
         }
 
-        Session stagedSession = new Session(new SessionID(targetTutor, day, start), end);
+        String normalizedDay = day == null ? "" : day.trim();
+        Session stagedSession = new Session(new SessionID(targetTutor, normalizedDay, start), end);
 
         try {
             sessionService.validateDropInConstraints(stagedSession);
             Set<Session> currentStaged = sessionService.getAddedTimes(browserSession);
 
             currentStaged.removeIf(existing ->
-                    existing.getSessionID().getDay().equals(day) &&
+                    existing.getSessionID().getDay().equals(normalizedDay) &&
                             start.isBefore(existing.getEndTime()) &&
                             end.isAfter(existing.getSessionID().getTime())
             );
