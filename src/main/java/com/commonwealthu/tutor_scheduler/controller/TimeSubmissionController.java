@@ -26,6 +26,7 @@ import java.util.*;
 public class TimeSubmissionController {
 
     private final TutorService tutorService;
+
     private final SessionService sessionService;
 
     public TimeSubmissionController(TutorService tutorService, SessionService sessionService) {
@@ -80,7 +81,7 @@ public class TimeSubmissionController {
     }
 
     @PostMapping("/add-times")
-    public String addTimes(@RequestParam("day") String day,
+    public String addTimes(@RequestParam("day") char day,
                            @RequestParam("start") LocalTime start,
                            @RequestParam("end") LocalTime end,
                            @RequestParam("effectiveTutorID") String effectiveTutorID,

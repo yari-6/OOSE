@@ -166,13 +166,6 @@ public class SessionService {
         }
     }
 
-    @Transactional
-    public void updateSession(String oldTutorId, String oldDay, String oldTime,
-                              String newTutorId, String newRoom) {
-        deleteSession(oldTutorId, oldDay, oldTime);
-
-        adminSaveSession(newTutorId, oldDay, oldTime, newRoom);
-    }
 
     //Drop in rules for Learning Center
     public void validateDropInConstraints(Session newSess) {

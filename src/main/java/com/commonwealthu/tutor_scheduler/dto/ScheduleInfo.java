@@ -50,23 +50,11 @@ public class ScheduleInfo {
         colors.add(color);
     }
 
-    public String getNamesString() {
-        return String.join("/", names);
-    }
-
-    public String getTutorIdsString() {
-        return String.join("/", tutorIDs);
-    }
-
     // Gets the cell styling based on how many tutors are in a grid cell
     public String getBackgroundStyle() {
-        if (colors.isEmpty()) {
-            return "";
-        }
         if (colors.size() == 1) {
             return "background-color: " + colors.getFirst();
         }
-        // Handles 2 (or more) tutors
-        return "background: linear-gradient(to right, " + colors.get(0) + " 50%, " + colors.get(1) + " 50%)";
+        return "background: linear-gradient(to right, " + colors.getFirst() + " 50%, " + colors.get(1) + " 50%)";
     }
 }
