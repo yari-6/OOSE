@@ -78,8 +78,8 @@
 }
 
 .signin-btn:hover {
-    background: var(--accent-gold);
-    color: var(--primary-maroon);
+    background: linear-gradient(to right, var(--primary-maroon), var(--secondary-maroon));
+    color: white;
 }
 
 .accent-line {
@@ -130,6 +130,8 @@
 }
 
 .dropdown:hover .dropdown-content {
+    background: linear-gradient(to right, var(--primary-maroon), var(--secondary-maroon));
+    color: white;
     display: block;
 }
 
@@ -160,42 +162,7 @@
     color: var(--secondary-maroon);
 }
 
-.main-footer {
-    background-color: #2d2d2d;
-    color: white;
-    padding: 40px 20px;
-    border-top: 5px solid var(--primary-maroon);
-    margin-top: 40px;
-    font-family: var(--font-header);
-}
 
-.footer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 20px;
-}
-
-.footer-heading {
-    color: var(--accent-gold);
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.footer-link {
-    color: white;
-    text-decoration: none;
-    display: block;
-    margin-bottom: 10px;
-    transition: 0.2s ease;
-}
-
-.footer-link:hover {
-    color: var(--accent-gold);
-    text-decoration: underline;
-}
 
 @media (max-width: 900px) {
     .header {

@@ -21,7 +21,7 @@
         <div th:if="${session.tutorID != null}" class="user-section">
             <div class="dropdown">
                 <button class="dropbtn">
-                    Welcome, <span th:text="${session.firstName}">User</span> &#9662;
+                    Welcome, <span th:text="${tutor != null ? tutor.firstName  : session.tutorID}">User</span> &#9662;
                 </button>
                 <div class="dropdown-content">
                     <a th:if="${session.isAdmin == true}" th:href="@{/admin/dashboard}">Admin Dashboard</a>

@@ -6,6 +6,7 @@
     <title>Schedule Editor</title>
     <link rel="stylesheet" th:href="@{/admin.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
 <div th:replace="~{headerFragment :: header('Schedule Editor')}"></div>
@@ -146,43 +147,9 @@
     </div>
 </div>
 
-<script th:inline="javascript">
-    function goToTutor() {
-        const val = document.getElementById('tutorSearchInput').value;
-        const opts = document.getElementById('tutorOptions').childNodes;
-        let id = null;
-
-        for (let i = 0; i < opts.length; i++) {
-            if (opts[i].value === val) {
-                id = opts[i].getAttribute('data-id');
-                break;
-            }
-        }
-
-        if (id) {
-            window.location.href = '/schedule-builder?targetTutorID=' + id;
-        } else {
-            alert("Please select a valid tutor from the list.");
-        }
-    }
-    function openModal(day, time) {
-        document.getElementById('modalTitle').innerText = "Add Session";
-        document.getElementById('sessionForm').action = /*[[ @{/admin/save-master-session} ]]*/ '';
-        document.getElementById('modalDay').value = day;
-        document.getElementById('modalTime').value = time;
-        document.getElementById('sessionModal').style.display = 'block';
-    }
-    function openEditModal(tutorId, day, time) {
-        document.getElementById('modalTitle').innerText = "Edit Session";
-        document.getElementById('sessionForm').action = /*[[ @{/admin/save-master-session} ]]*/ '';
-        document.getElementById('oldTutorId').value = tutorId;
-        document.getElementById('modalTutorSelect').value = tutorId;
-        document.getElementById('modalDay').value = day;
-        document.getElementById('modalTime').value = time;
-        document.getElementById('sessionModal').style.display = 'block';
-    }
-    function closeModal() { document.getElementById('sessionModal').style.display = 'none'; }
-</script>
 <div th:replace="~{footerFragment :: footer}"></div>
+
+<script th:src="@{/admin.js}"></script>
+
 </body>
 </html>

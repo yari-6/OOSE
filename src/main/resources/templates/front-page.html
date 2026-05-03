@@ -6,6 +6,7 @@
     <title>BloomTutors</title>
     <link rel="stylesheet" th:href="@{/style.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
 <div th:replace="~{headerFragment :: header('Welcome to Bloom Tutors')}"></div>
@@ -59,13 +60,13 @@
 
         <a th:href="@{/tutors}" class="hero-link">
             <div class="hero_content box">
-                <p>Click here to search for a tutor</p>
+                <p>Search for a tutor</p>
             </div>
         </a>
     </div>
 
     <div class="image-side">
-        <img th:src="@{/tutor_center.jpg}" alt="Bloomsburg Tutor Center" class="hero-image">
+        <img th:src="@{/tutor_center.jpg}" alt="Bloomsburg Tutor Center">
     </div>
 </main>
 

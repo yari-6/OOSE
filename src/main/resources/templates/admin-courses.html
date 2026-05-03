@@ -6,6 +6,7 @@
   <title>BloomTutors</title>
   <link rel="stylesheet" th:href="@{/admin.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
+  <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
 <div th:replace="~{headerFragment :: header('Course Editor')}"></div>
@@ -76,47 +77,7 @@
 
 <div th:replace="~{footerFragment :: footer}"></div>
 
-<script>
-  function populateSubjectFilter() {
-    const subjectFilter = document.getElementById('subjectFilter');
-    const rows = document.querySelectorAll('.course-row');
-    const subjects = [...new Set(Array.from(rows).map(row => row.getAttribute('data-subject')))].sort();
-
-    subjects.forEach(subject => {
-      const option = document.createElement('option');
-      option.value = subject;
-      option.textContent = subject;
-      subjectFilter.appendChild(option);
-    });
-  }
-
-  function filterCourses() {
-    const searchValue = document.getElementById('courseSearch').value.toLowerCase();
-    const subjectValue = document.getElementById('subjectFilter').value.toLowerCase();
-    const rows = document.querySelectorAll('.course-row');
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-      const subject = row.getAttribute('data-subject').toLowerCase();
-      const number = row.getAttribute('data-number').toLowerCase();
-      const title = row.getAttribute('data-title').toLowerCase();
-
-      const matchesSearch = subject.includes(searchValue) || number.includes(searchValue) || title.includes(searchValue);
-      const matchesSubject = !subjectValue || subject === subjectValue;
-
-      if (matchesSearch && matchesSubject) {
-        row.style.display = '';
-        visibleCount++;
-      } else {
-        row.style.display = 'none';
-      }
-    });
-
-    document.getElementById('noCourseResults').style.display = visibleCount === 0 ? '' : 'none';
-  }
-
-  populateSubjectFilter();
-</script>
+<script th:src="@{/admin.js}"></script>
 
 </body>
 </html>

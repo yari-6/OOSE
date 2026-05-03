@@ -6,6 +6,7 @@
   <title>Tutor Editor</title>
   <link rel="stylesheet" th:href="@{/admin.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
+  <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
 <div th:replace="~{headerFragment :: header('Tutor Editor')}"></div>
@@ -89,39 +90,7 @@
 
 <div th:replace="~{footerFragment :: footer}"></div>
 
-<script>
-  const modal = document.getElementById('tutorModal');
-
-  function openModal() { modal.classList.add('show'); }
-  function closeModal() { modal.classList.remove('show'); }
-
-  window.onclick = function(event) {
-      if (event.target == modal) closeModal();
-  }
-
-  // Search functionality
-  function filterTutors() {
-    const searchInput = document.getElementById('tutorSearch').value.toLowerCase();
-    const table = document.getElementById('tutorTable');
-    const rows = table.querySelectorAll('tbody .tutor-row');
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-      const name = row.getAttribute('data-name').toLowerCase();
-      const id = row.getAttribute('data-id').toLowerCase();
-      
-      if (name.includes(searchInput) || id.includes(searchInput)) {
-        row.style.display = '';
-        visibleCount++;
-      } else {
-        row.style.display = 'none';
-      }
-    });
-
-    // Show "no results" message if no tutors match
-    document.getElementById('noResults').style.display = visibleCount === 0 ? '' : 'none';
-  }
-</script>
+<script th:src="@{/admin.js}"></script>
 
 </body>
 </html>

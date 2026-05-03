@@ -6,6 +6,7 @@
     <title>Tutor Information</title>
     <link rel="stylesheet" th:href="@{/profile.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
+    <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/schedule-view.css}">
 </head>
 <body>
@@ -159,31 +160,28 @@
         </section>
 
         <section class="schedule-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+
+            <div class="schedule-actions">
                 <h2>Schedule</h2>
 
                 <a th:if="${session.tutorID == tutor.tutorID and isWindowOpen}"
                    th:href="@{/schedule-builder}"
-                   class="submit"
-                   style="text-decoration: none; font-size: 0.9rem; padding: 8px 15px;">
+                   class="btn-edit">
                     Edit Schedule
                 </a>
 
                 <span th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
-                      class="status-badge"
-                      style="background-color: #fee2e2; color: #b91c1c; border: 1px solid #f87171; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">
-            Submissions Locked
-        </span>
+                      class="status-badge-locked">
+                    Submissions Locked
+                </span>
             </div>
 
             <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
-                 style="font-size: 0.85rem; color: #666; margin-bottom: 15px; font-style: italic;">
+                 class="lock-notice">
                 * The administrator has closed the submission window. You cannot modify your times until it is reopened.
             </div>
 
-
             <div th:if="${tutor.type == 'Tutor'}">
-                <h2>Schedule</h2>
                 Schedule is subject to change, and sessions are by appointment only. Please book through CU Succeed.
             </div>
 
@@ -191,13 +189,15 @@
                 <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
             </div>
 
-            <div th:if="${schedule.isEmpty()}" style="padding: 20px; background: #f8f9fa; border-radius: 6px; text-align: center; color: #636e72;">
-                <h2>Schedule</h2>
+            <div th:if="${schedule.isEmpty()} AND tutor.type !='Tutor'" class="empty-schedule-msg">
                 Schedule coming soon.
             </div>
+
         </section>
     </div>
 </div>
+
+<div th:replace="~{footerFragment :: footer}"></div>
 
 <script th:inline="javascript">
     const isLoggedIn = [[${session.tutorID != null}]];
@@ -207,7 +207,6 @@
 <script th:src="@{/pfpCode.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script th:src="@{/feedback.js}"></script>
-
 
 </body>
 </html>
