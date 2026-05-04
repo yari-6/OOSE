@@ -33,27 +33,7 @@ public class TutorController {
     }
 
     @GetMapping("/")
-    public String home(HttpSession session,
-                       @RequestParam(value = "mode", required = false) String mode,
-                       Model model) {
-
-        String tutorID = (String) session.getAttribute("tutorID");
-        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
-
-        if (tutorID == null) {
-            model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
-            return "front-page";
-        }
-
-        if (isAdmin != null && isAdmin) {
-            if ("standard".equals(mode)) {
-                model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
-                return "front-page";
-            }
-            return "front-page";
-        }
-
-        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+    public String home(Model model) {
         return "front-page";
     }
 

@@ -152,5 +152,11 @@ public class TimeSubmissionController {
 
         return currentUser.isAdmin() ? "redirect:/admin/dashboard" : "redirect:/tutors/" + effectiveTutorID;
     }
+
+    @PostMapping("/reject-times")
+    public String rejectTimes(HttpSession browserSession) {
+        browserSession.removeAttribute("addedTimes");
+        return "redirect:/schedule-builder";
+    }
 }
 

@@ -115,12 +115,14 @@ public class SessionService {
                     String key = dayCode + " " + timeStr;
 
                     if (timeMap.containsKey(key)) {
-                        // If the slot exists, we just add the NEW tutor to the existing lists
                         timeMap.get(key).addTutor(name, tutorID, color);
+                        timeMap.get(key).setLocation(s.getLocation());
+                        timeMap.get(key).setEndTime(s.getEndTime());
                     } else {
-                        // If the slot is empty, create a new DTO and add the first tutor
                         ScheduleInfo display = new ScheduleInfo();
                         display.addTutor(name, tutorID, color);
+                        display.setLocation(s.getLocation());
+                        display.setEndTime(s.getEndTime());
                         timeMap.put(key, display);
                     }
                 }
@@ -184,6 +186,7 @@ public class SessionService {
 
         //No double sessions
         boolean isTutorOverloaded = sessionRepo.findBySessionID_Tutor(tutor).stream()
+                .filter(existing -> !existing.getSessionID().equals(newSess.getSessionID()))
                 .anyMatch(existing ->
                         existing.getSessionID().getDay().equals(day) &&
                                 start.isBefore(existing.getEndTime()) &&
@@ -297,26 +300,28 @@ public class SessionService {
         public void setLocation(String location) { this.location = location; }
     }
 
-    public void deleteSession(String tutorId, String day, String time) {
+    public void deleteSession(String tutorId, String day, String startTimeStr) {
         Tutor tutor = tutorRepo.findById(tutorId).orElse(null);
 
         if (tutor != null) {
-            LocalTime startTime = LocalTime.parse(time);
-
+            LocalTime startTime = LocalTime.parse(startTimeStr);
             SessionID id = new SessionID(tutor, day, startTime);
-
             sessionRepo.deleteById(id);
         }
     }
 
     @Transactional
-    public void adminSaveSession(String tutorId, String day, String time, String room) {
+    public void adminSaveSession(String tutorId, String day, String startTimeStr, String endTimeStr,
+                                 String room, String className, String professor, String meetingTimes) {
         Tutor tutor = tutorRepo.findById(tutorId)
                 .orElseThrow(() -> new IllegalArgumentException("Tutor not found"));
 
-        LocalTime startTime = LocalTime.parse(time);
+        LocalTime startTime = LocalTime.parse(startTimeStr);
+        LocalTime endTime = LocalTime.parse(endTimeStr);
 
-        LocalTime endTime = startTime.plusMinutes(50);
+        if (!endTime.isAfter(startTime)) {
+            throw new IllegalStateException("End time must be after start time.");
+        }
 
         SessionID id = new SessionID(tutor, day, startTime);
 
@@ -324,6 +329,11 @@ public class SessionService {
 
         session.setLocation(room);
         session.setEndTime(endTime);
+        session.setClassName(className != null ? className.trim() : null);
+        session.setProfessor(professor != null ? professor.trim() : null);
+        session.setClassMeetingTimes(meetingTimes != null ? meetingTimes.trim() : null);
+
+        validateDropInConstraints(session);
 
         sessionRepo.save(session);
     }

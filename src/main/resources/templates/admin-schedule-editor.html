@@ -59,7 +59,7 @@
                     <div th:if="${cell != null}">
                         <span th:each="name, iterStat : ${cell.names}"
                               class="admin-chip-text"
-                              th:onclick="openEditModal([[${cell.tutorIDs[iterStat.index]}]], [[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]], [[${cell.location ?: ''}]], '', '')">
+                              th:onclick="openEditModal([[${cell.tutorIDs[iterStat.index]}]], [[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]], [[${cell.location ?: ''}]], '', '', '', [[${#temporals.format(cell.endTime, 'HH:mm')}]])">
                                 <span th:text="${name}"></span>
                                 <span th:if="${!iterStat.last}"> / </span>
                         </span>
@@ -93,7 +93,7 @@
                     th:with="isNewGroup=${iterStat.first || s.sessionID.tutor.tutorID != siTableData[iterStat.index - 1].sessionID.tutor.tutorID}"
                     th:classappend="${isNewGroup} ? 'group-start' : ''"
                     class="clickable-row"
-                    th:onclick="openEditModal([[${s.sessionID.tutor.tutorID}]], [[${s.sessionID.day}]], [[${#temporals.format(s.sessionID.time, 'HH:mm')}]], [[${s.location ?: ''}]], [[${s.professor ?: ''}]], [[${s.classMeetingTimes ?: ''}]], [[${s.className ?: ''}]])">
+                    th:onclick="openEditModal([[${s.sessionID.tutor.tutorID}]], [[${s.sessionID.day}]], [[${#temporals.format(s.sessionID.time, 'HH:mm')}]], [[${s.location ?: ''}]], [[${s.professor ?: ''}]], [[${s.classMeetingTimes ?: ''}]], [[${s.className ?: ''}]], [[${#temporals.format(s.endTime, 'HH:mm')}]])">
 
                     <td class="cell-shared leader-col">
                         <strong th:if="${isNewGroup}" th:text="${s.sessionID.tutor.firstName + ' ' + s.sessionID.tutor.lastName}"></strong>
@@ -124,8 +124,9 @@
     <div class="modal">
         <h2 id="modalTitle">Manage Session</h2>
         <form id="sessionForm" method="post">
-            <input type="hidden" name="currentFilter" th:value="${currentFilter}">
+            <input type="hidden" name="currentFilter" id="modalCurrentFilter">
             <input type="hidden" name="oldTutorId" id="oldTutorId">
+            <input type="hidden" name="oldStartTime" id="oldStartTime">
 
             <div class="form-group">
                 <label>Time Slot</label>
@@ -135,8 +136,21 @@
                         <option value="W">Wednesday</option><option value="R">Thursday</option>
                         <option value="F">Friday</option>
                     </select>
-                    <select name="time" id="modalTime">
-                        <option th:each="t : ${times}" th:value="${#temporals.format(t, 'HH:mm')}" th:text="${#temporals.format(t, 'h:mm a')}"></option>
+                    <label>Start Time</label>
+                    <select id="modalStartTime" name="startTime" required>
+                        <option th:each="t : ${times}"
+                                th:value="${#temporals.format(t, 'HH:mm')}"
+                                th:text="${#temporals.format(t, 'h:mm a')}"></option>
+                    </select>
+
+                    <label>End Time</label>
+                    <select id="modalEndTime" name="endTime" required>
+                        <option th:each="t : ${times}"
+                                th:value="${#temporals.format(t, 'HH:mm')}"
+                                th:text="${#temporals.format(t, 'h:mm a')}"></option>
+                        <option value="12:00">12:00 PM</option>
+                        <option value="13:00">1:00 PM</option>
+                        <option value="17:00">5:00 PM</option>
                     </select>
                 </div>
             </div>

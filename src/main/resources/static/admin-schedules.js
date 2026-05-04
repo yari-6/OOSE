@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const sessionModal = document.getElementById('sessionModal');
     const sessionForm = document.getElementById('sessionForm');
 
-    // Helper to toggle custom location input
     window.handleLocationChange = function(selectElement) {
         const customInput = document.getElementById('modalLocation');
         if (selectElement.value === 'Other') {
@@ -15,13 +14,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    window.openModal = function (day, time) {
+    window.openModal = function (day, startTime) {
         document.getElementById('modalTitle').innerText = "Add New Session";
         document.getElementById('modalDeleteBtn').style.display = 'none';
         sessionForm.reset();
 
         document.getElementById('modalDay').value = day;
-        document.getElementById('modalTime').value = time;
+        document.getElementById('modalStartTime').value = startTime;
         document.getElementById('oldTutorId').value = "";
 
         const params = new URLSearchParams(window.location.search);
@@ -47,14 +46,34 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionModal.style.display = 'flex';
     };
 
-    window.openEditModal = function (tutorId, day, time, location = '', professor = '', classMeetingTimes = '', className = '') {
+    window.openEditModal = function (tutorId, day, startTime, location = '', professor = '', classMeetingTimes = '', className = '', endTime = '') {
+        const cleanTime = (t) => {
+            if (!t || t === 'null' || t === '') return "";
+            return t.substring(0, 5);
+        };
+
+        const formattedStart = cleanTime(startTime);
+        const formattedEnd = cleanTime(endTime);
+
         document.getElementById('modalTitle').innerText = "Edit Session";
         document.getElementById('modalDeleteBtn').style.display = 'block';
 
-        document.getElementById('modalDay').value = day;
-        document.getElementById('modalTime').value = time;
-        document.getElementById('modalTutorSelect').value = tutorId;
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentFilter = urlParams.get('type') || 'Drop-in';
+
+        if(document.getElementById('modalCurrentFilter')) {
+            document.getElementById('modalCurrentFilter').value = currentFilter;
+        }
+
+        if(document.getElementById('oldStartTime')) {
+            document.getElementById('oldStartTime').value = formattedStart;
+        }
+
         document.getElementById('oldTutorId').value = tutorId;
+        document.getElementById('modalDay').value = day;
+        document.getElementById('modalStartTime').value = formattedStart;
+        document.getElementById('modalEndTime').value = formattedEnd;
+        document.getElementById('modalTutorSelect').value = tutorId;
 
         const selector = document.getElementById('locationSelector');
         const customInput = document.getElementById('modalLocation');
@@ -70,18 +89,27 @@ document.addEventListener("DOMContentLoaded", function () {
             customInput.style.display = 'block';
         }
 
-        if(document.getElementById('modalProfessor')) {
+        if(document.getElementById('modalProfessor'))
             document.getElementById('modalProfessor').value = (professor && professor !== 'null') ? professor : "";
-        }
-        if(document.getElementById('modalMeetingTimes')) {
+        if(document.getElementById('modalMeetingTimes'))
             document.getElementById('modalMeetingTimes').value = (classMeetingTimes && classMeetingTimes !== 'null') ? classMeetingTimes : "";
-        }
-        if(document.getElementById('modalClassName')) {
+        if(document.getElementById('modalClassName'))
             document.getElementById('modalClassName').value = (className && className !== 'null') ? className : "";
-        }
 
+        const sessionForm = document.getElementById('sessionForm');
+        const sessionModal = document.getElementById('sessionModal');
         sessionForm.action = "/admin/save-master-session";
         sessionModal.style.display = 'flex';
+    };
+
+    sessionForm.onsubmit = function(e) {
+        const start = document.getElementById('modalStartTime').value;
+        const end = document.getElementById('modalEndTime').value;
+        if (start && end && start >= end) {
+            alert("Error: End time must be after the start time.");
+            e.preventDefault();
+            return false;
+        }
     };
 
     window.submitDelete = function() {

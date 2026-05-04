@@ -34,13 +34,9 @@ public class SessionID implements Serializable {
 
     public void setTutor(Tutor tutor) { this.tutor = tutor; }
 
-    public String getDay() {
-        return day != null ? day.trim() : null;
-    }
+    public String getDay() { return day != null ? day.trim() : null; }
 
-    public void setDay(String day) {
-        this.day = (day != null) ? day.trim() : null;
-    }
+    public void setDay(String day) { this.day = (day != null) ? day.trim() : null;}
 
     public LocalTime getTime() {
         return time;

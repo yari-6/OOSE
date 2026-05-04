@@ -1,5 +1,6 @@
 package com.commonwealthu.tutor_scheduler.dto;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class ScheduleInfo {
     private List<String> tutorIDs;
     private List<String> colors;
     private String location;
+    private LocalTime endTime;
 
     // Fixed the constructor parameters and logic
     public ScheduleInfo() {
@@ -21,6 +23,10 @@ public class ScheduleInfo {
         this.colors = new ArrayList<>();
         this.location = "";
     }
+
+    public LocalTime getEndTime() {return endTime; }
+
+    public void setEndTime(LocalTime endTime) {this.endTime = endTime;}
 
     public List<String> getTutorIDs() {
         return tutorIDs;
@@ -48,7 +54,7 @@ public class ScheduleInfo {
 
     public String getLocation () { return location; }
 
-    public void setLocation(String Location) {this.location = location;}
+    public void setLocation(String location) { this.location = location; }
 
     public void addTutor(String name, String tutorID, String color) {
         names.add(name);

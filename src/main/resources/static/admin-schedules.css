@@ -303,9 +303,27 @@ input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 1000px white inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
+.modal-day-time-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.modal-day-time-row > div {
+    flex: 1;
+}
+
+.modal-day-time-row label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
 
 @media (max-width: 1000px) {
     .admin-editor-header { flex-direction: column; align-items: stretch; }
     .editor-search-input { width: 100%; }
     .modal-grid-row { grid-template-columns: 1fr; }
+    .modal-day-time-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
 }

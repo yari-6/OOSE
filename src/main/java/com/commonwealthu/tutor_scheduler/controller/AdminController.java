@@ -221,28 +221,44 @@ public class AdminController {
     @PostMapping("/save-master-session")
     public String saveMasterSession(@RequestParam String tutorId,
                                     @RequestParam String day,
-                                    @RequestParam String time,
+                                    @RequestParam String startTime,
+                                    @RequestParam String endTime,
                                     @RequestParam String location,
                                     @RequestParam(required = false) String className,
                                     @RequestParam(required = false) String professor,
                                     @RequestParam(required = false) String meetingTimes,
+                                    @RequestParam(required = false) String oldTutorId,
+                                    @RequestParam(required = false) String oldStartTime,
                                     @RequestParam(defaultValue = "Drop-in") String currentFilter,
                                     HttpSession session,
-                                    org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+                                    RedirectAttributes redirectAttributes) {
         if (!isAdmin(session)) return "redirect:/";
+
         try {
-            sessionService.adminSaveSession(tutorId, day, time, location);
+            boolean tutorChanged = (oldTutorId != null && !oldTutorId.isEmpty() && !oldTutorId.equals(tutorId));
+            boolean timeChanged = (oldStartTime != null && !oldStartTime.isEmpty() && !oldStartTime.equals(startTime));
+
+            if (tutorChanged || timeChanged) {
+                String targetTutor = (oldTutorId != null) ? oldTutorId : tutorId;
+                String targetTime = (oldStartTime != null) ? oldStartTime : startTime;
+                sessionService.deleteSession(targetTutor, day, targetTime);
+            }
+
+            sessionService.adminSaveSession(tutorId, day, startTime, endTime, location, className, professor, meetingTimes);
             redirectAttributes.addFlashAttribute("success", "Session saved!");
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
+
         return "redirect:/admin/schedule?type=" + URLEncoder.encode(currentFilter, StandardCharsets.UTF_8);
     }
 
     @PostMapping("/delete-session")
-    public String deleteSession(@RequestParam String tutorId, @RequestParam String day,
-                                @RequestParam String time, @RequestParam(defaultValue = "Drop-in") String currentFilter) {
-        sessionService.deleteSession(tutorId, day, time);
+    public String deleteSession(@RequestParam String tutorId,
+                                @RequestParam String day,
+                                @RequestParam String startTime, // Match the HTML name
+                                @RequestParam(defaultValue = "Drop-in") String currentFilter) {
+        sessionService.deleteSession(tutorId, day, startTime);
         return "redirect:/admin/schedule?type=" + URLEncoder.encode(currentFilter, StandardCharsets.UTF_8);
     }
 
