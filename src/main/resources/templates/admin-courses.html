@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BloomTutors</title>
-  <link rel="stylesheet" th:href="@{/admin.css}">
+  <link rel="stylesheet" th:href="@{/admin-courses.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
   <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
@@ -20,17 +20,23 @@
 </div>
 
 <main class="container">
-  <div class="form-card">
-    <h2>Add Course</h2>
-    <form th:action="@{/admin/courses/add}" method="post" class="inline-form">
-      <div class="input-group">
-        <input type="text" name="courseSubject" placeholder="MATH" maxlength="10" required>
-        <input type="text" name="courseNumber" placeholder="101" required>
-        <input type="text" name="courseTitle" placeholder="Algebra" class="input-grow" required>
-        <button type="submit" class="btn-open">Add</button>
-      </div>
-    </form>
-  </div>
+  <form th:action="@{/admin/courses/add}" method="post" class="inline-form">
+    <div class="input-group">
+
+      <input type="text" name="courseSubject" list="subjectOptions" placeholder="MATH" maxlength="10" required>
+      <datalist id="subjectOptions">
+        <option value="MATH">
+        <option value="COMPSCI">
+        <option value="BIOLOGY">
+        <option value="ENGLISH">
+        <option value="PSYCH">
+      </datalist>
+
+      <input type="text" name="courseNumber" placeholder="101" required>
+      <input type="text" name="courseTitle" placeholder="Algebra" class="input-grow" required>
+      <button type="submit" class="btn-open">Add</button>
+    </div>
+  </form>
 
   <div class="form-card">
     <h2>Current Catalog</h2>
@@ -77,7 +83,7 @@
 
 <div th:replace="~{footerFragment :: footer}"></div>
 
-<script th:src="@{/admin.js}"></script>
+<script th:src="@{/admin-courses.js}"></script>
 
 </body>
 </html>

@@ -12,12 +12,14 @@ public class ScheduleInfo {
     private List<String> names;
     private List<String> tutorIDs;
     private List<String> colors;
+    private String location;
 
     // Fixed the constructor parameters and logic
     public ScheduleInfo() {
         this.names = new ArrayList<>();
         this.tutorIDs = new ArrayList<>(); // Case-sensitive: must match the field name
         this.colors = new ArrayList<>();
+        this.location = "";
     }
 
     public List<String> getTutorIDs() {
@@ -43,6 +45,10 @@ public class ScheduleInfo {
     public void setColors(List<String> colors) {
         this.colors = colors;
     }
+
+    public String getLocation () { return location; }
+
+    public void setLocation(String Location) {this.location = location;}
 
     public void addTutor(String name, String tutorID, String color) {
         names.add(name);

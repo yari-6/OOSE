@@ -1,7 +1,7 @@
 package com.commonwealthu.tutor_scheduler.service;
 
+import com.commonwealthu.tutor_scheduler.entity.CourseID;
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
-import com.commonwealthu.tutor_scheduler.entity.Course;
 import com.commonwealthu.tutor_scheduler.repository.CourseRepository;
 import com.commonwealthu.tutor_scheduler.repository.RatingRepository;
 import com.commonwealthu.tutor_scheduler.repository.SessionRepository;
@@ -91,15 +91,13 @@ public class TutorService {
         String[] searchParts = searchTrimmed.split(" ");
 
         String subject = "";
-        int number = -1; // Use a value that won't naturally match a course number
+        int number = -1;
 
-        // "Subject Number"
         if (searchParts.length >= 2) {
             try {
                 subject = searchParts[0].toUpperCase();
                 number = Integer.parseInt(searchParts[1]);
             } catch (NumberFormatException e) {
-                // Title match
             }
         }
 
@@ -115,36 +113,29 @@ public class TutorService {
         }
     }
 
-    public void addCourseToTutor(String tutorID, String courseID) {
+    @Transactional
+    public void updateTutorCourses(String tutorID, List<String> courseKeys) {
         Tutor tutor = findTutorByID(tutorID);
-        String subject = courseID.replaceAll("[0-9]", "");
-        int number = Integer.parseInt(courseID.replaceAll("[^0-9]", ""));
+        if (tutor == null) return;
 
-        com.commonwealthu.tutor_scheduler.entity.CourseID id = new com.commonwealthu.tutor_scheduler.entity.CourseID(subject, number);
-        Course course = courseRepo.findById(id).orElse(null);
+        tutor.getCoursesOffered().clear();
 
-        if (tutor != null && course != null) {
-            if (!tutor.getCoursesOffered().contains(course)) {
-                tutor.getCoursesOffered().add(course);
-                tutorRepo.save(tutor);
+        if (courseKeys != null && !courseKeys.isEmpty()) {
+            for (String key : courseKeys) {
+                String[] parts = key.split("-");
+                if (parts.length == 2) {
+                    try {
+                        String subject = parts[0];
+                        int number = Integer.parseInt(parts[1]);
+                        CourseID id = new CourseID(subject, number);
+                        courseRepo.findById(id).ifPresent(tutor.getCoursesOffered()::add);
+                    } catch (NumberFormatException ignored) {}
+                }
             }
         }
+        tutorRepo.save(tutor);
     }
 
-    public void removeCourseFromTutor(String tutorID, String courseID) {
-        Tutor tutor = findTutorByID(tutorID);
-
-        String subject = courseID.replaceAll("[0-9]", "");
-        int number = Integer.parseInt(courseID.replaceAll("[^0-9]", ""));
-
-        if (tutor != null) {
-            tutor.getCoursesOffered().removeIf(c ->
-                    c.getCourseID().getCourseSubject().equals(subject) &&
-                            c.getCourseID().getCourseNumber() == number
-            );
-            tutorRepo.save(tutor);
-        }
-    }
 
     public void createTutor(Tutor tutor) {
         if (tutor.getPass() == null || tutor.getPass().isEmpty()) {

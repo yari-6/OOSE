@@ -50,7 +50,7 @@ public class TutorController {
                 model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
                 return "front-page";
             }
-            return "redirect:/admin/dashboard";
+            return "front-page";
         }
 
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());

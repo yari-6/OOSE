@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tutor Editor</title>
-  <link rel="stylesheet" th:href="@{/admin.css}">
+  <link rel="stylesheet" th:href="@{/admin-tutors.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
   <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
+
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <p class="loading-text">Initializing Courses...</p>
+</div>
+
 <div th:replace="~{headerFragment :: header('Tutor Editor')}"></div>
 
 <div class="stripe-container">
@@ -23,7 +29,7 @@
   <div class="form-card">
     <div class="card-header">
       <h2>Tutor Roster</h2>
-      <button onclick="openModal()" class="btn-open">+ Register Tutor</button>
+      <button onclick="openTutorModal()" class="btn-open">+ Register Tutor</button>
     </div>
 
     <div class="tutor-search-box">
@@ -42,25 +48,21 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="t : ${tutors}" class="fade-in tutor-row" th:attr="data-name=${t.firstName + ' ' + t.lastName}, data-id=${t.tutorID}">
+        <tr th:each="t : ${tutors}" class="fade-in tutor-row"
+            th:attr="data-name=${t.firstName + ' ' + t.lastName}, data-id=${t.tutorID}">
           <td th:text="${t.firstName + ' ' + t.lastName}" class="tutor-name-cell"></td>
           <td><span class="status-badge" th:text="${t.type}"></span></td>
           <td th:text="${t.tutorID}"></td>
           <td>
             <div class="action-group">
-              <form th:action="@{/admin/tutors/reset/{id}(id=${t.tutorID})}" method="post">
-                <button type="submit" class="btn-secondary btn-small">Reset Pass</button>
-              </form>
-              <form th:action="@{/admin/tutors/delete/{id}(id=${t.tutorID})}" method="post">
-                <button type="submit" class="btn-delete"
-                        onclick="return confirm('Are you sure? This will delete all their sessions and ratings.')">
-                  Delete
-                </button>
-              </form>
+              <button type="button" class="btn-secondary btn-small"
+                      th:onclick="openEditModal([[${t.tutorID}]], [[${t.firstName}]], [[${t.lastName}]], [[${t.type}]], [[${tutorCourseMap.get(t.tutorID)}]])">
+                Edit
+              </button>
             </div>
           </td>
         </tr>
-        <tr id="noResults" class="results-empty-row">
+        <tr id="noResults" class="results-empty-row" style="display: none;">
           <td colspan="4" class="results-empty-cell">No tutors match your search.</td>
         </tr>
         </tbody>
@@ -70,27 +72,120 @@
 </main>
 
 <div id="tutorModal" class="modal">
-  <div class="modal-content">
-    <h3>Register New Tutor</h3>
+  <div class="modal-content modal-large">
+    <div class="modal-header">
+      <h3>Register New Tutor</h3>
+      <button type="button" onclick="closeTutorModal()" class="close-x">&times;</button>
+    </div>
     <form th:action="@{/admin/tutors/add}" method="post" class="modal-form">
-      <input type="text" name="tutorID" placeholder="Tutor ID" required>
-      <input type="text" name="firstName" placeholder="First Name" required>
-      <input type="text" name="lastName" placeholder="Last Name" required>
-      <select name="type">
-        <option value="SI">SI</option>
-        <option value="Drop-in">Drop-in</option>
-      </select>
-      <div class="modal-buttons">
-        <button type="submit" class="btn-open">Create Account</button>
-        <button type="button" onclick="closeModal()" class="btn-clear">Cancel</button>
+      <div class="modal-grid">
+        <div class="info-section">
+          <label>Tutor ID</label>
+          <input type="text" name="tutorID" placeholder="e.g. 123456" required>
+          <label>First Name</label>
+          <input type="text" name="firstName" required>
+          <label>Last Name</label>
+          <input type="text" name="lastName" required>
+          <label>Tutor Type</label>
+          <select name="type">
+            <option value="Drop-In">Drop-in</option>
+            <option value="Math Lab">Math Lab</option>
+            <option value="SI">SI</option>
+            <option value="SSC">SSC</option>
+            <option value="Tutor">Tutor</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="course-section">
+          <label>Initial Course Assignment (Optional)</label>
+          <div class="course-filter-controls">
+            <select id="regSubjectFilter" onchange="filterRegCourses()">
+              <option value="">All Depts</option>
+            </select>
+            <input type="text" id="regCourseSearch" placeholder="Filter courses..." onkeyup="filterRegCourses()">
+          </div>
+          <div class="course-scroll-area" id="regCourseList">
+            <div th:each="course : ${allCourses}"
+                 class="reg-course-item course-checkbox-item"
+                 th:attr="data-subject=${course.courseID.courseSubject}">
+              <input type="checkbox" name="courseKeys"
+                     th:id="'reg-' + ${course.courseID.courseSubject} + '-' + ${course.courseID.courseNumber}"
+                     th:value="${course.courseID.courseSubject + '-' + course.courseID.courseNumber}">
+              <label th:for="'reg-' + ${course.courseID.courseSubject} + '-' + ${course.courseID.courseNumber}"
+                     th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber + ': ' + course.courseTitle}"></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn-save">Create Account</button>
+        <button type="button" onclick="closeTutorModal()" class="btn-clear">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="editTutorModal" class="modal">
+  <div class="modal-content modal-large">
+    <div class="modal-header">
+      <h3>Edit Tutor: <span id="displayTutorName"></span></h3>
+      <button type="button" onclick="closeEditModal()" class="close-x">&times;</button>
+    </div>
+    <form th:action="@{/admin/tutors/update-full}" method="post" class="modal-form">
+      <div class="modal-grid">
+        <div class="info-section">
+          <label>Tutor ID</label>
+          <input type="text" id="editTutorID" name="tutorID" readonly class="readonly-input">
+          <label>First Name</label>
+          <input type="text" id="editFirstName" name="firstName" required>
+          <label>Last Name</label>
+          <input type="text" id="editLastName" name="lastName" required>
+          <label>Tutor Type</label>
+          <select id="editType" name="type">
+            <option value="Drop-In">Drop-in</option>
+            <option value="Math Lab">Math Lab</option>
+            <option value="SI">SI</option>
+            <option value="SSC">SSC</option>
+            <option value="Tutor">Tutor</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <div class="danger-zone">
+            <button type="button" onclick="handleResetPassword()" class="btn-secondary btn-small">Reset Password</button>
+            <button type="button" onclick="handleDeleteTutor()" class="btn-delete btn-small">Delete Account</button>
+          </div>
+        </div>
+
+        <div class="course-section">
+          <label>Expertise</label>
+          <div class="course-filter-controls">
+            <select id="modalSubjectFilter" onchange="filterModalCourses()">
+              <option value="">All Depts</option>
+            </select>
+            <input type="text" id="modalCourseSearch" placeholder="Filter courses..." onkeyup="filterModalCourses()">
+          </div>
+          <div class="course-scroll-area" id="modalCourseList">
+            <div th:each="course : ${allCourses}"
+                 class="course-checkbox-item"
+                 th:attr="data-subject=${course.courseID.courseSubject}">
+              <input type="checkbox" name="courseKeys"
+                     th:id="'course-' + ${course.courseID.courseSubject} + '-' + ${course.courseID.courseNumber}"
+                     th:value="${course.courseID.courseSubject + '-' + course.courseID.courseNumber}">
+              <label th:for="'course-' + ${course.courseID.courseSubject} + '-' + ${course.courseID.courseNumber}"
+                     th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber + ': ' + course.courseTitle}"></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn-save">Save All Changes</button>
+        <button type="button" onclick="closeEditModal()" class="btn-clear">Cancel</button>
       </div>
     </form>
   </div>
 </div>
 
 <div th:replace="~{footerFragment :: footer}"></div>
-
-<script th:src="@{/admin.js}"></script>
-
+<script th:src="@{/admin-tutors.js}"></script>
 </body>
 </html>

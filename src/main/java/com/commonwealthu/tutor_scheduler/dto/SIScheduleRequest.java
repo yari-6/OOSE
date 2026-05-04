@@ -19,7 +19,7 @@ public class SIScheduleRequest {
     @NotBlank(message = "Session pattern is required")
     private String pattern;
 
-    private List<SessionEntry> sessions;
+    private List<SessionEntry> sessions = new java.util.ArrayList<>();
 
     @Data
     public static class SessionEntry {

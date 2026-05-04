@@ -175,6 +175,11 @@ fieldset:disabled .btn-add {
     border-top: 4px solid var(--border-distinct);
 }
 
+.cell-shared {
+    font-weight: 700;
+    background-color: rgba(0,0,0,0.01);
+}
+
 @media (max-width: 1024px) {
     .builder-grid {
         flex-direction: column !important;

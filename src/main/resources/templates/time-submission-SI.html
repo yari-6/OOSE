@@ -1,133 +1,121 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enter Times</title>
-  <link rel="stylesheet" th:href="@{/time-submission-SI.css}">
-  <link rel="stylesheet" th:href="@{/header.css}">
-  <link rel="stylesheet" th:href="@{/footer.css}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,width=device-width" />
+  <title>SI Schedule Builder</title>
+  <link rel="stylesheet" th:href="@{/time-submisson-SI.css}" />
+  <link rel="stylesheet" th:href="@{/header.css}" />
 </head>
 <body>
-<div th:replace="~{headerFragment :: header('Enter Your Session Times')}"></div>
+
+<div th:replace="~{headerFragment :: header('SI Time Submission')}"></div>
 
 <div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" />
   <div class="stripe-text">
-    Bloom Tutors - Making scheduling easy!
-    <hr class="accent-line">
+    Blooms Tutors – Making scheduling easy!
+    <hr class="accent-line" />
   </div>
 </div>
 
 <main class="container" id="app">
-  <div th:if="${!isWindowOpen}" class="banner banner-danger">
-    <p><strong>Submissions Locked:</strong> The SI scheduling window is currently closed. You may preview your schedule settings, but you cannot save changes to the database.</p>
-  </div>
-
   <form th:action="@{/si-builder/preview}" method="post" id="siForm">
-    <input type="hidden" name="effectiveTutorID" th:value="${tutorID}">
+    <div class="form-card">
+      <h2>SI Session Builder</h2>
 
-    <fieldset th:disabled="${!isWindowOpen}" class="builder-fieldset">
-      <div class="form-card">
-        <h2>SI Session Builder</h2>
-
-        <div th:if="${error}" class="banner banner-error">
-          <p th:text="${error}"></p>
+      <div th:if="${error}" class="error-banner" style="color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 5px; margin-bottom: 20px; font-weight: bold; border: 1px solid #f87171;">
+        <p th:text="${error}"></p>
+      </div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label for="Class">Class</label>
+          <select id="Class" name="className" required>
+            <option value="" disabled th:selected="${info?.className == null}">-- Select a Course --</option>
+            <option th:each="course : ${tutor.coursesOffered}"
+                    th:value="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
+                    th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
+                    th:selected="${info?.className == (course.courseID.courseSubject + ' ' + course.courseID.courseNumber)}">
+            </option>
+          </select>
         </div>
-
-        <div class="input-grid">
-          <div class="input-group">
-            <label for="Class">Class / Course</label>
-            <input type="text" id="Class" name="className" th:value="${info?.className}" placeholder="e.g. BIOL 114" required>
-          </div>
-          <div class="input-group">
-            <label for="Professor">Professor</label>
-            <input type="text" id="Professor" name="professor" th:value="${info?.professor}" placeholder="Name" required>
-          </div>
-          <div class="input-group">
-            <label for="ClassMeetingTimes">Course Meeting Times</label>
-            <input type="text" id="ClassMeetingTimes" name="classMeetingTimes" th:value="${info?.classMeetingTimes}" placeholder="MWF 10:00AM" required>
-          </div>
+        <div class="input-group">
+          <label for="Professor">Professor</label>
+          <input type="text" id="Professor" name="professor" th:value="${info?.professor}" placeholder="Name" required />
         </div>
-
-        <div class="controls">
-          <div class="input-group">
-            <label for="pattern">Session Pattern</label>
-            <select id="pattern" name="pattern" class="small-select" required>
-              <option value="4x50" th:selected="${info?.pattern == '4x50'}">4 x 50 min</option>
-              <option value="3x75" th:selected="${info?.pattern == '3x75'}">3 x 75 min</option>
-            </select>
-          </div>
-          <div class="button-group">
-            <button type="submit" class="btn-secondary">Review Schedule Settings</button>
-          </div>
+        <div class="input-group">
+          <label for="ClassMeetingTimes">Course Meeting Times</label>
+          <input type="text" id="ClassMeetingTimes" name="classMeetingTimes" th:value="${info?.classMeetingTimes}" placeholder="MWF 10:00AM" required />
         </div>
       </div>
 
-      <div id="sessionsWrap" class="sessions-container"></div>
-    </fieldset>
-  </form>
-
-  <div id="tableWrap" th:if="${sessions != null}" class="preview-section">
-    <hr class="section-divider">
-    <h3 class="preview-title">Review Generated Schedule</h3>
-
-    <div class="table-responsive">
-      <table class="table-fill fade-in">
-        <thead>
-        <tr>
-          <th>CLASS</th>
-          <th>DAY</th>
-          <th>TIMES</th>
-          <th>LOCATION</th>
-          <th>PROFESSOR</th>
-          <th>MEETING TIMES</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="s : ${sessions}">
-          <td th:text="${info.className}"></td>
-          <td>
-                <span th:switch="${s.day}">
-                  <span th:case="'M'">Monday</span>
-                  <span th:case="'T'">Tuesday</span>
-                  <span th:case="'W'">Wednesday</span>
-                  <span th:case="'R'">Thursday</span>
-                  <span th:case="'F'">Friday</span>
-                  <span th:case="*" th:text="${s.day}"></span>
-                </span>
-          </td>
-          <td th:text="${s.start + ' - ' + s.end}"></td>
-          <td th:classappend="${#strings.contains(s.location, 'PENDING')} ? 'location-pending'"
-              th:text="${s.location}">
-          </td>
-          <td th:text="${info.professor}"></td>
-          <td th:text="${info.classMeetingTimes}"></td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="controls">
+        <div class="input-group">
+          <label for="pattern">Session Pattern</label>
+          <select id="pattern" name="pattern" class="small" required>
+            <option value="4x50" th:selected="${info?.pattern == '4x50'}">4 × 50 min</option>
+            <option value="3x75" th:selected="${info?.pattern == '3x75'}">3 × 75 min</option>
+          </select>
+        </div>
+        <div class="button-group">
+          <button type="submit" class="btn-secondary">Review Schedule</button>
+        </div>
+      </div>
     </div>
 
-    <form th:action="@{/si-builder/confirm}" method="post" class="confirm-container">
-      <button type="submit"
-              class="btn-save fade-in"
-              th:disabled="${!isWindowOpen}">
-        Save to Database
-      </button>
+    <div id="sessionsWrap"
+         th:data-existing="${existingSchedule != null ? existingSchedule : '[]'}">
+    </div>
+  </form>
 
-      <p th:if="${isWindowOpen}" class="helper-text">Everything looks correct? Click save to publish this schedule.</p>
-      <p th:unless="${isWindowOpen}" class="helper-text text-danger">
-        Changes cannot be saved while the submission window is locked.
-      </p>
+  <div id="tableWrap" th:if="${sessions != null}">
+    <hr class="section-divider" />
+    <h3 class="preview-title">Review Generated Schedule</h3>
+
+    <table class="table-fill fade-in">
+      <thead>
+      <tr>
+        <th>SI LEADER</th>
+        <th>CLASS</th>
+        <th>DAY</th>
+        <th>TIMES</th>
+        <th>LOCATION</th>
+        <th>PROFESSOR</th>
+        <th>MEETING TIMES</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="s : ${sessions}">
+        <td th:text="${tutor != null ? tutor.firstName + ' ' + tutor.lastName : 'Unknown'}"></td>
+        <td th:text="${info.className}"></td>
+        <td>
+          <span th:switch="${s.day}">
+            <span th:case="'M'">Monday</span>
+            <span th:case="'T'">Tuesday</span>
+            <span th:case="'W'">Wednesday</span>
+            <span th:case="'R'">Thursday</span>
+            <span th:case="'F'">Friday</span>
+            <span th:case="*" th:text="${s.day}"></span>
+          </span>
+        </td>
+        <td th:text="${s.start + ' - ' + s.end}"></td>
+        <td th:classappend="${#strings.contains(s.location, 'PENDING')} ? 'location-pending'"
+            th:text="${s.location}">
+        </td>
+        <td th:text="${info.professor}"></td>
+        <td th:text="${info.classMeetingTimes}"></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <form th:action="@{/si-builder/confirm}" method="post" class="confirm-container">
+      <button type="submit" class="submit fade-in">Save to Database</button>
+      <p class="helper-text">Everything looks correct? Click save to publish this schedule.</p>
     </form>
   </div>
 </main>
 
-<div th:replace="~{footerFragment :: footer}"></div>
-
-<script th:inline="javascript">
-  /* ... Existing JS Logic ... */
-</script>
+<script th:src="@{/si-builder.js}" defer></script>
 
 </body>
 </html>
