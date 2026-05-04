@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
+    void deleteByTutor_TutorID(String tutorID);
+
     // Updated to bring old methods back, I thought they were all incorrect because of an error saying multiple
     // numbers returned, but it was really just the overall because there was not an avg function on the outside
 

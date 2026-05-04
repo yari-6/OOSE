@@ -2,101 +2,124 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,width=device-width">
-  <title>Drop-in Schedule Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Times</title>
   <link rel="stylesheet" th:href="@{/time-submisson.css}">
+  <link rel="stylesheet" th:href="@{/schedule-view.css}">
   <link rel="stylesheet" th:href="@{/header.css}">
-  <title>Enter Session Times</title>
+  <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
 <body>
-<div th:replace="~{headerFragment :: header('Enter Session Times')}"></div>
+<div th:replace="~{headerFragment :: header('Enter Your Session Times')}"></div>
 
 <div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
   <div class="stripe-text">
-    Drop-in Builder
+    Blooms Tutors – Making scheduling easy!
     <hr class="accent-line">
   </div>
 </div>
 
-<!--drop down for day, start time, end time; display all, then submit button (check which form version)-->
-<h3>Request times for drop-in:</h3>
-
-<!-- Form was submitting to schedule-builder page, so nothing was being done, now submits to the right page -->
-<!-- Time values also changed, value is updated to be in LocalTime format instead of doubles -->
-<form method="post" th:action="@{/add-times}">
-  <div class="selection">
-    <label for="day">Select day of week:</label>
-    <select id="day" name="day">
-      <option value="M">Monday</option>
-      <option value="T">Tuesday</option>
-      <option value="W">Wednesday</option>
-      <option value="R">Thursday</option>
-      <option value="F">Friday</option>
-    </select>
-
-    <label for="start">Select start time:</label>
-    <select id="start" name="start">
-      <option value="09:00">9:00</option>
-      <option value="09:30">9:30</option>
-      <option value="10:00">10:00</option>
-      <option value="10:30">10:30</option>
-      <option value="11:00">11:00</option>
-      <option value="11:30">11:30</option>
-      <option value="12:00">12:00</option>
-      <option value="12:30">12:30</option>
-      <option value="13:00">1:00</option>
-      <option value="13:30">1:30</option>
-      <option value="14:00">2:00</option>
-      <option value="14:30">2:30</option>
-      <option value="15:00">3:00</option>
-      <option value="15:30">3:30</option>
-      <option value="16:00">4:00</option>
-      <option value="16:30">4:30</option>
-    </select>
-
-    <label for="end">Select end time:</label>
-    <select id="end" name="end">
-      <option value="09:30">9:30</option>
-      <option value="10:00">10:00</option>
-      <option value="10:30">10:30</option>
-      <option value="11:00">11:00</option>
-      <option value="11:30">11:30</option>
-      <option value="12:00">12:00</option>
-      <option value="12:30">12:30</option>
-      <option value="13:00">1:00</option>
-      <option value="13:30">1:30</option>
-      <option value="14:00">2:00</option>
-      <option value="14:30">2:30</option>
-      <option value="15:00">3:00</option>
-      <option value="15:30">3:30</option>
-      <option value="16:00">4:00</option>
-      <option value="16:30">4:30</option>
-      <option value="17:00">5:00</option>
-    </select>
-
-    <button type="submit" class="add">Add Time</button>
+<main class="container">
+  <div th:if="${!isWindowOpen}" class="error-banner">
+    <p><strong>Submissions Closed:</strong> The administrator has locked the scheduling window. You can view your current schedule, but changes cannot be saved at this time.</p>
   </div>
 
-  <div>
-    <a th:href="@{/review-times}" class="hero-link">Review Schedule</a>
+  <div class="builder-grid">
+    <div class="form-card">
+      <fieldset th:disabled="${!isWindowOpen}">
+        <div th:if="${error}" class="error-banner">
+          <p th:text="${error}"></p>
+        </div>
+        <div th:if="${success}" class="success-banner">
+          <p th:text="${success}"></p>
+        </div>
+
+        <form method="post" th:action="@{/add-times}" id="dropInForm">
+          <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
+          <div class="input-stack">
+            <div class="input-group">
+              <label for="day">Select Day</label>
+              <select id="day" name="day" required>
+                <option value="M">Monday</option>
+                <option value="T">Tuesday</option>
+                <option value="W">Wednesday</option>
+                <option value="R">Thursday</option>
+                <option value="F">Friday</option>
+              </select>
+            </div>
+
+            <div class="time-row">
+              <div class="input-group">
+                <label for="start">Start Time</label>
+                <select id="start" name="start" required>
+                  <option value="" disabled selected>Select Start Time</option>
+                  <option th:each="t : ${times}"
+                          th:value="${#temporals.format(t, 'HH:mm')}"
+                          th:text="${#temporals.format(t, 'h:mm a')}">
+                  </option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label for="end">End Time</label>
+                <select id="end" name="end" required>
+                  <option value="" disabled selected>Select End Time</option>
+                  <option th:each="t : ${times}"
+                          th:value="${#temporals.format(t, 'HH:mm')}"
+                          th:text="${#temporals.format(t, 'h:mm a')}">
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-add">Add to List</button>
+          </div>
+        </form>
+
+        <div class="confirm-section">
+          <hr>
+          <div class="builder-note">
+            <p><strong>Note:</strong> Saving or clearing here only affects times added during this session.
+            The times in gray are your existing schedule.</p>
+          </div>
+
+          <p th:if="${isWindowOpen}" class="confirm-instruction">Review your session times below, then select 'Save All Changes'.</p>
+          <p th:unless="${isWindowOpen}" class="locked-text">Submissions are currently locked.</p>
+
+          <div class="confirm-buttons">
+            <form th:action="@{/confirm-times}" method="post">
+              <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
+              <button type="submit" class="btn-save"
+                      th:disabled="${!hasUnsavedChanges or !isWindowOpen}">
+                Save All Changes
+              </button>
+            </form>
+            <form th:action="@{/reject-times}" method="post">
+              <button type="submit" class="btn-clear">Clear Recent</button>
+            </form>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="display">
+      <div class="display-header">
+        <h3>Schedule Preview</h3>
+        <span th:if="${hasUnsavedChanges}" class="status-badge warning">Unsaved Changes</span>
+        <span th:unless="${hasUnsavedChanges}" class="status-badge success">Synced</span>
+      </div>
+      <div class="table-responsive">
+        <div th:replace="~{schedule-view :: scheduleView(false)}"></div>
+      </div>
+    </div>
+
   </div>
+</main>
 
-</form>
-<script>
-  const form = document.querySelector('form');
-  const startSelect = document.getElementById('start');
-  const endSelect = document.getElementById('end');
+<div th:replace="~{footerFragment :: footer}"></div>
 
-  form.addEventListener('submit', (e) => {
-      const start = startSelect.value; // e.g., "09:00"
-      const end = endSelect.value;     // e.g., "10:00"
+<script th:src="@{/time-submission.js}"></script>
 
-      if (start >= end) {
-          e.preventDefault();
-          alert("Oops! The end time must be later than the start time.");
-      }
-  });
-</script>
 </body>
 </html>

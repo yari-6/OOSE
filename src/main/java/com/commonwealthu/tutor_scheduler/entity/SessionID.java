@@ -17,14 +17,14 @@ public class SessionID implements Serializable {
     private Tutor tutor;
 
     @Column(name="\"day\"")
-    private char day;
+    private String day;
 
     @Column(name = "\"time\"")
     private LocalTime time;
 
-    protected SessionID() {};
+    protected SessionID() {}
 
-    public SessionID(Tutor tutor, char day, LocalTime time) {
+    public SessionID(Tutor tutor, String day, LocalTime time) {
         this.tutor = tutor;
         this.day = day;
         this.time = time;
@@ -34,13 +34,9 @@ public class SessionID implements Serializable {
 
     public void setTutor(Tutor tutor) { this.tutor = tutor; }
 
-    public char getDay() {
-        return day;
-    }
+    public String getDay() { return day != null ? day.trim() : null; }
 
-    public void setDay(char day) {
-        this.day = day;
-    }
+    public void setDay(String day) { this.day = (day != null) ? day.trim() : null;}
 
     public LocalTime getTime() {
         return time;
@@ -54,11 +50,13 @@ public class SessionID implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SessionID sessionID)) return false;
-        return Objects.equals(tutor, sessionID.tutor) && day == sessionID.day && Objects.equals(time, sessionID.time);
+        return Objects.equals(tutor, sessionID.tutor) &&
+               Objects.equals(getDay(), sessionID.getDay()) &&
+               Objects.equals(time, sessionID.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tutor, day, time);
+        return Objects.hash(tutor, getDay(), time);
     }
 }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloomTutors</title>
+  <link rel="stylesheet" th:href="@{/admin-courses.css}">
+  <link rel="stylesheet" th:href="@{/header.css}">
+  <link rel="stylesheet" th:href="@{/footer.css}">
+</head>
+<body>
+<div th:replace="~{headerFragment :: header('Course Editor')}"></div>
+
+<div class="stripe-container">
+  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
+  <div class="stripe-text">
+    Blooms Tutors – Making scheduling easy!
+    <hr class="accent-line">
+  </div>
+</div>
+
+<main class="container">
+  <form th:action="@{/admin/courses/add}" method="post" class="inline-form">
+    <div class="input-group">
+
+      <input type="text" name="courseSubject" list="subjectOptions" placeholder="MATH" maxlength="10" required>
+      <datalist id="subjectOptions">
+        <option value="MATH">
+        <option value="COMPSCI">
+        <option value="BIOLOGY">
+        <option value="ENGLISH">
+        <option value="PSYCH">
+      </datalist>
+
+      <input type="text" name="courseNumber" placeholder="101" required>
+      <input type="text" name="courseTitle" placeholder="Algebra" class="input-grow" required>
+      <button type="submit" class="btn-open">Add</button>
+    </div>
+  </form>
+
+  <div class="form-card">
+    <h2>Current Catalog</h2>
+    <div class="tutor-search-box">
+      <label for="courseSearch" class="search-label">Search Courses:</label>
+      <input type="text" id="courseSearch" placeholder="Search by subject, number, or title..." class="tutor-search-input" onkeyup="filterCourses()">
+      <label for="subjectFilter" class="search-label search-label-spaced">Filter by Subject:</label>
+      <select id="subjectFilter" onchange="filterCourses()" class="tutor-search-input">
+        <option value="">All Subjects</option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table class="table-fill" id="courseTable">
+        <thead>
+        <tr>
+          <th>Subject</th>
+          <th>No.</th>
+          <th>Title</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${courses}" class="fade-in course-row"
+            th:attr="data-subject=${c.courseID.courseSubject},data-number=${c.courseID.courseNumber},data-title=${c.courseTitle}">
+          <td th:text="${c.courseID.courseSubject}"></td>
+          <td th:text="${c.courseID.courseNumber}"></td>
+          <td th:text="${c.courseTitle}"></td>
+          <td>
+            <form th:action="@{/admin/courses/delete}" method="post" class="delete-form">
+              <input type="hidden" name="subject" th:value="${c.courseID.courseSubject}" />
+              <input type="hidden" name="number" th:value="${c.courseID.courseNumber}" />
+              <button type="submit" class="btn-clear">Remove</button>
+            </form>
+          </td>
+        </tr>
+        <tr id="noCourseResults" class="results-empty-row">
+          <td colspan="4" class="results-empty-cell">No courses match the current filters.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{footerFragment :: footer}"></div>
+
+<script th:src="@{/admin-courses.js}"></script>
+
+</body>
+</html>
