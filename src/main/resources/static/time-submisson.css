@@ -1,52 +1,197 @@
-/* The container that creates the "Card" effect */
-.display {
-    background: white;
-    margin: 20px auto;
-    padding: 0;
-    width: 95%;
-    max-width: var(--max-width);
+:root {
+    --primary: #8a1538;
+    --secondary: #f3d03e;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --bg-body: #f8f9fa;
+    --bg-card: #ffffff;
+    --border-light: #b2bec3;
+    --border-distinct: #8b969a;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --success: #166534;
+    --success-bg: #d3f9d8;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    margin: 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 10px auto 0;
+    padding: 0 20px;
+}
+
+.builder-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.form-card {
+    flex: 0 0 340px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
-    /* This is the shadow used in modern builders */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow: hidden; /* Clips the table corners to the rounded box */
-    border: 1px solid #ddd;
+    padding: 15px;
+    box-shadow: var(--shadow);
 }
 
-.schedule-view-table {
-    border-collapse: collapse;
-    width: 100%;
-    table-layout: fixed;
-    background-color: white;
+.display {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: var(--shadow);
+    min-width: 0;
 }
 
-/* Thinner, cleaner borders instead of 3px black */
-.schedule-view-table th,
-.schedule-view-table td {
-    border: 1px solid #e0e0e0;
-    padding: 12px 8px;
-    text-align: center;
+.display-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-/* Target the Time column specifically (Thinner) */
-.schedule-view-table tr th:first-child {
-    width: 90px;
-    background-color: var(--muted);
-    color: var(--accent1);
-    font-weight: bold;
-    font-size: 0.9em;
+.form-card h3, .display-header h3 {
+    color: var(--primary);
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 700;
 }
 
-/* The Day Header row */
-.schedule-view-table thead th,
-.schedule-view-table tr:first-child th {
-    background-color: var(--accent1);
-    color: white;
+.status-badge.success {
+    background-color: var(--success-bg);
+    color: var(--success);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
     text-transform: uppercase;
-    font-size: 14px;
-    letter-spacing: 1px;
+    border: 1px solid #b2f2bb;
 }
 
-/* Ensure empty cells don't collapse */
-.schedule-view-table td:empty::before {
-    content: "\00a0";
+.input-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.input-group { display: flex; flex-direction: column; gap: 3px; }
+label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+
+select, .btn-add, .btn-save, .btn-clear {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    border: 1px solid var(--border-light);
+}
+
+.btn-add { background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: 700; }
+
+.builder-note {
+    background-color: #fff9db;
+    border-left: 5px solid var(--secondary);
+    padding: 12px 15px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #7d5a00;
+    border-radius: 4px;
+    margin: 15px 0;
+}
+
+.builder-note strong {
+    color: #856404;
+    font-weight: 800;
+}
+
+.confirm-buttons { display: flex; gap: 10px; margin-top: 10px; }
+
+.btn-save {
+    background-color: var(--success);
+    color: white;
+    border: none;
+    flex: 2;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-clear {
+    background-color: #f1f3f5;
+    color: var(--text-main);
+    flex: 1;
+    cursor: pointer;
+}
+
+.error-banner {
+    background-color: #fff5f5;
+    border: 1px solid #ffc9c9;
+    color: #fa5252;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.status-badge.warning {
+    background-color: #fff9db;
+    color: #f08c00;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    border: 1px solid #ffe066;
+}
+
+fieldset:disabled {
+    opacity: 0.7;
+    filter: grayscale(0.3);
+    cursor: not-allowed;
+}
+
+fieldset:disabled select,
+fieldset:disabled .btn-add {
+    background-color: #f1f3f5 !important;
+    color: #adb5bd !important;
+    border-color: #dee2e6 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+.btn-save:disabled {
+    background-color: #e9ecef !important;
+    color: #adb5bd !important;
+    border: 1px solid #dee2e6 !important;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.form-card:has(fieldset:disabled) {
+    border-top: 4px solid var(--border-distinct);
+}
+
+.cell-shared {
+    font-weight: 700;
+    background-color: rgba(0,0,0,0.01);
+}
+
+@media (max-width: 1024px) {
+    .builder-grid {
+        flex-direction: column !important;
+        align-items: stretch;
+    }
+
+    .form-card {
+        flex: none;
+        width: 95%;
+    }
+
+    .display {
+        width: 95%;
+    }
 }

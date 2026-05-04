@@ -7,10 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 @Data
 public class SIScheduleRequest {
 
-    @NotBlank(message = "SI Leader is required")
-    private String siLeader;
-
-    @NotBlank(message = "Class name is required")
+    @NotBlank(message = "Please select a course")
     private String className;
 
     @NotBlank(message = "Professor name is required")
@@ -22,7 +19,7 @@ public class SIScheduleRequest {
     @NotBlank(message = "Session pattern is required")
     private String pattern;
 
-    private List<SessionEntry> sessions;
+    private List<SessionEntry> sessions = new java.util.ArrayList<>();
 
     @Data
     public static class SessionEntry {

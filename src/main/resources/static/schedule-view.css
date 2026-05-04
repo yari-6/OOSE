@@ -5,15 +5,16 @@
     --text-muted: #636e72;
     --bg-body: #f8f9fa;
     --bg-card: #ffffff;
-    --border-light: #b2bec3;
+    --border-color: #b2bec3;
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-body);
     color: var(--text-main);
     margin: 0;
+    line-height: 1.5;
 }
 
 .dashboard-wrapper {
@@ -21,13 +22,13 @@ body {
     gap: 25px;
     padding: 30px;
     max-width: 1600px;
-    margin: 40px auto 0;
+    margin: 5px auto;
     align-items: flex-start;
 }
 
 .schedule-card, .sidebar-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     box-shadow: var(--shadow);
     padding: 25px;
@@ -42,10 +43,10 @@ body {
 .sidebar-card {
     flex: 1;
     min-width: 320px;
-    max-width: 400px;
+    max-width: 380px;
     position: sticky;
-    top: 20px;
-    max-height: 90vh;
+    top: 10px;
+    max-height: calc(100vh - 40px);
     overflow-y: auto;
 }
 
@@ -67,13 +68,13 @@ body {
 .schedule-view-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1.5px solid var(--border-light);
+    border: 1.5px solid var(--border-color);
     table-layout: fixed;
 }
 
 .schedule-view-table th,
 .schedule-view-table td {
-    border: 1px solid var(--border-light) !important;
+    border: 1px solid var(--border-color) !important;
     padding: 12px 4px;
     text-align: center;
     vertical-align: middle;
@@ -83,9 +84,8 @@ body {
     background-color: var(--primary) !important;
     color: white !important;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .schedule-view-table tbody tr th {
@@ -93,7 +93,7 @@ body {
     color: var(--primary);
     font-weight: bold;
     width: 95px;
-    border: 1px solid var(--border-light) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
 .schedule-cell span {
@@ -104,7 +104,7 @@ body {
 }
 
 .grid-link {
-    color: white !important;
+    color: White !important;
     text-decoration: none;
 }
 
@@ -113,28 +113,90 @@ body {
     color: var(--secondary) !important;
 }
 
+.tutor-entry-container {
+    margin: 0 0 5px 0;
+    padding-bottom: 10px;
+}
+
+.tutor-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
 .sidebar-pfp {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: 2px solid var(--secondary);
     object-fit: cover;
+    flex-shrink: 0;
+    background-color: #eee;
 }
 
 .sidebar-tutor-name {
-    font-weight: bold;
+    font-weight: 700;
     color: var(--primary);
     text-decoration: none;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
+    transition: color 0.2s;
+}
+
+.sidebar-tutor-name:hover {
+    color: var(--secondary);
+}
+
+.tutor-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--secondary);
+    margin: 10px 0 10px 0;
+    width: 100%;
+    opacity: 0.7;
+}
+
+.tutor-courses-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 .course-badge {
-    display: inline-block;
     background: #f1f3f5;
     border: 1px solid #dee2e6;
     padding: 2px 8px;
     border-radius: 4px;
-    font-size: 0.7rem;
-    margin: 2px;
-    color: #333;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: inline-block;
+}
+
+.course-badge:hover {
+    background: var(--secondary);
+    color: var(--primary);
+    border-color: var(--primary);
+    cursor: default;
+}
+
+@media (max-width: 1100px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+        padding: 15px; 
+        margin-top: 0;
+    }
+
+    .sidebar-card {
+        flex: none;
+        max-width: 90%;
+        min-width: 0;
+        width: 90%;
+        position: static;
+    }
+
+    .schedule-card {
+        width: 90%;
+        margin-bottom: 20px;
+    }
 }

@@ -2,52 +2,79 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Search</title>
     <link rel="stylesheet" th:href="@{/tutors.css}">
     <link rel="stylesheet" th:href="@{/header.css}">
-    <title>Campus Tutors</title>
+    <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-
 <body>
-
-<div th:replace="~{headerFragment :: header('Tutor List')}"></div>
-
+<div th:replace="~{headerFragment :: header('Tutor Search')}"></div>
 <div class="stripe-container">
-
-    <img th:src="@{/fadedstripe.svg}" class="stripe">
-
+    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
     <div class="stripe-text">
-        Tutor List
+        Blooms Tutors – Making scheduling easy!
         <hr class="accent-line">
     </div>
-
 </div>
 
-<div class = "search-container">
-    <form th:action="@{/tutors}" method="get">
-        <label for="search-input">Search tutors by course </label>
-        <input type="text" id="search-input" name="courseSearch" placeholder="Search...">
-        <button type="submit">Search</button>
-    </form>
-</div>
+<main class="container">
 
-<table class="tutor-table">
-    <tr class = "tutor-table-header-row">
-        <th>Name</th>
-        <th>Tutor Type</th>
-        <th>Profile</th>
-    </tr>
+    <section class="search-section">
+        <div class="search-container">
+            <form th:action="@{/tutors}" method="get" class="search-form">
+                <div class="search-group">
+                    <label for="search-input">Find help by course code or subject:</label>
+                    <div class="search-bar">
+                        <input type="text" id="search-input" name="courseSearch"
+                               th:value="${param.courseSearch}" placeholder="e.g., BIOL 114 or English...">
+                        <button type="submit" class="btn-search">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
-    <tbody>
-    <tr th:each="tutor: ${tutors}">
-        <td th:text="${tutor.firstName + ' ' + tutor.lastName}"></td>
-        <td th:text="${tutor.type}"></td>
-        <td><a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="button">View Profile</a>
-        </td>
-    </tr>
-    </tbody>
+        <p class="search-hint">
+            <strong>Note:</strong> Regular Tutors offer 1-on-1 booking via
+            <a href="https://bloomu.starfishsolutions.com/starfish-ops/support/login.html" target="_blank">CU Succeed</a>.
+        </p>
+    </section>
 
-</table>
+    <div class="table-responsive">
+        <table class="tutor-table">
+            <thead>
+            <tr class="tutor-table-header-row">
+                <th>Tutor Name</th>
+                <th>Type</th>
+                <th>Availability & Bio</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(tutors)}">
+                <td colspan="3" class="empty-msg">No tutors found for that search. Please try a different course code.</td>
+            </tr>
+
+            <tr th:each="tutor : ${tutors}" class="tutor-row">
+                <td class="tutor-name-cell">
+                    <strong th:text="${tutor.firstName + ' ' + tutor.lastName}"></strong>
+                </td>
+                <td>
+                        <span class="type-badge"
+                              th:classappend="${tutor.type == 'SI Leader'} ? 'badge-si' : 'badge-regular'"
+                              th:text="${tutor.type}">
+                        </span>
+                </td>
+                <td>
+                    <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="btn-profile">View Profile</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+<div th:replace="~{footerFragment :: footer}"></div>
 
 </body>
-
 </html>

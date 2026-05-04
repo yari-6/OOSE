@@ -12,11 +12,11 @@ public interface TutorRepository extends JpaRepository<Tutor, String> {
     List<Tutor> findByTypeNotOrderByFirstNameAsc(String type);
 
     // Check the courses a tutor offers and return the tutors that offer the specific course
-    @Query("SELECT t FROM Tutor t JOIN t.coursesOffered c " +
-            "WHERE c.courseID.courseSubject = :subject " +
-            "AND c.courseID.courseNumber = :number " +
+    @Query("SELECT DISTINCT t FROM Tutor t JOIN t.coursesOffered c " +
+            "WHERE ((c.courseID.courseSubject = :subject AND c.courseID.courseNumber = :number) " +
+            "OR UPPER(c.courseTitle) LIKE UPPER(CONCAT('%', :title, '%'))) " +
             "AND t.type != 'Admin' " +
             "ORDER BY t.firstName ASC")
-    List<Tutor> findTutorsByCourse(@Param("subject") String subject, @Param("number") int number);
+    List<Tutor> findTutorsByCourse(@Param("subject") String subject, @Param("number") int number, @Param("title") String title);
 
 }
