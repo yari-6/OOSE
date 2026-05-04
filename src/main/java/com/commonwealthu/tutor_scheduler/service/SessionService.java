@@ -81,19 +81,16 @@ public class SessionService {
 
     // Take in a tutor's submitted sessions (saved or for confirmation) and a list of the times on the display grid
     // and returns a map storing the day + time and the tutors working + display color
-    public HashMap<String, ScheduleInfo> fillInSessions(Collection<Session> sessions, List<LocalTime> times) {
-        return fillInSessions(sessions, times, s -> ColorService.getColor(s.getSessionID().getTutor().getTutorID()));
-    }
+
 
     public HashMap<String, ScheduleInfo> fillInSessions(Collection<Session> sessions,
-                                                        List<LocalTime> times,
-                                                        java.util.function.Function<Session, String> colorFn) {
+                                                        List<LocalTime> times) {
         HashMap<String, ScheduleInfo> timeMap = new HashMap<>();
         for (Session s: sessions) {
             String rawDay = s.getSessionID().getDay();
             if (rawDay == null) continue;
 
-            // Normalize day to M, T, W, R, F
+            // Normalize day to M, T, W, R, F (COULD CHANGE THIS to just string)
             String dayCode = rawDay.trim().toUpperCase();
             if (dayCode.startsWith("MON")) dayCode = "M";
             else if (dayCode.startsWith("TUE")) dayCode = "T";
@@ -106,7 +103,7 @@ public class SessionService {
             LocalTime end = (s.getEndTime() != null) ? s.getEndTime() : start.plusMinutes(50);
             String name = s.getSessionID().getTutor().getFirstName() + " " + s.getSessionID().getTutor().getLastName();
             String tutorID = s.getSessionID().getTutor().getTutorID();
-            String color = colorFn.apply(s);
+            String color = ColorService.getColor(tutorID);
 
             // Check if the grid time falls within session time range
             for (LocalTime t: times) {
@@ -186,7 +183,6 @@ public class SessionService {
 
         //No double sessions
         boolean isTutorOverloaded = sessionRepo.findBySessionID_Tutor(tutor).stream()
-                .filter(existing -> !existing.getSessionID().equals(newSess.getSessionID()))
                 .anyMatch(existing ->
                         existing.getSessionID().getDay().equals(day) &&
                                 start.isBefore(existing.getEndTime()) &&

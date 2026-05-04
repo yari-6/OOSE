@@ -163,7 +163,9 @@
 
             <div class="schedule-actions">
                 <h2>Schedule</h2>
+            </div>
 
+            <div class="schedule-controls">
                 <a th:if="${session.tutorID == tutor.tutorID and isWindowOpen}"
                    th:href="@{/schedule-builder}"
                    class="btn-edit">
@@ -174,11 +176,11 @@
                       class="status-badge-locked">
                     Submissions Locked
                 </span>
-            </div>
 
-            <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
-                 class="lock-notice">
-                * The administrator has closed the submission window. You cannot modify your times until it is reopened.
+                <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
+                     class="lock-notice">
+                    * The administrator has closed the submission window. You cannot modify your times until it is reopened.
+                </div>
             </div>
 
             <div th:if="${tutor.type == 'Tutor'}">

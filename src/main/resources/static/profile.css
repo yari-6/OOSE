@@ -237,6 +237,30 @@ body {
     font-weight: 500;
 }
 
+.schedule-controls {
+    margin-bottom: 15px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.schedule-actions {
+    margin-bottom: 5px;
+}
+
+.btn-edit {
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tutor-notice {
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #4a5568;
+}
+
 .feedback {
     display: flex;
     flex-direction: column;

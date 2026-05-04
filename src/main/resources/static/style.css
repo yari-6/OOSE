@@ -20,7 +20,7 @@ body {
   justify-content: center;
   align-items: stretch;
   gap: 20px;
-   margin: 70px auto 70px;
+  margin: 70px auto 70px;
   width: 95%;
   max-width: 1400px;
 }
