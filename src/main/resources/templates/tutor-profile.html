@@ -189,7 +189,7 @@
                 <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
             </div>
 
-            <div th:if="${schedule.isEmpty()} AND tutor.type !='Tutor'" class="empty-schedule-msg">
+            <div th:if="${schedule.isEmpty() AND tutor.type !='Tutor'}" class="empty-schedule-msg">
                 Schedule coming soon.
             </div>
 
