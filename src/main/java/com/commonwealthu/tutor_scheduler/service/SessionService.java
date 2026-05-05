@@ -91,13 +91,7 @@ public class SessionService {
             if (rawDay == null) continue;
 
             // Normalize day to M, T, W, R, F (COULD CHANGE THIS to just string)
-            String dayCode = rawDay.trim().toUpperCase();
-            if (dayCode.startsWith("MON")) dayCode = "M";
-            else if (dayCode.startsWith("TUE")) dayCode = "T";
-            else if (dayCode.startsWith("WED")) dayCode = "W";
-            else if (dayCode.startsWith("THU")) dayCode = "R";
-            else if (dayCode.startsWith("FRI")) dayCode = "F";
-            else if (dayCode.length() > 0) dayCode = dayCode.substring(0, 1);
+            String dayCode = normalizeDay(rawDay);
 
             LocalTime start = s.getSessionID().getTime();
             LocalTime end = (s.getEndTime() != null) ? s.getEndTime() : start.plusMinutes(50);
@@ -138,6 +132,19 @@ public class SessionService {
             current = current.plusMinutes(30);
         }
         return times;
+    }
+
+    public String normalizeDay(String rawDay) {
+        if (rawDay == null) {
+            return "";
+        }
+        String dayCode = rawDay.trim().toUpperCase();
+        if (dayCode.startsWith("MON")) return "M";
+        else if (dayCode.startsWith("TUE")) return "T";
+        else if (dayCode.startsWith("WED")) return "W";
+        else if (dayCode.startsWith("THU")) return "R";
+        else if (dayCode.startsWith("FRI")) return "F";
+        return (!dayCode.isEmpty()) ? dayCode.substring(0, 1) : "";
     }
 
     // addedTimes represent times added during the time submission, not actual times saved to the db
