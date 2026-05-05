@@ -134,7 +134,7 @@ public class SessionService {
         return times;
     }
 
-    public String normalizeDay(String rawDay) {
+    private String normalizeDay(String rawDay) {
         if (rawDay == null) {
             return "";
         }
