@@ -6,9 +6,9 @@
 }
 
 .footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 5px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5px;
 }
 
 .footer-grid {
@@ -16,6 +16,7 @@
     grid-template-columns: repeat(3, 1fr);
     max-width: 1200px;
     margin: 0 auto;
+    place-items: center;
 }
 
 .footer-heading {
