@@ -9,114 +9,107 @@
   <link rel="stylesheet" th:href="@{/header.css}">
   <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Enter Your Session Times')}"></div>
 
-<div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-  <div class="stripe-text">
-    Blooms Tutors – Making scheduling easy!
-    <hr class="accent-line">
-  </div>
+<div class="content-spacer">
+  <main class="container">
+    <div th:if="${!isWindowOpen}" class="error-banner">
+      <p><strong>Submissions Closed:</strong> The administrator has locked the scheduling window. You can view your current schedule, but changes cannot be saved at this time.</p>
+    </div>
+
+    <div class="builder-grid">
+      <div class="form-card">
+        <fieldset th:disabled="${!isWindowOpen}">
+          <div th:if="${error}" class="error-banner">
+            <p th:text="${error}"></p>
+          </div>
+          <div th:if="${success}" class="success-banner">
+            <p th:text="${success}"></p>
+          </div>
+
+          <form method="post" th:action="@{/add-times}" id="dropInForm">
+            <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
+            <div class="input-stack">
+              <div class="input-group">
+                <label for="day">Select Day</label>
+                <select id="day" name="day" required>
+                  <option value="M">Monday</option>
+                  <option value="T">Tuesday</option>
+                  <option value="W">Wednesday</option>
+                  <option value="R">Thursday</option>
+                  <option value="F">Friday</option>
+                </select>
+              </div>
+
+              <div class="time-row">
+                <div class="input-group">
+                  <label for="start">Start Time</label>
+                  <select id="start" name="start" required>
+                    <option value="" disabled selected>Select Start Time</option>
+                    <option th:each="t : ${times}"
+                            th:value="${#temporals.format(t, 'HH:mm')}"
+                            th:text="${#temporals.format(t, 'h:mm a')}">
+                    </option>
+                  </select>
+                </div>
+
+                <div class="input-group">
+                  <label for="end">End Time</label>
+                  <select id="end" name="end" required>
+                    <option value="" disabled selected>Select End Time</option>
+                    <option th:each="t : ${times}"
+                            th:value="${#temporals.format(t, 'HH:mm')}"
+                            th:text="${#temporals.format(t, 'h:mm a')}">
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-add">Add to List</button>
+            </div>
+          </form>
+
+          <div class="confirm-section">
+            <hr>
+            <div class="builder-note">
+              <p><strong>Note:</strong> Saving or clearing here only affects times added during this session.
+              The times in gray are your existing schedule.</p>
+            </div>
+
+            <p th:if="${isWindowOpen}" class="confirm-instruction">Review your session times below, then select 'Save All Changes'.</p>
+            <p th:unless="${isWindowOpen}" class="locked-text">Submissions are currently locked.</p>
+
+            <div class="confirm-buttons">
+              <form th:action="@{/confirm-times}" method="post">
+                <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
+                <button type="submit" class="btn-save"
+                        th:disabled="${!hasUnsavedChanges or !isWindowOpen}">
+                  Save All Changes
+                </button>
+              </form>
+              <form th:action="@{/reject-times}" method="post">
+                <button type="submit" class="btn-clear">Clear Recent</button>
+              </form>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="display">
+        <div class="display-header">
+          <h3>Schedule Preview</h3>
+          <span th:if="${hasUnsavedChanges}" class="status-badge warning">Unsaved Changes</span>
+          <span th:unless="${hasUnsavedChanges}" class="status-badge success">Synced</span>
+        </div>
+        <div class="table-responsive">
+          <div th:replace="~{schedule-view :: scheduleView(false)}"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
 </div>
-
-<main class="container">
-  <div th:if="${!isWindowOpen}" class="error-banner">
-    <p><strong>Submissions Closed:</strong> The administrator has locked the scheduling window. You can view your current schedule, but changes cannot be saved at this time.</p>
-  </div>
-
-  <div class="builder-grid">
-    <div class="form-card">
-      <fieldset th:disabled="${!isWindowOpen}">
-        <div th:if="${error}" class="error-banner">
-          <p th:text="${error}"></p>
-        </div>
-        <div th:if="${success}" class="success-banner">
-          <p th:text="${success}"></p>
-        </div>
-
-        <form method="post" th:action="@{/add-times}" id="dropInForm">
-          <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
-          <div class="input-stack">
-            <div class="input-group">
-              <label for="day">Select Day</label>
-              <select id="day" name="day" required>
-                <option value="M">Monday</option>
-                <option value="T">Tuesday</option>
-                <option value="W">Wednesday</option>
-                <option value="R">Thursday</option>
-                <option value="F">Friday</option>
-              </select>
-            </div>
-
-            <div class="time-row">
-              <div class="input-group">
-                <label for="start">Start Time</label>
-                <select id="start" name="start" required>
-                  <option value="" disabled selected>Select Start Time</option>
-                  <option th:each="t : ${times}"
-                          th:value="${#temporals.format(t, 'HH:mm')}"
-                          th:text="${#temporals.format(t, 'h:mm a')}">
-                  </option>
-                </select>
-              </div>
-
-              <div class="input-group">
-                <label for="end">End Time</label>
-                <select id="end" name="end" required>
-                  <option value="" disabled selected>Select End Time</option>
-                  <option th:each="t : ${times}"
-                          th:value="${#temporals.format(t, 'HH:mm')}"
-                          th:text="${#temporals.format(t, 'h:mm a')}">
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <button type="submit" class="btn-add">Add to List</button>
-          </div>
-        </form>
-
-        <div class="confirm-section">
-          <hr>
-          <div class="builder-note">
-            <p><strong>Note:</strong> Saving or clearing here only affects times added during this session.
-            The times in gray are your existing schedule.</p>
-          </div>
-
-          <p th:if="${isWindowOpen}" class="confirm-instruction">Review your session times below, then select 'Save All Changes'.</p>
-          <p th:unless="${isWindowOpen}" class="locked-text">Submissions are currently locked.</p>
-
-          <div class="confirm-buttons">
-            <form th:action="@{/confirm-times}" method="post">
-              <input type="hidden" name="effectiveTutorID" th:value="${tutorID}" />
-              <button type="submit" class="btn-save"
-                      th:disabled="${!hasUnsavedChanges or !isWindowOpen}">
-                Save All Changes
-              </button>
-            </form>
-            <form th:action="@{/reject-times}" method="post">
-              <button type="submit" class="btn-clear">Clear Recent</button>
-            </form>
-          </div>
-        </div>
-      </fieldset>
-    </div>
-
-    <div class="display">
-      <div class="display-header">
-        <h3>Schedule Preview</h3>
-        <span th:if="${hasUnsavedChanges}" class="status-badge warning">Unsaved Changes</span>
-        <span th:unless="${hasUnsavedChanges}" class="status-badge success">Synced</span>
-      </div>
-      <div class="table-responsive">
-        <div th:replace="~{schedule-view :: scheduleView(false)}"></div>
-      </div>
-    </div>
-
-  </div>
-</main>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 <script th:src="@{/time-submission.js}"></script>

@@ -8,72 +8,64 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Tutor Search')}"></div>
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Blooms Tutors – Making scheduling easy!
-        <hr class="accent-line">
-    </div>
-</div>
 
-<main class="container">
-
-    <section class="search-section">
-        <div class="search-container">
-            <form th:action="@{/tutors}" method="get" class="search-form">
-                <div class="search-group">
-                    <label for="search-input">Find help by course code or subject:</label>
-                    <div class="search-bar">
-                        <input type="text" id="search-input" name="courseSearch"
-                               th:value="${param.courseSearch}" placeholder="e.g., BIOL 114 or English...">
-                        <button type="submit" class="btn-search">Search</button>
+<div class="content-spacer">
+    <main class="container">
+        <section class="search-section">
+            <div class="search-container">
+                <form th:action="@{/tutors}" method="get" class="search-form">
+                    <div class="search-group">
+                        <label for="search-input">Find help by course code or subject:</label>
+                        <div class="search-bar">
+                            <input type="text" id="search-input" name="courseSearch"
+                                   th:value="${param.courseSearch}" placeholder="e.g., BIOL 114 or English...">
+                            <button type="submit" class="btn-search">Search</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
+            <p class="search-hint">
+                <strong>Note:</strong> Regular Tutors offer 1-on-1 booking via
+                <a href="https://bloomu.starfishsolutions.com/starfish-ops/support/login.html" target="_blank">CU Succeed</a>.
+            </p>
+        </section>
+
+        <div class="table-responsive">
+            <table class="tutor-table">
+                <thead>
+                <tr class="tutor-table-header-row">
+                    <th>Tutor Name</th>
+                    <th>Type</th>
+                    <th>Availability & Bio</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(tutors)}">
+                    <td colspan="3" class="empty-msg">No tutors found for that search. Please try a different course code.</td>
+                </tr>
+
+                <tr th:each="tutor : ${tutors}" class="tutor-row">
+                    <td class="tutor-name-cell">
+                        <strong th:text="${tutor.firstName + ' ' + tutor.lastName}"></strong>
+                    </td>
+                    <td>
+                            <span class="type-badge"
+                                  th:classappend="${tutor.type == 'SI Leader'} ? 'badge-si' : 'badge-regular'"
+                                  th:text="${tutor.type}">
+                            </span>
+                    </td>
+                    <td>
+                        <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="btn-profile">View Profile</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-
-        <p class="search-hint">
-            <strong>Note:</strong> Regular Tutors offer 1-on-1 booking via
-            <a href="https://bloomu.starfishsolutions.com/starfish-ops/support/login.html" target="_blank">CU Succeed</a>.
-        </p>
-    </section>
-
-    <div class="table-responsive">
-        <table class="tutor-table">
-            <thead>
-            <tr class="tutor-table-header-row">
-                <th>Tutor Name</th>
-                <th>Type</th>
-                <th>Availability & Bio</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${#lists.isEmpty(tutors)}">
-                <td colspan="3" class="empty-msg">No tutors found for that search. Please try a different course code.</td>
-            </tr>
-
-            <tr th:each="tutor : ${tutors}" class="tutor-row">
-                <td class="tutor-name-cell">
-                    <strong th:text="${tutor.firstName + ' ' + tutor.lastName}"></strong>
-                </td>
-                <td>
-                        <span class="type-badge"
-                              th:classappend="${tutor.type == 'SI Leader'} ? 'badge-si' : 'badge-regular'"
-                              th:text="${tutor.type}">
-                        </span>
-                </td>
-                <td>
-                    <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}" class="btn-profile">View Profile</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-</main>
-
+    </main>
+</div>
 <div th:replace="~{footerFragment :: footer}"></div>
 
 </body>

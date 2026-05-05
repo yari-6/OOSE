@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <footer th:fragment="footer" class="main-footer">
   <div class="footer-container">
 
@@ -8,24 +7,38 @@
       <div class="footer-column">
         <h4 class="footer-heading">Contact Us</h4>
         <p class="footer-text">
-          Desk: <a th:href="|mailto:bloomtutoring@commonwealthu.edu|" class="footer-link"> bloomtutoring@commonwealthu.edu</a> <br>
-          Secretary: <a th:href="|mailto:jgusick@commonwealthu.edu|" class="footer-link"> jgusick@commonwealthu.edu</a> <br>
-          Director: <a th:href="|mailto:khamman@commonwealthu.edu|" class="footer-link"> khamman@commonwealthu.edu</a>
+          <a class="footer-text">Andruss Library 306</a><br>
+          Email:
+          <a th:href="@{https://outlook.office.com/mail/deeplink/compose(to='bloomtutoring@commonwealthu.edu')}"
+             target="_blank" class="footer-link">
+            bloomtutoring@commonwealthu.edu
+          </a><br>
+          <a class="footer-text">Phone: (570)-389-2720</a>
         </p>
-        <p class="footer-text">Phone: (570)-389-2720</p>
       </div>
 
       <div class="footer-column">
         <h4 class="footer-heading">Quick Navigation</h4>
-        <nav class="footer-nav">
-          <a th:href="@{/}" class="footer-link">Home</a>
+        <p class="footer-text">
+          <a th:href="@{/}" class="footer-link">Home</a><br>
           <a th:href="@{/tutors}" class="footer-link">Search for a Tutor</a>
-        </nav>
+        </p>
       </div>
 
       <div class="footer-column">
-        <h4 class="footer-heading">Location</h4>
-        <p class="footer-text">Andruss Library 306</p>
+        <h4 class="footer-heading">Administration</h4>
+        <p class="footer-text">
+          Secretary:
+          <a th:href="@{https://outlook.office.com/mail/deeplink/compose(to='jgusick@commonwealthu.edu')}"
+             target="_blank" class="footer-link">
+            Julia Gusick
+          </a><br>
+          Director:
+          <a th:href="@{https://outlook.office.com/mail/deeplink/compose(to='khamman@commonwealthu.edu')}"
+             target="_blank" class="footer-link">
+            Dr. Karen Hamman
+          </a>
+        </p>
       </div>
     </div>
 

@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<header th:fragment="header(title)" class="header">
-    <a th:href="@{/}" class="logo-link">
-        <img th:src="@{/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo">
-    </a>
 
-    <div class="header-title-group">
-        <h1 th:text="${title}">Default Title</h1>
-        <hr class="title-line">
-    </div>
-
-    <div class="signin-container">
-        <a th:if="${session.tutorID == null}"
-           th:href="@{/sign-in}"
-           class="signin-btn">
-            Sign In
+<div th:fragment="header(title)">
+    <header class="header">
+        <a th:href="@{/}" class="logo-link">
+            <img th:src="@{/Husky-Clip-Art-Transparent-File.png}" alt="Husky" class="logo">
         </a>
 
-        <div th:if="${session.tutorID != null}" class="user-section">
-            <div class="dropdown">
-                <button class="dropbtn">
-                    Welcome, <span th:text="${tutor != null ? tutor.firstName  : session.tutorID}">User</span> &#9662;
-                </button>
-                <div class="dropdown-content">
-                    <a th:if="${session.isAdmin == true}" th:href="@{/admin/dashboard}">Admin Dashboard</a>
-                    <a th:if="${session.isAdmin == false}" th:href="@{/tutors/{id}(id=${session.tutorID})}">Profile</a>
-                    <a th:href="@{/logout}">Logout</a>
+        <div class="header-title-group">
+            <h1 th:text="${title}">Default Title</h1>
+            <hr class="title-line">
+        </div>
+
+        <div class="signin-container">
+            <a th:if="${session.tutorID == null}"
+               th:href="@{/sign-in}"
+               class="signin-btn">
+                Sign In
+            </a>
+
+            <div th:if="${session.tutorID != null}" class="user-section">
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        Welcome, <span th:text="${tutor != null ? tutor.firstName  : session.tutorID}">User</span> &#9662;
+                    </button>
+                    <div class="dropdown-content">
+                        <a th:if="${session.isAdmin == true}" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+                        <a th:if="${session.isAdmin == false}" th:href="@{/tutors/{id}(id=${session.tutorID})}">Profile</a>
+                        <a th:href="@{/logout}">Logout</a>
+                    </div>
                 </div>
             </div>
         </div>
+    </header>
+
+    <div class="stripe-container">
+        <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
+        <div class="stripe-text">
+            Blooms Tutors – Making scheduling easy!
+            <hr class="accent-line">
+        </div>
     </div>
-</header>
+</div>

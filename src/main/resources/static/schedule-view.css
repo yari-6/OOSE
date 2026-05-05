@@ -1,19 +1,7 @@
-:root {
-    --primary: #8a1538;
-    --secondary: #f3d03e;
-    --text-main: #2d3436;
-    --text-muted: #636e72;
-    --bg-body: #f8f9fa;
-    --bg-card: #ffffff;
-    --border-color: #b2bec3;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
 body {
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    margin: 0;
+    font-family: var(--font)
+    background-color: white;
+    color: black;
     line-height: 1.5;
 }
 
@@ -27,8 +15,8 @@ body {
 }
 
 .schedule-card, .sidebar-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    border: 1px solid var(--border-gray);
     border-radius: 10px;
     box-shadow: var(--shadow);
     padding: 25px;
@@ -51,7 +39,7 @@ body {
 }
 
 .card-title {
-    color: var(--primary);
+    color: var(--primary-maroon);
     font-size: 1.4rem;
     margin: 0 0 8px 0;
     font-weight: 700;
@@ -60,7 +48,7 @@ body {
 .gold-divider {
     border: none;
     height: 3px;
-    background-color: var(--secondary);
+    background-color: var(--accent-gold);
     margin-bottom: 20px;
     width: 100%;
 }
@@ -68,20 +56,20 @@ body {
 .schedule-view-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px solid var(--border-gray);
     table-layout: fixed;
 }
 
 .schedule-view-table th,
 .schedule-view-table td {
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-gray) !important;
     padding: 12px 4px;
     text-align: center;
     vertical-align: middle;
 }
 
 .schedule-view-table thead th {
-    background-color: var(--primary) !important;
+    background-color: var(--primary-maroon) !important;
     color: white !important;
     text-transform: uppercase;
     font-size: 0.75rem;
@@ -90,10 +78,10 @@ body {
 
 .schedule-view-table tbody tr th {
     background-color: #fdfdfd;
-    color: var(--primary);
+    color: var(--primary-maroon);
     font-weight: bold;
     width: 95px;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-gray) !important;
 }
 
 .schedule-cell span {
@@ -110,7 +98,7 @@ body {
 
 .grid-link:hover {
     text-decoration: underline;
-    color: var(--secondary) !important;
+    color: var(--accent-gold) !important;
 }
 
 .tutor-entry-container {
@@ -129,7 +117,7 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid var(--secondary);
+    border: 2px solid var(--accent-gold);
     object-fit: cover;
     flex-shrink: 0;
     background-color: #eee;
@@ -137,20 +125,20 @@ body {
 
 .sidebar-tutor-name {
     font-weight: 700;
-    color: var(--primary);
+    color: var(--primary-maroon);
     text-decoration: none;
     font-size: 1.25rem;
     transition: color 0.2s;
 }
 
 .sidebar-tutor-name:hover {
-    color: var(--secondary);
+    color: var(--accent-gold);
 }
 
 .tutor-divider {
     border: none;
     height: 1px;
-    background-color: var(--secondary);
+    background-color: var(--accent-gold);
     margin: 10px 0 10px 0;
     width: 100%;
     opacity: 0.7;
@@ -174,9 +162,9 @@ body {
 }
 
 .course-badge:hover {
-    background: var(--secondary);
-    color: var(--primary);
-    border-color: var(--primary);
+    background: var(--accent-gold);
+    color: var(--primary-maroon);
+    border-color: var(--primary-maroon);
     cursor: default;
 }
 

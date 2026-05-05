@@ -1,5 +1,4 @@
 body {
-  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #fcfcfc;
   margin: 0;
   display: flex;
@@ -19,18 +18,18 @@ body {
   border-radius: 8px;
   margin-bottom: 25px;
   font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow);
 }
 
 .alert-success {
   background-color: #dcfce7;
-  color: #15803d;
+  color: var(--success-green);
   border: 1px solid #86efac;
 }
 
 .alert-danger {
   background-color: #fee2e2;
-  color: #b91c1c;
+  color: var(--danger-red);
   border: 1px solid #f87171;
 }
 
@@ -39,31 +38,21 @@ body {
   border: 1px solid #e0e0e0;
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow);
   margin-bottom: 30px;
 }
 
 .form-card h2, .form-card h3 {
   margin-top: 0;
-  color: #6f263d;
-  border-bottom: 2px solid #f3d03e;
+  color: var(--primary-maroon);
+  border-bottom: 2px solid var(--accent-gold);
   display: inline-block;
   padding-bottom: 5px;
-  margin-bottom: 20px;
-}
-
-.status-card {
-  background: linear-gradient(to right, #6f263d, #8a1538);
-  color: white;
-}
-
-.status-card h3 {
-  color: white;
-  border-bottom-color: #f3d03e;
+  margin-bottom: 1px;
 }
 
 .btn-secondary, .btn-open, .btn-lock {
-  background: #6f263d;
+  background: var(--primary-maroon);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -76,15 +65,16 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #8a1538;
+  background: var(--secondary-maroon);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-hover);
 }
 
-.btn-lock { background: #b91c1c; }
-.btn-open { background: #15803d; }
+.btn-lock { background: var(--danger-red); }
+.btn-open { background: var(--success-green); }
 
 .table-fill {
+  margin-top: 5px;
   width: 100%;
   border-collapse: collapse;
   background: white;
@@ -93,7 +83,7 @@ body {
 }
 
 .table-fill th {
-  background: #6f263d;
+  background: var(--primary-maroon);
   color: white;
   text-align: left;
   padding: 15px;
@@ -113,7 +103,7 @@ body {
 .admin-nav-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 10px;
 }
 
 .nav-card {
@@ -142,7 +132,7 @@ body {
 }
 
 .modal-header {
-    background-color: #f8f9fa;
+    background-color: var(--primary-maroon);
     padding: 20px 25px;
     border-bottom: 1px solid #dee2e6;
     display: flex;

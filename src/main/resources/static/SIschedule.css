@@ -1,19 +1,6 @@
-:root {
-    --primary: #8a1538;
-    --accent-gold: #f3d03e;
-    --text-main: #2d3436;
-    --text-muted: #636e72;
-    --bg-body: #f8f9fa;
-    --bg-card: #ffffff;
-    --border-color: #b2bec3;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    margin: 0;
+    background-color: white
+    color: black;
 }
 
 .page-title {
@@ -23,14 +10,14 @@ body {
 
 .page-title h1 {
     font-size: 2.2rem;
-    color: var(--primary);
+    color: var(--primary-maroon);
     margin-bottom: 0.5rem;
 }
 
 .accent-bar {
     width: 60px;
     height: 4px;
-    background: var(--secondary);
+    background: var(--secondary-maroon);
     margin: 0 auto;
     border-radius: 2px;
 }
@@ -39,12 +26,13 @@ body {
     width: 100%;
     max-width: 1400px;
     margin: 5px auto 3rem;
-    background: var(--bg-card);
+    background: var(--bg-light);
     border-radius: 12px;
     box-shadow: var(--shadow);
     overflow: hidden;
     border: 1px solid #e0e0e0;
 }
+
 .si-table {
     width: 100%;
     border-collapse: collapse;
@@ -52,13 +40,12 @@ body {
     table-layout: auto;
 }
 
-
 td {
     border: 1px solid #e0e0e0;
 }
 
 th {
-    background-color: var(--primary);
+    background-color: var(--primary-maroon);
     color: white;
     padding: 1.2rem 1rem;
     font-size: 0.85rem;
@@ -78,7 +65,7 @@ td {
 }
 
 .group-start td {
-    border-top: 3px solid var(--primary) !important;
+    border-top: 3px solid var(--primary-maroon) !important;
 }
 
 .cell-shared {
@@ -87,7 +74,7 @@ td {
 }
 
 .leader-col a {
-    color: var(--primary);
+    color: var(--primary-maroon);
     text-decoration: none;
     font-weight: bold;
 }
