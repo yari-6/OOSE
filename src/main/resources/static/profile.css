@@ -1,7 +1,6 @@
 body {
-    font-family: Arial;
+    font-family: var(--font);
     background-color: white;
-    margin: 0;
     padding: 0;
     overflow-x: hidden;
 }
@@ -18,7 +17,7 @@ body {
 
 .profile-left {
     width: 30%;
-    background: linear-gradient(to right, #6f263d, #8a1538);
+    background: var(--main-gradient);
     color: white;
     padding: 40px 30px;
     display: flex;
@@ -34,7 +33,6 @@ body {
 }
 
 .profile-right h2 {
-    font-family: franklin-gothic-urw, sans-serif;
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-bottom: 20px;
@@ -63,7 +61,7 @@ body {
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid #f3d03e;
+    border: 5px solid var(--accent-gold);
 }
 
 .modal {
@@ -107,7 +105,7 @@ body {
     border-radius: 50%;
     cursor: pointer;
     object-fit: cover;
-    border: 3px solid #f3d03e;
+    border: 3px solid var(--accent-gold);
 }
 
 .submit,
@@ -122,16 +120,16 @@ body {
 .submit {
     margin-top: 15px;
     padding: 8px 16px;
-    background: #f3d03e;
+    background: var(--accent-gold);
 }
 
 .submit:hover {
-    background: linear-gradient(to right, #6f263d, #8a1538);
+    background: var(--main-gradient);
     color: white;
 }
 
 .btn-edit {
-    background-color: #f3d03e;
+    background-color: var(--accent-gold);
     color: black;
     text-decoration: none;
     padding: 8px 16px;
@@ -158,7 +156,6 @@ body {
     direction: rtl;
     margin-top: 15px;
     text-align: center;
-    font-family: sans-serif;
 }
 
 .rating input {
@@ -175,12 +172,12 @@ body {
 
 .rating label:hover,
 .rating label:hover ~ label {
-    color: #f3d03e;
+    var(--accent-gold);
     animation: spinStar 0.6s linear;
 }
 
 .rating input:checked ~ label {
-    color: #f3d03e;
+    var(--accent-gold);
 }
 
 .rating:hover input:checked ~ label {
@@ -235,6 +232,30 @@ body {
     border-radius: 8px;
     color: #4a5568;
     font-weight: 500;
+}
+
+.schedule-controls {
+    margin-bottom: 15px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.schedule-actions {
+    margin-bottom: 5px;
+}
+
+.btn-edit {
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tutor-notice {
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #4a5568;
 }
 
 .feedback {

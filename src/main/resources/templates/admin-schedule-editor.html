@@ -8,118 +8,118 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Schedule Editor')}"></div>
 
-<div class="container fade-in">
+<div class="content-spacer">
+    <main class="container fade-in">
+        <div class="admin-editor-header">
+            <div class="filter-controls editor-filter-controls">
+                <div class="btn-group">
+                    <a th:href="@{/admin/schedule(type='Drop-in')}" th:classappend="${currentFilter == 'Drop-in'} ? 'active' : ''" class="btn-filter">Drop-In</a>
+                    <a th:href="@{/admin/schedule(type='SSC Andruss Library')}" th:classappend="${currentFilter == 'SSC Andruss Library'} ? 'active' : ''" class="btn-filter">SSC</a>
+                    <a th:href="@{/admin/schedule(type='Math Lab')}" th:classappend="${currentFilter == 'Math Lab'} ? 'active' : ''" class="btn-filter">Math Lab</a>
+                    <a th:href="@{/admin/schedule(type='SI')}" th:classappend="${currentFilter == 'SI'} ? 'active' : ''" class="btn-filter">SI Table</a>
+                </div>
+            </div>
 
-    <div class="admin-editor-header">
-        <div class="filter-controls editor-filter-controls">
-            <div class="btn-group">
-                <a th:href="@{/admin/schedule(type='Drop-in')}" th:classappend="${currentFilter == 'Drop-in'} ? 'active' : ''" class="btn-filter">Drop-In</a>
-                <a th:href="@{/admin/schedule(type='SSC Andruss Library')}" th:classappend="${currentFilter == 'SSC Andruss Library'} ? 'active' : ''" class="btn-filter">SSC</a>
-                <a th:href="@{/admin/schedule(type='Math Lab')}" th:classappend="${currentFilter == 'Math Lab'} ? 'active' : ''" class="btn-filter">Math Lab</a>
-                <a th:href="@{/admin/schedule(type='SI')}" th:classappend="${currentFilter == 'SI'} ? 'active' : ''" class="btn-filter">SI Table</a>
+            <div class="editor-actions-bar">
+                <button class="btn-add-global" onclick="openModal('M', '09:00')">
+                    <span class="plus-icon">+</span> Add New Session
+                </button>
+            </div>
+
+            <div class="editor-search-container">
+                <input type="text" id="tutorSearchInput" list="tutorOptions" class="editor-search-input" placeholder="Individual Editor...">
+                <datalist id="tutorOptions">
+                    <option th:each="t : ${tutors}"
+                            th:value="${t.firstName + ' ' + t.lastName}"
+                            th:data-id="${t.tutorID}"></option>
+                </datalist>
+                <button type="button" onclick="goToTutor()" class="btn-filter active">Go</button>
             </div>
         </div>
 
-        <div class="editor-actions-bar">
-            <button class="btn-add-global" onclick="openModal('M', '09:00')">
-                <span class="plus-icon">+</span> Add New Session
-            </button>
-        </div>
-
-        <div class="editor-search-container">
-            <input type="text" id="tutorSearchInput" list="tutorOptions" class="editor-search-input" placeholder="Individual Editor...">
-            <datalist id="tutorOptions">
-                <option th:each="t : ${tutors}"
-                        th:value="${t.firstName + ' ' + t.lastName}"
-                        th:data-id="${t.tutorID}"></option>
-            </datalist>
-            <button type="button" onclick="goToTutor()" class="btn-filter active">Go</button>
-        </div>
-    </div>
-
-    <div th:if="${currentFilter != 'SI'}" class="schedule-wrapper">
-        <table class="schedule-view-table">
-            <thead>
-            <tr>
-                <th class="time-column-header">Time</th>
-                <th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="t : ${times}">
-                <th th:text="${#temporals.format(t, 'h:mm a')}" class="time-cell"></th>
-                <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
-                    th:with="cellKey=${dayCode + ' ' + t.toString()}, cell=${schedule.get(cellKey)}"
-                    th:style="${cell != null ? cell.backgroundStyle : ''}"
-                    class="schedule-cell clickable-cell">
-
-                    <div th:if="${cell != null}">
-                        <span th:each="name, iterStat : ${cell.names}"
-                              class="admin-chip-text"
-                              th:onclick="openEditModal([[${cell.tutorIDs[iterStat.index]}]], [[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]], [[${cell.location ?: ''}]], '', '', '', [[${#temporals.format(cell.endTime, 'HH:mm')}]])">
-                                <span th:text="${name}"></span>
-                                <span th:if="${!iterStat.last}"> / </span>
-                        </span>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div th:if="${currentFilter == 'SI'}" class="schedule-wrapper">
-        <div class="table-responsive">
-            <table class="schedule-view-table si-editor-table">
+        <div th:if="${currentFilter != 'SI'}" class="schedule-wrapper">
+            <table class="schedule-view-table">
                 <thead>
                 <tr>
-                    <th>SI Leader</th>
-                    <th>Class</th>
-                    <th>Day</th>
-                    <th>Times</th>
-                    <th>Location</th>
-                    <th>Professor</th>
-                    <th>Meeting Times</th>
+                    <th class="time-column-header">Time</th>
+                    <th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${#lists.isEmpty(siTableData)}">
-                    <td colspan="7" class="empty-state">No sessions currently scheduled.</td>
-                </tr>
+                <tr th:each="t : ${times}">
+                    <th th:text="${#temporals.format(t, 'h:mm a')}" class="time-cell"></th>
+                    <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
+                        th:with="cellKey=${dayCode + ' ' + t.toString()}, cell=${schedule.get(cellKey)}"
+                        th:style="${cell != null ? cell.backgroundStyle : ''}"
+                        class="schedule-cell clickable-cell">
 
-                <tr th:each="s, iterStat : ${siTableData}"
-                    th:with="isNewGroup=${iterStat.first || s.sessionID.tutor.tutorID != siTableData[iterStat.index - 1].sessionID.tutor.tutorID}"
-                    th:classappend="${isNewGroup} ? 'group-start' : ''"
-                    class="clickable-row"
-                    th:onclick="openEditModal([[${s.sessionID.tutor.tutorID}]], [[${s.sessionID.day}]], [[${#temporals.format(s.sessionID.time, 'HH:mm')}]], [[${s.location ?: ''}]], [[${s.professor ?: ''}]], [[${s.classMeetingTimes ?: ''}]], [[${s.className ?: ''}]], [[${#temporals.format(s.endTime, 'HH:mm')}]])">
-
-                    <td class="cell-shared leader-col">
-                        <strong th:if="${isNewGroup}" th:text="${s.sessionID.tutor.firstName + ' ' + s.sessionID.tutor.lastName}"></strong>
+                        <div th:if="${cell != null}">
+                            <span th:each="name, iterStat : ${cell.names}"
+                                  class="admin-chip-text"
+                                  th:onclick="openEditModal([[${cell.tutorIDs[iterStat.index]}]], [[${dayCode}]], [[${#temporals.format(t, 'HH:mm')}]], [[${cell.location ?: ''}]], '', '', '', [[${#temporals.format(cell.endTime, 'HH:mm')}]])">
+                                    <span th:text="${name}"></span>
+                                    <span th:if="${!iterStat.last}"> / </span>
+                            </span>
+                        </div>
                     </td>
-                    <td class="cell-shared" th:text="${isNewGroup} ? ${s.className} : ''"></td>
-                    <td class="cell-session">
-                        <span th:switch="${s.sessionID.day}">
-                            <span th:case="'M'">Monday</span>
-                            <span th:case="'T'">Tuesday</span>
-                            <span th:case="'W'">Wednesday</span>
-                            <span th:case="'R'">Thursday</span>
-                            <span th:case="'F'">Friday</span>
-                            <span th:case="*" th:text="${s.sessionID.day}"></span>
-                        </span>
-                    </td>
-                    <td class="cell-session" th:text="${#temporals.format(s.sessionID.time, 'h:mm a')}"></td>
-                    <td class="cell-session" th:text="${s.location ?: 'TBD'}"></td>
-                    <td class="cell-session" th:text="${s.professor ?: 'N/A'}"></td>
-                    <td class="cell-session" th:text="${s.classMeetingTimes ?: 'N/A'}"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
 
+        <div th:if="${currentFilter == 'SI'}" class="schedule-wrapper">
+            <div class="table-responsive">
+                <table class="schedule-view-table si-editor-table">
+                    <thead>
+                    <tr>
+                        <th>SI Leader</th>
+                        <th>Class</th>
+                        <th>Day</th>
+                        <th>Times</th>
+                        <th>Location</th>
+                        <th>Professor</th>
+                        <th>Meeting Times</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(siTableData)}">
+                        <td colspan="7" class="empty-state">No sessions currently scheduled.</td>
+                    </tr>
+
+                    <tr th:each="s, iterStat : ${siTableData}"
+                        th:with="isNewGroup=${iterStat.first || s.sessionID.tutor.tutorID != siTableData[iterStat.index - 1].sessionID.tutor.tutorID}"
+                        th:classappend="${isNewGroup} ? 'group-start' : ''"
+                        class="clickable-row"
+                        th:onclick="openEditModal([[${s.sessionID.tutor.tutorID}]], [[${s.sessionID.day}]], [[${#temporals.format(s.sessionID.time, 'HH:mm')}]], [[${s.location ?: ''}]], [[${s.professor ?: ''}]], [[${s.classMeetingTimes ?: ''}]], [[${s.className ?: ''}]], [[${#temporals.format(s.endTime, 'HH:mm')}]])">
+
+                        <td class="cell-shared leader-col">
+                            <strong th:if="${isNewGroup}" th:text="${s.sessionID.tutor.firstName + ' ' + s.sessionID.tutor.lastName}"></strong>
+                        </td>
+                        <td class="cell-shared" th:text="${isNewGroup} ? ${s.className} : ''"></td>
+                        <td class="cell-session">
+                            <span th:switch="${s.sessionID.day}">
+                                <span th:case="'M'">Monday</span>
+                                <span th:case="'T'">Tuesday</span>
+                                <span th:case="'W'">Wednesday</span>
+                                <span th:case="'R'">Thursday</span>
+                                <span th:case="'F'">Friday</span>
+                                <span th:case="*" th:text="${s.sessionID.day}"></span>
+                            </span>
+                        </td>
+                        <td class="cell-session" th:text="${#temporals.format(s.sessionID.time, 'h:mm a')}"></td>
+                        <td class="cell-session" th:text="${s.location ?: 'TBD'}"></td>
+                        <td class="cell-session" th:text="${s.professor ?: 'N/A'}"></td>
+                        <td class="cell-session" th:text="${s.classMeetingTimes ?: 'N/A'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
 <div id="sessionModal" class="modal-overlay">
     <div class="modal">
         <h2 id="modalTitle">Manage Session</h2>
@@ -204,6 +204,7 @@
         </form>
     </div>
 </div>
+<div th:replace="~{footerFragment :: footer}"></div>
 
 <script th:src="@{/admin-schedules.js}"></script>
 </body>

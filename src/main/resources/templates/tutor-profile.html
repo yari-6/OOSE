@@ -9,194 +9,189 @@
     <link rel="stylesheet" th:href="@{/footer.css}">
     <link rel="stylesheet" th:href="@{/schedule-view.css}">
 </head>
-<body>
+<body class="site-wrapper">
 
 <div th:replace="~{headerFragment :: header('Tutor Information')}"></div>
 
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Blooms Tutors – Making scheduling easy!
-        <hr class="accent-line">
+<div class="content-spacer">
+    <div class="profile-container">
+        <div class="profile-left">
+
+            <div class="profile">
+                <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
+                     alt="Profile Picture"
+                     id="profileImage">
+
+                <button th:if="${session.tutorID == tutor.tutorID}"
+                        class="submit"
+                        id="changePfpBtn">
+                    Change PFP
+                </button>
+            </div>
+
+            <div id="avatarModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h2>Select an Avatar</h2>
+                    <div class="avatar-grid">
+                        <img src="/pochacoPfp.jpg" onclick="selectAvatar('/pochacoPfp.jpg')">
+                        <img src="/myMelodyPfp.jpg" onclick="selectAvatar('/myMelodyPfp.jpg')">
+                        <img src="/kuroppiPfp.jpg" onclick="selectAvatar('/kuroppiPfp.jpg')">
+                        <img src="/helloKittyPfp.jpg" onclick="selectAvatar('/helloKittyPfp.jpg')">
+                    </div>
+                </div>
+            </div>
+
+            <h1 th:text="${tutor != null ? tutor.firstName + ' ' + tutor.lastName : 'Unknown'}"></h1>
+            <h3 class="tutor-type" th:text="${tutor.type}"></h3>
+
+            <div class="profile-card" th:if="${ratings != 0.0 and ratings['overall'] != 0.0}">
+                <h3 th:text="'Average Communication: ' + ${ratings['comm']}"></h3>
+                <h3 th:text="'Average Approachability: ' + ${ratings['approach']}"></h3>
+                <h3 th:text="'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
+                <h3 th:text="'Average Helpfulness: ' + ${ratings['help']}"></h3>
+                <h3 th:text="'Average Overall: ' + ${ratings['overall']}"></h3>
+            </div>
+
+            <div class="profile-card">
+                <h3>Anonymously rate this tutor (must rate all categories):</h3>
+
+                <form th:action="@{/tutors/{id}/rate(id=${tutor.tutorID})}" method="post">
+
+                    <div class="rating-category">
+                        <p>Communication</p>
+                        <div class="rating">
+                            <input type="radio" name="communication" id="comm1" value="5">
+                            <label for="comm1">★</label>
+                            <input type="radio" name="communication" id="comm2" value="4">
+                            <label for="comm2">★</label>
+                            <input type="radio" name="communication" id="comm3" value="3">
+                            <label for="comm3">★</label>
+                            <input type="radio" name="communication" id="comm4" value="2">
+                            <label for="comm4">★</label>
+                            <input type="radio" name="communication" id="comm5" value="1">
+                            <label for="comm5">★</label>
+                        </div>
+                    </div>
+
+                    <div class="rating-category">
+                        <p>Approachability</p>
+                        <div class="rating">
+                            <input type="radio" name="approach" id="app1" value="5">
+                            <label for="app1">★</label>
+                            <input type="radio" name="approach" id="app2" value="4">
+                            <label for="app2">★</label>
+                            <input type="radio" name="approach" id="app3" value="3">
+                            <label for="app3">★</label>
+                            <input type="radio" name="approach" id="app4" value="2">
+                            <label for="app4">★</label>
+                            <input type="radio" name="approach" id="app5" value="1">
+                            <label for="app5">★</label>
+                        </div>
+                    </div>
+
+                    <div class="rating-category">
+                        <p>Implements Effective Learning Strategies</p>
+                        <div class="rating">
+                            <input type="radio" name="effLearn" id="learn1" value="5">
+                            <label for="learn1">★</label>
+                            <input type="radio" name="effLearn" id="learn2" value="4">
+                            <label for="learn2">★</label>
+                            <input type="radio" name="effLearn" id="learn3" value="3">
+                            <label for="learn3">★</label>
+                            <input type="radio" name="effLearn" id="learn4" value="2">
+                            <label for="learn4">★</label>
+                            <input type="radio" name="effLearn" id="learn5" value="1">
+                            <label for="learn5">★</label>
+                        </div>
+                    </div>
+
+                    <div class="rating-category">
+                        <p>Helpfulness</p>
+                        <div class="rating">
+                            <input type="radio" name="helpfulness" id="help1" value="5">
+                            <label for="help1">★</label>
+                            <input type="radio" name="helpfulness" id="help2" value="4">
+                            <label for="help2">★</label>
+                            <input type="radio" name="helpfulness" id="help3" value="3">
+                            <label for="help3">★</label>
+                            <input type="radio" name="helpfulness" id="help4" value="2">
+                            <label for="help4">★</label>
+                            <input type="radio" name="helpfulness" id="help5" value="1">
+                            <label for="help5">★</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit">Submit Rating</button>
+                </form>
+            </div>
+
+            <div class="profile-card">
+                <form id="feedbackForm" class="feedback">
+                    <label>Your School Email:</label>
+                    <input type="email" id="user_email" required placeholder="email@commonwealthu.edu">
+
+                    <label>Leave anonymous feedback:</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Please include the tutors name!"></textarea>
+
+                    <button type="submit" class="submit">Send</button>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="profile-right">
+            <section class="course-section">
+                <h2>Courses Offered</h2>
+                <div class="course-card" th:each="course : ${tutor.coursesOffered}">
+                    <div class="course-info">
+                        <span th:text="${course.courseID.courseSubject}"></span>
+                        <span th:text="${course.courseID.courseNumber}"></span>
+                    </div>
+                    <div class="course-title" th:text="${course.courseTitle}"></div>
+                </div>
+            </section>
+
+            <section class="schedule-section">
+
+                <div class="schedule-actions">
+                    <h2>Schedule</h2>
+                </div>
+
+                <div class="schedule-controls">
+                    <a th:if="${session.tutorID == tutor.tutorID and isWindowOpen}"
+                       th:href="@{/schedule-builder}"
+                       class="btn-edit">
+                        Edit Schedule
+                    </a>
+
+                    <span th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
+                          class="status-badge-locked">
+                        Submissions Locked
+                    </span>
+
+                    <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
+                         class="lock-notice">
+                        * The administrator has closed the submission window. You cannot modify your times until it is reopened.
+                    </div>
+                </div>
+
+                <div th:if="${tutor.type == 'Tutor'}">
+                    Schedule is subject to change, and sessions are by appointment only. Please book through CU Succeed.
+                </div>
+
+                <div th:if="${!schedule.isEmpty()}">
+                    <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
+                </div>
+
+                <div th:if="${schedule.isEmpty()} and tutor.type !='Tutor'}" class="empty-schedule-msg">
+                    Schedule coming soon.
+                </div>
+
+            </section>
+        </div>
     </div>
 </div>
-
-<div class="profile-container">
-    <div class="profile-left">
-
-        <div class="profile">
-            <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
-                 alt="Profile Picture"
-                 id="profileImage">
-
-            <button th:if="${session.tutorID == tutor.tutorID}"
-                    class="submit"
-                    id="changePfpBtn">
-                Change PFP
-            </button>
-        </div>
-
-        <div id="avatarModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeModal">&times;</span>
-                <h2>Select an Avatar</h2>
-                <div class="avatar-grid">
-                    <img src="/pochacoPfp.jpg" onclick="selectAvatar('/pochacoPfp.jpg')">
-                    <img src="/myMelodyPfp.jpg" onclick="selectAvatar('/myMelodyPfp.jpg')">
-                    <img src="/kuroppiPfp.jpg" onclick="selectAvatar('/kuroppiPfp.jpg')">
-                    <img src="/helloKittyPfp.jpg" onclick="selectAvatar('/helloKittyPfp.jpg')">
-                </div>
-            </div>
-        </div>
-
-        <h1 th:text="${tutor != null ? tutor.firstName + ' ' + tutor.lastName : 'Unknown'}"></h1>
-        <h3 class="tutor-type" th:text="${tutor.type}"></h3>
-
-        <div class="profile-card" th:if="${ratings != 0.0 and ratings['overall'] != 0.0}">
-            <h3 th:text="'Average Communication: ' + ${ratings['comm']}"></h3>
-            <h3 th:text="'Average Approachability: ' + ${ratings['approach']}"></h3>
-            <h3 th:text="'Average Effective Learning Strategies: ' + ${ratings['effLearn']}"></h3>
-            <h3 th:text="'Average Helpfulness: ' + ${ratings['help']}"></h3>
-            <h3 th:text="'Average Overall: ' + ${ratings['overall']}"></h3>
-        </div>
-
-        <div class="profile-card">
-            <h3>Anonymously rate this tutor (must rate all categories):</h3>
-
-            <form th:action="@{/tutors/{id}/rate(id=${tutor.tutorID})}" method="post">
-
-                <div class="rating-category">
-                    <p>Communication</p>
-                    <div class="rating">
-                        <input type="radio" name="communication" id="comm1" value="5">
-                        <label for="comm1">★</label>
-                        <input type="radio" name="communication" id="comm2" value="4">
-                        <label for="comm2">★</label>
-                        <input type="radio" name="communication" id="comm3" value="3">
-                        <label for="comm3">★</label>
-                        <input type="radio" name="communication" id="comm4" value="2">
-                        <label for="comm4">★</label>
-                        <input type="radio" name="communication" id="comm5" value="1">
-                        <label for="comm5">★</label>
-                    </div>
-                </div>
-
-                <div class="rating-category">
-                    <p>Approachability</p>
-                    <div class="rating">
-                        <input type="radio" name="approach" id="app1" value="5">
-                        <label for="app1">★</label>
-                        <input type="radio" name="approach" id="app2" value="4">
-                        <label for="app2">★</label>
-                        <input type="radio" name="approach" id="app3" value="3">
-                        <label for="app3">★</label>
-                        <input type="radio" name="approach" id="app4" value="2">
-                        <label for="app4">★</label>
-                        <input type="radio" name="approach" id="app5" value="1">
-                        <label for="app5">★</label>
-                    </div>
-                </div>
-
-                <div class="rating-category">
-                    <p>Implements Effective Learning Strategies</p>
-                    <div class="rating">
-                        <input type="radio" name="effLearn" id="learn1" value="5">
-                        <label for="learn1">★</label>
-                        <input type="radio" name="effLearn" id="learn2" value="4">
-                        <label for="learn2">★</label>
-                        <input type="radio" name="effLearn" id="learn3" value="3">
-                        <label for="learn3">★</label>
-                        <input type="radio" name="effLearn" id="learn4" value="2">
-                        <label for="learn4">★</label>
-                        <input type="radio" name="effLearn" id="learn5" value="1">
-                        <label for="learn5">★</label>
-                    </div>
-                </div>
-
-                <div class="rating-category">
-                    <p>Helpfulness</p>
-                    <div class="rating">
-                        <input type="radio" name="helpfulness" id="help1" value="5">
-                        <label for="help1">★</label>
-                        <input type="radio" name="helpfulness" id="help2" value="4">
-                        <label for="help2">★</label>
-                        <input type="radio" name="helpfulness" id="help3" value="3">
-                        <label for="help3">★</label>
-                        <input type="radio" name="helpfulness" id="help4" value="2">
-                        <label for="help4">★</label>
-                        <input type="radio" name="helpfulness" id="help5" value="1">
-                        <label for="help5">★</label>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit">Submit Rating</button>
-            </form>
-        </div>
-
-        <div class="profile-card">
-            <form id="feedbackForm" class="feedback">
-                <label>Your School Email:</label>
-                <input type="email" id="user_email" required placeholder="email@commonwealthu.edu">
-
-                <label>Leave anonymous feedback:</label>
-                <textarea id="message" name="message" rows="5" placeholder="Please include the tutors name!"></textarea>
-
-                <button type="submit" class="submit">Send</button>
-            </form>
-        </div>
-
-    </div>
-
-    <div class="profile-right">
-        <section class="course-section">
-            <h2>Courses Offered</h2>
-            <div class="course-card" th:each="course : ${tutor.coursesOffered}">
-                <div class="course-info">
-                    <span th:text="${course.courseID.courseSubject}"></span>
-                    <span th:text="${course.courseID.courseNumber}"></span>
-                </div>
-                <div class="course-title" th:text="${course.courseTitle}"></div>
-            </div>
-        </section>
-
-        <section class="schedule-section">
-
-            <div class="schedule-actions">
-                <h2>Schedule</h2>
-
-                <a th:if="${session.tutorID == tutor.tutorID and isWindowOpen}"
-                   th:href="@{/schedule-builder}"
-                   class="btn-edit">
-                    Edit Schedule
-                </a>
-
-                <span th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
-                      class="status-badge-locked">
-                    Submissions Locked
-                </span>
-            </div>
-
-            <div th:if="${session.tutorID == tutor.tutorID and !isWindowOpen}"
-                 class="lock-notice">
-                * The administrator has closed the submission window. You cannot modify your times until it is reopened.
-            </div>
-
-            <div th:if="${tutor.type == 'Tutor'}">
-                Schedule is subject to change, and sessions are by appointment only. Please book through CU Succeed.
-            </div>
-
-            <div th:if="${!schedule.isEmpty()}">
-                <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
-            </div>
-
-            <div th:if="${schedule.isEmpty()} AND tutor.type !='Tutor'" class="empty-schedule-msg">
-                Schedule coming soon.
-            </div>
-
-        </section>
-    </div>
-</div>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 <script th:inline="javascript">

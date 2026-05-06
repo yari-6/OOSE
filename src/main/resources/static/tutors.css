@@ -1,12 +1,8 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: var(--font);
     background-color: #f8fafc;
     color: #111827;
-    margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
 .container {
@@ -15,7 +11,6 @@ body {
     margin: 36px auto 0;
     padding: 0 20px;
     box-sizing: border-box;
-    flex: 1;
 }
 
 .search-section {
@@ -26,7 +21,7 @@ body {
     background: #ffffff;
     border: 1px solid #dbe2ea;
     border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--shadow);
     padding: 22px;
 }
 
@@ -68,7 +63,7 @@ body {
 }
 
 .btn-search {
-    background-color: #f3d03e;
+    background-color: var(--accent-gold);
     color: #111827;
     padding: 12px 18px;
     border: 1px solid #d7b72f;
@@ -80,7 +75,7 @@ body {
 }
 
 .btn-search:hover {
-    background: linear-gradient(to right, #6f263d, #8a1538);
+    background: var(--main-gradient);
     color: #ffffff;
     transform: translateY(-1px);
 }
@@ -107,6 +102,7 @@ body {
     border: 1px solid #dbe2ea;
     border-radius: 8px;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    margin-bottom: 10px;
 }
 
 .tutor-table {
@@ -116,7 +112,7 @@ body {
 }
 
 .tutor-table-header-row {
-    background: linear-gradient(to right, #6f263d, #8a1538);
+    background: var(--main-gradient);
     color: #ffffff;
 }
 

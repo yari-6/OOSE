@@ -8,56 +8,48 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Andruss Library Drop-In')}"></div>
 
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Blooms Tutors – Making scheduling easy!
-        <hr class="accent-line">
+<div class="content-spacer">
+    <div class="dashboard-wrapper">
+        <main class="schedule-card">
+            <h2 class="card-title">Weekly Schedule</h2>
+            <hr class="gold-divider">
+            <div class="schedule-container">
+                <div th:replace="~{schedule-view :: scheduleView(true)}"></div>
+            </div>
+        </main>
+
+        <aside class="sidebar-card">
+            <h2 class="card-title">Drop-In Tutors</h2>
+            <hr class="gold-divider">
+
+            <div class="tutor-scroll-list">
+                <div th:each="tutor : ${activeTutors}" class="tutor-entry-container">
+                    <div class="tutor-profile-header">
+                        <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
+                             alt="Tutor Profile" class="sidebar-pfp">
+                        <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}"
+                           th:text="${tutor.firstName + ' ' + tutor.lastName}"
+                           class="sidebar-tutor-name"></a>
+                    </div>
+
+                    <div class="tutor-courses-list">
+                        <span th:each="course : ${tutor.coursesOffered}"
+                              th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
+                              class="course-badge"></span>
+                    </div>
+                    <hr class="tutor-divider">
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(activeTutors)}" class="empty-msg">
+                No tutor information is currently available for this location.
+            </div>
+        </aside>
     </div>
 </div>
-
-<div class="dashboard-wrapper">
-
-    <main class="schedule-card">
-        <h2 class="card-title">Weekly Schedule</h2>
-        <hr class="gold-divider">
-        <div class="schedule-container">
-            <div th:replace="~{schedule-view :: scheduleView(true)}"></div>
-        </div>
-    </main>
-
-    <aside class="sidebar-card">
-        <h2 class="card-title">Drop-In Tutors</h2>
-        <hr class="gold-divider">
-
-        <div class="tutor-scroll-list">
-            <div th:each="tutor : ${activeTutors}" class="tutor-entry-container">
-                <div class="tutor-profile-header">
-                    <img th:src="${tutor.profilePicture != null ? tutor.profilePicture : '/graypfp.png'}"
-                         alt="Tutor Profile" class="sidebar-pfp">
-                    <a th:href="@{/tutors/{id}(id=${tutor.tutorID})}"
-                       th:text="${tutor.firstName + ' ' + tutor.lastName}"
-                       class="sidebar-tutor-name"></a>
-                </div>
-
-                <div class="tutor-courses-list">
-                    <span th:each="course : ${tutor.coursesOffered}"
-                          th:text="${course.courseID.courseSubject + ' ' + course.courseID.courseNumber}"
-                          class="course-badge"></span>
-                </div>
-                <hr class="tutor-divider">
-            </div>
-        </div>
-
-        <div th:if="${#lists.isEmpty(activeTutors)}" class="empty-msg">
-            No tutor information is currently available for this location.
-        </div>
-    </aside>
-</div>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 </body>

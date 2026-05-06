@@ -8,93 +8,86 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Admin Dashboard')}"></div>
 
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Bloom Tutors - Making scheduling easy!
-        <hr class="accent-line">
-    </div>
+<div class="content-spacer">
+    <main class="container">
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="form-card" th:classappend="${isWindowOpen ? 'status-open' : 'status-locked'}">
+            <h2>System Submission Control</h2>
+            <div class="status-controls">
+                <p>Current Status:
+                    <span th:text="${isWindowOpen ? 'OPEN' : 'LOCKED'}"
+                          th:class="${isWindowOpen ? 'text-success' : 'text-danger'}"></span>
+                </p>
+                <form th:action="@{/admin/toggle-window}" method="post">
+                    <input type="hidden" name="open" th:value="${!isWindowOpen}">
+                    <button type="submit"
+                            th:class="${isWindowOpen ? 'btn-lock' : 'btn-open'}"
+                            th:text="${isWindowOpen ? 'Lock All Submissions' : 'Open Window'}"></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h2>Pending Room Assignments</h2>
+            <div class="table-responsive">
+                <table class="table-fill">
+                    <thead>
+                    <tr>
+                        <th>Tutor</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(pendingSessions)}">
+                        <td colspan="4" class="empty-table-msg">No pending assignments. Great job!</td>
+                    </tr>
+                    <tr th:each="sess : ${pendingSessions}" class="fade-in">
+                        <td th:text="${sess.sessionID.tutor.firstName + ' ' + sess.sessionID.tutor.lastName}"></td>
+                        <td th:text="${sess.sessionID.day}"></td>
+                        <td th:text="${#temporals.format(sess.sessionID.time, 'h:mm a')}"></td>
+                        <td>
+                            <form th:action="@{/admin/assign-room}" method="post" class="assign-form">
+                                <input type="hidden" name="tutorId" th:value="${sess.sessionID.tutor.tutorID}">
+                                <input type="hidden" name="day" th:value="${sess.sessionID.day}">
+                                <input type="hidden" name="time" th:value="${sess.sessionID.time}">
+                                <input type="text" name="room" placeholder="Room #" required class="input-room">
+                                <button type="submit" class="btn-secondary">Assign</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-nav-grid">
+            <div class="form-card nav-card">
+                <h3>Staff Management</h3>
+                <p>Add new tutors and update staff profiles.</p>
+                <a th:href="@{/admin/tutors}" class="btn-secondary">Manage Tutors</a>
+            </div>
+
+            <div class="form-card nav-card">
+                <h3>Master Schedule</h3>
+                <p>View the full weekly grid and manage all room assignments.</p>
+                <a th:href="@{/admin/schedule}" class="btn-secondary">View Master Grid</a>
+            </div>
+
+            <div class="form-card nav-card">
+                <h3>Course Catalog</h3>
+                <p>Update subject codes and university courses.</p>
+                <a th:href="@{/admin/courses}" class="btn-secondary">Edit Courses</a>
+            </div>
+        </div>
+    </main>
 </div>
-
-<main class="container">
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-    <div class="form-card status-card" th:classappend="${isWindowOpen ? 'status-open' : 'status-locked'}">
-        <h3>System Submission Control</h3>
-        <div class="status-controls">
-            <p>Current Status:
-                <span th:text="${isWindowOpen ? 'OPEN' : 'LOCKED'}"
-                      th:class="${isWindowOpen ? 'text-success' : 'text-danger'}"></span>
-            </p>
-            <form th:action="@{/admin/toggle-window}" method="post">
-                <input type="hidden" name="open" th:value="${!isWindowOpen}">
-                <button type="submit"
-                        th:class="${isWindowOpen ? 'btn-lock' : 'btn-open'}"
-                        th:text="${isWindowOpen ? 'Lock All Submissions' : 'Open Window'}"></button>
-            </form>
-        </div>
-    </div>
-
-    <div class="form-card">
-        <h2>Pending Room Assignments</h2>
-        <div class="table-responsive">
-            <table class="table-fill">
-                <thead>
-                <tr>
-                    <th>Tutor</th>
-                    <th>Day</th>
-                    <th>Time</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(pendingSessions)}">
-                    <td colspan="4" class="empty-table-msg">No pending assignments. Great job!</td>
-                </tr>
-                <tr th:each="sess : ${pendingSessions}" class="fade-in">
-                    <td th:text="${sess.sessionID.tutor.firstName + ' ' + sess.sessionID.tutor.lastName}"></td>
-                    <td th:text="${sess.sessionID.day}"></td>
-                    <td th:text="${#temporals.format(sess.sessionID.time, 'h:mm a')}"></td>
-                    <td>
-                        <form th:action="@{/admin/assign-room}" method="post" class="assign-form">
-                            <input type="hidden" name="tutorId" th:value="${sess.sessionID.tutor.tutorID}">
-                            <input type="hidden" name="day" th:value="${sess.sessionID.day}">
-                            <input type="hidden" name="time" th:value="${sess.sessionID.time}">
-                            <input type="text" name="room" placeholder="Room #" required class="input-room">
-                            <button type="submit" class="btn-secondary">Assign</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="admin-nav-grid">
-        <div class="form-card nav-card">
-            <h3>Staff Management</h3>
-            <p>Add new tutors and update staff profiles.</p>
-            <a th:href="@{/admin/tutors}" class="btn-secondary">Manage Tutors</a>
-        </div>
-
-        <div class="form-card nav-card">
-            <h3>Master Schedule</h3>
-            <p>View the full weekly grid and manage all room assignments.</p>
-            <a th:href="@{/admin/schedule}" class="btn-secondary">View Master Grid</a>
-        </div>
-
-        <div class="form-card nav-card">
-            <h3>Course Catalog</h3>
-            <p>Update subject codes and university courses.</p>
-            <a th:href="@{/admin/courses}" class="btn-secondary">Edit Courses</a>
-        </div>
-    </div>
-</main>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 </body>

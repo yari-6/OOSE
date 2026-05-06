@@ -8,68 +8,61 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('Welcome to Bloom Tutors')}"></div>
 
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Blooms Tutors – Making scheduling easy!
-        <hr class="accent-line">
-    </div>
+<div class="content-spacer">
+    <main class="main-section">
+        <div class="left-side">
+            <th:block th:if="${session.tutorID != null}">
+                <a th:if="${session.isAdmin}" th:href="@{/admin/dashboard}" class="hero-link">
+                    <div class="hero_content box">
+                        <p>Admin Dashboard</p>
+                    </div>
+                </a>
+                <a th:if="${!session.isAdmin}" th:href="@{/schedule-builder}" class="hero-link">
+                    <div class="hero_content box">
+                        <p>Build Your Schedule</p>
+                    </div>
+                </a>
+            </th:block>
+
+            <a th:href="@{/schedules/drop-in}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Drop-In Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/schedules/SSC}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SSC Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/schedules/math-lab}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View Ben Frank Math Lab Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/schedules/SI}" class="hero-link">
+                <div class="hero_content box">
+                    <p>View SI Schedule</p>
+                </div>
+            </a>
+
+            <a th:href="@{/tutors}" class="hero-link">
+                <div class="hero_content box">
+                    <p>Search for a tutor</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="image-side">
+            <img th:src="@{/tutor_center.jpg}" alt="Bloomsburg Tutor Center">
+        </div>
+    </main>
 </div>
-
-<main class="main-section">
-    <div class="left-side">
-        <th:block th:if="${session.tutorID != null}">
-            <a th:if="${session.isAdmin}" th:href="@{/admin/dashboard}" class="hero-link">
-                <div class="hero_content box">
-                    <p>Admin Dashboard</p>
-                </div>
-            </a>
-            <a th:if="${!session.isAdmin}" th:href="@{/schedule-builder}" class="hero-link">
-                <div class="hero_content box">
-                    <p>Build Your Schedule</p>
-                </div>
-            </a>
-        </th:block>
-
-        <a th:href="@{/schedules/drop-in}" class="hero-link">
-            <div class="hero_content box">
-                <p>View Drop-In Schedule</p>
-            </div>
-        </a>
-
-        <a th:href="@{/schedules/SSC}" class="hero-link">
-            <div class="hero_content box">
-                <p>View SSC Math Lab Schedule</p>
-            </div>
-        </a>
-
-        <a th:href="@{/schedules/math-lab}" class="hero-link">
-            <div class="hero_content box">
-                <p>View Ben Frank Math Lab Schedule</p>
-            </div>
-        </a>
-
-        <a th:href="@{/schedules/SI}" class="hero-link">
-            <div class="hero_content box">
-                <p>View SI Schedule</p>
-            </div>
-        </a>
-
-        <a th:href="@{/tutors}" class="hero-link">
-            <div class="hero_content box">
-                <p>Search for a tutor</p>
-            </div>
-        </a>
-    </div>
-
-    <div class="image-side">
-        <img th:src="@{/tutor_center.jpg}" alt="Bloomsburg Tutor Center">
-    </div>
-</main>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 </body>
