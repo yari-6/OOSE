@@ -1,15 +1,20 @@
 package com.commonwealthu.tutor_scheduler.controller;
 
 import com.commonwealthu.tutor_scheduler.entity.Tutor;
+import com.commonwealthu.tutor_scheduler.service.PDFService;
 import com.commonwealthu.tutor_scheduler.service.TutorService;
 import com.commonwealthu.tutor_scheduler.service.SessionService;
 import com.commonwealthu.tutor_scheduler.service.CourseService;
 import com.commonwealthu.tutor_scheduler.dto.ScheduleInfo;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -24,11 +29,13 @@ public class AdminController {
     private final TutorService tutorService;
     private final SessionService sessionService;
     private final CourseService courseService;
+    private final PDFService pdfService;
 
-    public AdminController(TutorService tutorService, SessionService sessionService, CourseService courseService) {
+    public AdminController(TutorService tutorService, SessionService sessionService, CourseService courseService, PDFService pdfService) {
         this.tutorService = tutorService;
         this.sessionService = sessionService;
         this.courseService = courseService;
+        this.pdfService = pdfService;
     }
 
     @GetMapping("/dashboard")
@@ -216,6 +223,38 @@ public class AdminController {
                 .collect(Collectors.toList()));
 
         return "admin-schedule-editor";
+    }
+
+    public static WebContext createContext(HttpServletRequest req, HttpServletResponse res) {
+        var application = JakartaServletWebApplication.buildApplication(req.getServletContext());
+        var exchange = application.buildExchange(req, res);
+        return new WebContext(exchange);
+    }
+
+    private String populateGridModel(Model model, String type, String viewName) {
+        var sessions = sessionService.getSessionsByType(type);
+        List<LocalTime> times = sessionService.generateTimes();
+
+        Set<Tutor> activeTutors = sessions.stream()
+                .map(s -> s.getSessionID().getTutor())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        model.addAttribute("times", times);
+        model.addAttribute("activeTutors", activeTutors);
+        model.addAttribute("schedule", sessionService.fillInSessions(sessions, times));
+        model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
+        return viewName;
+    }
+
+    @RequestMapping("/print")
+    public String printSchedule(@RequestParam(defaultValue = "Drop-in") String currentFilter,
+                                HttpServletRequest request,
+                                HttpServletResponse response,
+                                Model model) throws Exception {
+        WebContext context = createContext(request, response);
+        pdfService.generateSchedulePdf(populateGridModel(model, currentFilter, "print-schedule"), model.asMap(), context);
+        return "print-schedule";
     }
 
     @PostMapping("/save-master-session")

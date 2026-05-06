@@ -21,6 +21,13 @@
                 <a th:href="@{/admin/schedule(type='Math Lab')}" th:classappend="${currentFilter == 'Math Lab'} ? 'active' : ''" class="btn-filter">Math Lab</a>
                 <a th:href="@{/admin/schedule(type='SI')}" th:classappend="${currentFilter == 'SI'} ? 'active' : ''" class="btn-filter">SI Table</a>
             </div>
+            <!--print button hidden until functional-->
+            <div hidden>
+                <form action="print" method="post">
+                    <input type="hidden" name="currentFilter" value="${currentFilter}"/>
+                    <button type="submit" class="btn-filter">Print this Schedule</button>
+                </form>
+            </div>
         </div>
 
         <div class="editor-actions-bar">
@@ -33,7 +40,7 @@
             <input type="text" id="tutorSearchInput" list="tutorOptions" class="editor-search-input" placeholder="Individual Editor...">
             <datalist id="tutorOptions">
                 <option th:each="t : ${tutors}"
-                        th:value="${t.firstName + ' ' + t.lastName}"
+                        th:value="${t.firstName + ' ' + t.lastName + ' (' + t.type + ')'}"
                         th:data-id="${t.tutorID}"></option>
             </datalist>
             <button type="button" onclick="goToTutor()" class="btn-filter active">Go</button>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        /* PDF Page Setup */
+        @page {
+            size: Letter landscape;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #2d3436;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #f3d03e; /* Gold accent */
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #8a1538; /* Maroon */
+            margin: 0;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #636e72;
+            font-weight: bold;
+        }
+
+        /* Table Grid Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th {
+            background-color: #8a1538;
+            color: #ffffff;
+            padding: 12px;
+            border: 1px solid #b2bec3;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        td {
+            border: 1px solid #b2bec3;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+            height: 60px; /* Consistent height for bulletin boards */
+            font-size: 11px;
+            word-wrap: break-word;
+        }
+
+        .time-column {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            width: 90px;
+            color: #8a1538;
+        }
+
+        /* Content inside the cells */
+        .tutor-name {
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+        }
+
+        .empty-cell {
+            background-color: #ffffff;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 10px;
+            color: #b2bec3;
+        }
+    </style>
+    <title>Title</title>
+</head>
+<body>
+
+<div class="header">
+    <h1 th:text="${currentFilter + ' Schedule'}">Schedule</h1>
+    <p>Commonwealth University Tutor Scheduler</p>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th style="width: 90px;">Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="t : ${times}">
+        <!-- Time Column -->
+        <td class="time-column" th:text="${#temporals.format(t, 'h:mm a')}"></td>
+
+        <!-- Day Columns -->
+        <td th:each="dayCode : ${#strings.arraySplit('M,T,W,R,F', ',')}"
+            th:with="cellKey=${dayCode + ' ' + t.toString()}, cell=${schedule.get(cellKey)}"
+            th:style="${cell != null ? cell.backgroundStyle : 'background-color: #ffffff;'}">
+
+            <div th:if="${cell != null}" class="tutor-name">
+                <span th:text="${cell.names}"></span>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    Generated on: <span th:text="${#temporals.format(#temporals.createNow(), 'MMMM dd, yyyy - h:mm a')}"></span>
+</div>
+
+</body>
+</html>
