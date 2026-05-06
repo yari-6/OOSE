@@ -17,7 +17,7 @@
             <div class="filter-controls editor-filter-controls">
                 <div class="btn-group">
                     <a th:href="@{/admin/schedule(type='Drop-in')}" th:classappend="${currentFilter == 'Drop-in'} ? 'active' : ''" class="btn-filter">Drop-In</a>
-                    <a th:href="@{/admin/schedule(type='SSC Andruss Library')}" th:classappend="${currentFilter == 'SSC Andruss Library'} ? 'active' : ''" class="btn-filter">SSC</a>
+                    <a th:href="@{/admin/schedule(type='SSC')}" th:classappend="${currentFilter == 'SSC'} ? 'active' : ''" class="btn-filter">SSC</a>
                     <a th:href="@{/admin/schedule(type='Math Lab')}" th:classappend="${currentFilter == 'Math Lab'} ? 'active' : ''" class="btn-filter">Math Lab</a>
                     <a th:href="@{/admin/schedule(type='SI')}" th:classappend="${currentFilter == 'SI'} ? 'active' : ''" class="btn-filter">SI Table</a>
                 </div>
