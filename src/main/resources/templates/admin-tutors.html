@@ -8,7 +8,7 @@
   <link rel="stylesheet" th:href="@{/header.css}">
   <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 
 <div id="loadingOverlay">
   <div class="spinner"></div>
@@ -16,60 +16,53 @@
 </div>
 
 <div th:replace="~{headerFragment :: header('Tutor Editor')}"></div>
+<div class="content-spacer">
+  <main class="container">
+    <div class="form-card">
+      <div class="card-header">
+        <h2>Tutor Roster</h2>
+        <button onclick="openTutorModal()" class="btn-open">+ Register Tutor</button>
+      </div>
 
-<div class="stripe-container">
-  <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-  <div class="stripe-text">
-    Blooms Tutors – Making scheduling easy!
-    <hr class="accent-line">
-  </div>
+      <div class="tutor-search-box">
+        <label for="tutorSearch" class="search-label">Search Tutors:</label>
+        <input type="text" id="tutorSearch" placeholder="Search by name or ID..." class="tutor-search-input" onkeyup="filterTutors()">
+      </div>
+
+      <div class="table-responsive">
+        <table class="table-fill" id="tutorTable">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>ID</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="t : ${tutors}" class="fade-in tutor-row"
+              th:attr="data-name=${t.firstName + ' ' + t.lastName}, data-id=${t.tutorID}">
+            <td th:text="${t.firstName + ' ' + t.lastName}" class="tutor-name-cell"></td>
+            <td><span class="status-badge" th:text="${t.type}"></span></td>
+            <td th:text="${t.tutorID}"></td>
+            <td>
+              <div class="action-group">
+                <button type="button" class="btn-edit"
+                        th:onclick="openEditModal([[${t.tutorID}]], [[${t.firstName}]], [[${t.lastName}]], [[${t.type}]], [[${tutorCourseMap.get(t.tutorID)}]])">
+                  Edit
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr id="noResults" class="results-empty-row" style="display: none;">
+            <td colspan="4" class="results-empty-cell">No tutors match your search.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
 </div>
-
-<main class="container">
-  <div class="form-card">
-    <div class="card-header">
-      <h2>Tutor Roster</h2>
-      <button onclick="openTutorModal()" class="btn-open">+ Register Tutor</button>
-    </div>
-
-    <div class="tutor-search-box">
-      <label for="tutorSearch" class="search-label">Search Tutors:</label>
-      <input type="text" id="tutorSearch" placeholder="Search by name or ID..." class="tutor-search-input" onkeyup="filterTutors()">
-    </div>
-
-    <div class="table-responsive">
-      <table class="table-fill" id="tutorTable">
-        <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>ID</th>
-          <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="t : ${tutors}" class="fade-in tutor-row"
-            th:attr="data-name=${t.firstName + ' ' + t.lastName}, data-id=${t.tutorID}">
-          <td th:text="${t.firstName + ' ' + t.lastName}" class="tutor-name-cell"></td>
-          <td><span class="status-badge" th:text="${t.type}"></span></td>
-          <td th:text="${t.tutorID}"></td>
-          <td>
-            <div class="action-group">
-              <button type="button" class="btn-secondary btn-small"
-                      th:onclick="openEditModal([[${t.tutorID}]], [[${t.firstName}]], [[${t.lastName}]], [[${t.type}]], [[${tutorCourseMap.get(t.tutorID)}]])">
-                Edit
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr id="noResults" class="results-empty-row" style="display: none;">
-          <td colspan="4" class="results-empty-cell">No tutors match your search.</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</main>
 
 <div id="tutorModal" class="modal">
   <div class="modal-content modal-large">

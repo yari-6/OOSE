@@ -8,79 +8,72 @@
     <link rel="stylesheet" th:href="@{/header.css}">
     <link rel="stylesheet" th:href="@{/footer.css}">
 </head>
-<body>
+<body class="site-wrapper">
 <div th:replace="~{headerFragment :: header('SI Schedule')}"></div>
 
-<div class="stripe-container">
-    <img th:src="@{/fadedstripe.svg}" class="stripe" alt="decorative stripe">
-    <div class="stripe-text">
-        Blooms Tutors – Making scheduling easy!
-        <hr class="accent-line">
-    </div>
+<div class="content-spacer">
+    <main class="schedule-wrapper">
+        <div class="table-responsive">
+            <table class="si-table">
+                <thead>
+                <tr>
+                    <th>SI Leader</th>
+                    <th>Class</th>
+                    <th>Day</th>
+                    <th>Times</th>
+                    <th>Location</th>
+                    <th>Professor</th>
+                    <th>Meeting Times</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr th:if="${#lists.isEmpty(schedule)}">
+                    <td colspan="7" class="empty-state">No sessions currently scheduled.</td>
+                </tr>
+
+                <tr th:each="s, iterStat : ${schedule}"
+                    th:with="isNewGroup=${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')}"
+                    th:classappend="${isNewGroup} ? 'group-start' : ''">
+
+                    <td class="cell-shared leader-col">
+                        <th:block th:if="${isNewGroup}">
+                            <a th:if="${s.get('tutorId') != null}"
+                               th:href="@{/tutors/{id}(id=${s.get('tutorId')})}"
+                               th:text="${s.get('siLeader')}"
+                               class="leader-link"></a>
+                            <span th:unless="${s.get('tutorId') != null}" th:text="${s.get('siLeader')}"></span>
+                        </th:block>
+                    </td>
+
+                    <td class="cell-shared class-col" th:text="${isNewGroup} ? ${s.get('className')} : ''"></td>
+
+                    <td class="cell-session">
+                            <span th:switch="${s.get('day')}">
+                                <span th:case="'M'">Monday</span>
+                                <span th:case="'T'">Tuesday</span>
+                                <span th:case="'W'">Wednesday</span>
+                                <span th:case="'R'">Thursday</span>
+                                <span th:case="'F'">Friday</span>
+                                <span th:case="*" th:text="${s.get('day')}"></span>
+                            </span>
+                    </td>
+
+                    <td class="cell-session time-column">
+                        <span class="time-block" th:text="${s.get('start')}"></span>
+                        <span class="time-dash">-</span>
+                        <span class="time-block" th:text="${s.get('end')}"></span>
+                    </td>
+                    <td class="cell-session" th:text="${s.get('location') ?: 'TBD'}"></td>
+
+                    <td class="cell-shared" th:text="${isNewGroup} ? ${s.get('professor')} : ''"></td>
+                    <td class="cell-shared" th:text="${isNewGroup} ? ${s.get('classMeetingTimes')} : ''"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </div>
-
-<main class="schedule-wrapper">
-    <div class="table-responsive">
-        <table class="si-table">
-            <thead>
-            <tr>
-                <th>SI Leader</th>
-                <th>Class</th>
-                <th>Day</th>
-                <th>Times</th>
-                <th>Location</th>
-                <th>Professor</th>
-                <th>Meeting Times</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            <tr th:if="${#lists.isEmpty(schedule)}">
-                <td colspan="7" class="empty-state">No sessions currently scheduled.</td>
-            </tr>
-
-            <tr th:each="s, iterStat : ${schedule}"
-                th:with="isNewGroup=${iterStat.first || s.get('siLeader') != schedule[iterStat.index - 1].get('siLeader')}"
-                th:classappend="${isNewGroup} ? 'group-start' : ''">
-
-                <td class="cell-shared leader-col">
-                    <th:block th:if="${isNewGroup}">
-                        <a th:if="${s.get('tutorId') != null}"
-                           th:href="@{/tutors/{id}(id=${s.get('tutorId')})}"
-                           th:text="${s.get('siLeader')}"
-                           class="leader-link"></a>
-                        <span th:unless="${s.get('tutorId') != null}" th:text="${s.get('siLeader')}"></span>
-                    </th:block>
-                </td>
-
-                <td class="cell-shared class-col" th:text="${isNewGroup} ? ${s.get('className')} : ''"></td>
-
-                <td class="cell-session">
-                        <span th:switch="${s.get('day')}">
-                            <span th:case="'M'">Monday</span>
-                            <span th:case="'T'">Tuesday</span>
-                            <span th:case="'W'">Wednesday</span>
-                            <span th:case="'R'">Thursday</span>
-                            <span th:case="'F'">Friday</span>
-                            <span th:case="*" th:text="${s.get('day')}"></span>
-                        </span>
-                </td>
-
-                <td class="cell-session time-column">
-                    <span class="time-block" th:text="${s.get('start')}"></span>
-                    <span class="time-dash">-</span>
-                    <span class="time-block" th:text="${s.get('end')}"></span>
-                </td>
-                <td class="cell-session" th:text="${s.get('location') ?: 'TBD'}"></td>
-
-                <td class="cell-shared" th:text="${isNewGroup} ? ${s.get('professor')} : ''"></td>
-                <td class="cell-shared" th:text="${isNewGroup} ? ${s.get('classMeetingTimes')} : ''"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</main>
-
 <div th:replace="~{footerFragment :: footer}"></div>
 
 </body>

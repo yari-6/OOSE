@@ -1,26 +1,10 @@
-:root {
-    --primary: #8a1538;
-    --secondary: #f3d03e;
-    --text-main: #2d3436;
-    --text-muted: #636e72;
-    --bg-body: #f8f9fa;
-    --bg-card: #ffffff;
-    --border-color: #b2bec3;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: var(--bg-body);
-    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text-main);
+    background-color: white;
+    font-family: var(--font);
+    color: black;
 }
 
 .container {
@@ -32,7 +16,7 @@ body {
 
 .schedule-wrapper {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-gray);
     border-radius: 10px;
     box-shadow: var(--shadow);
     padding: 25px;
@@ -50,8 +34,8 @@ body {
 
 .btn-filter {
     background: white;
-    border: 1px solid var(--primary);
-    color: var(--primary);
+    border: 1px solid var(--primary-maroon);
+    color: var(--primary-maroon);
     padding: 10px 20px;
     border-radius: 6px;
     text-decoration: none;
@@ -60,12 +44,12 @@ body {
 }
 
 .btn-filter.active, .btn-filter:hover {
-    background: var(--primary);
+    background: var(--secondary-maroon);
     color: white;
 }
 
 .btn-add-global {
-    background-color: var(--primary);
+    background-color: var(--primary-maroon);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -79,13 +63,13 @@ body {
 }
 
 .btn-add-global:hover {
-    filter: brightness(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background: var(--secondary-maroon);
+    box-shadow: var(--shadow-hover);
 }
 
 .editor-search-input {
     padding: 10px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-gray);
     border-radius: 6px;
     width: 250px;
 }
@@ -93,20 +77,20 @@ body {
 .schedule-view-table {
     width: 100%;
     border-collapse: collapse;
-    border: 1.5px solid var(--border-color);
+    border: 1.5px black;
     table-layout: fixed;
 }
 
 .schedule-view-table th,
 .schedule-view-table td {
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-gray) !important;
     padding: 12px 4px;
     text-align: center;
     vertical-align: middle;
 }
 
 .schedule-view-table thead th {
-    background-color: var(--primary) !important;
+    background-color: var(--primary-maroon) !important;
     color: white !important;
     text-transform: uppercase;
     font-size: 0.75rem;
@@ -115,7 +99,7 @@ body {
 
 .schedule-view-table tbody tr th.time-cell {
     background-color: #fdfdfd;
-    color: var(--primary);
+    color: var(--primary-maroon);
     font-weight: bold;
     width: 95px;
 }
@@ -141,7 +125,7 @@ body {
 
 .admin-chip-text:hover {
     text-decoration: underline;
-    color: var(--secondary);
+    color: var(--accent-gold);
 }
 
 .si-table-card {
@@ -152,26 +136,27 @@ body {
 .si-editor-table {
     width: 100%;
     border-collapse: collapse !important;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-gray) !important;
 }
 
 .si-editor-table th,
 .si-editor-table td {
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid var(--border-gray) !important;
     padding: 12px 15px;
 }
 
 .si-editor-table tr.group-start td {
-    border-top: 3px solid var(--primary) !important;
+    border-top: 3px solid var(--primary-maroon) !important;
 }
 
 .cell-shared {
     font-weight: 700;
     background-color: rgba(0,0,0,0.01);
+    color: var(--primary-maroon);
 }
 
 .cell-session {
-    color: var(--text-muted);
+    color: black;
 }
 
 .clickable-row {
@@ -204,7 +189,7 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    border-top: 6px solid var(--primary);
+    border-top: 6px solid var(--primary-maroon);
 }
 
 .form-group {
@@ -223,7 +208,7 @@ body {
 .form-group select {
     width: 100%;
     padding: 11px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-gray);
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1rem;
@@ -233,7 +218,7 @@ body {
 
 .form-group input:focus, .form-group select:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: var(--primary-maroon);
 }
 
 .modal-grid-row {

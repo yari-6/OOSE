@@ -1,21 +1,12 @@
 :root {
-    --primary: #8a1538;
-    --secondary: #f3d03e;
-    --text-main: #2d3436;
-    --text-muted: #636e72;
-    --bg-body: #f8f9fa;
-    --bg-card: #ffffff;
-    --border-light: #b2bec3;
     --border-distinct: #8b969a;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     --success: #166534;
     --success-bg: #d3f9d8;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-body);
-    margin: 0;
+    font-family: var(--font);
+    background-color: white;
 }
 
 .container {
@@ -33,7 +24,7 @@ body {
 
 .form-card {
     flex: 0 0 340px;
-    background: var(--bg-card);
+    background: white;
     border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 15px;
@@ -42,7 +33,7 @@ body {
 
 .display {
     flex: 1;
-    background: var(--bg-card);
+    background: white;
     border: 1px solid var(--border-light);
     border-radius: 8px;
     padding: 15px;
@@ -58,7 +49,7 @@ body {
 }
 
 .form-card h3, .display-header h3 {
-    color: var(--primary);
+    color: var(--primary-maroon);
     font-size: 1.2rem;
     margin: 0;
     font-weight: 700;
@@ -83,14 +74,14 @@ select, .btn-add, .btn-save, .btn-clear {
     padding: 8px 10px;
     font-size: 0.9rem;
     border-radius: 5px;
-    border: 1px solid var(--border-light);
+    border: 1px solid var(--border-gray);
 }
 
-.btn-add { background-color: var(--primary); color: white; border: none; cursor: pointer; font-weight: 700; }
+.btn-add { background-color: var(--primary-maroon); color: white; border: none; cursor: pointer; font-weight: 700; }
 
 .builder-note {
     background-color: #fff9db;
-    border-left: 5px solid var(--secondary);
+    border-left: 5px solid var(--accent-gold);
     padding: 12px 15px;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -124,8 +115,8 @@ select, .btn-add, .btn-save, .btn-clear {
 
 .error-banner {
     background-color: #fff5f5;
-    border: 1px solid #ffc9c9;
-    color: #fa5252;
+    border: 1px solid var(--danger-red);
+    color: var(--danger-red);
     padding: 10px 12px;
     border-radius: 6px;
     font-size: 0.85rem;

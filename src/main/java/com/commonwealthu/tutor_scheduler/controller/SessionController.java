@@ -31,6 +31,8 @@ public class SessionController {
     public String siSchedule(Model model) {
         var sessions = sessionService.getSessionsByType("SI");
 
+        List<String> dayOrder = Arrays.asList("M", "T", "W", "R", "F");
+
         List<Map<String, Object>> schedule = sessions.stream().map(s -> {
             Map<String, Object> map = new HashMap<>();
             Tutor tutor = s.getSessionID().getTutor();
@@ -38,6 +40,7 @@ public class SessionController {
             map.put("tutorId", tutor.getTutorID());
             map.put("day", s.getSessionID().getDay());
             map.put("start", s.getSessionID().getTime().format(TIME_FORMATTER));
+            map.put("startTimeRaw", s.getSessionID().getTime());
             map.put("end", s.getEndTime().format(TIME_FORMATTER));
             map.put("location", s.getLocation());
             map.put("siLeader", tutor.getFirstName() + " " + tutor.getLastName());
@@ -45,7 +48,19 @@ public class SessionController {
             map.put("professor", s.getProfessor());
             map.put("classMeetingTimes", s.getClassMeetingTimes());
             return map;
-        }).toList();
+                })
+                .sorted((m1, m2) -> {
+                    int leaderCompare = ((String) m1.get("siLeader")).compareTo((String) m2.get("siLeader"));
+                    if (leaderCompare != 0) return leaderCompare;
+
+                    int day1 = dayOrder.indexOf(m1.get("day"));
+                    int day2 = dayOrder.indexOf(m2.get("day"));
+                    int dayCompare = Integer.compare(day1, day2);
+                    if (dayCompare != 0) return dayCompare;
+
+                    return ((LocalTime) m1.get("startTimeRaw")).compareTo((LocalTime) m2.get("startTimeRaw"));
+                })
+                .collect(Collectors.toList());
 
         model.addAttribute("isWindowOpen", sessionService.isSubmissionWindowOpen());
         model.addAttribute("schedule", schedule);

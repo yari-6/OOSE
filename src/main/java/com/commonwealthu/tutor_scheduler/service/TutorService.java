@@ -10,7 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TutorService {
@@ -82,26 +85,57 @@ public class TutorService {
         }
     }
 
+    private static final Map<String, List<String>> SUBJECT_ALIASES = Map.ofEntries(
+            Map.entry("NURSING", Arrays.asList("NRS", "NURS", "NUR")),
+            Map.entry("COMP SCI", Arrays.asList("CMSC")),
+            Map.entry("BIOLOGY", Arrays.asList("BIOL")),
+            Map.entry("CHEMISTRY", Arrays.asList("CHEM", "CHE", "CHM")),
+            Map.entry("ACCOUNTING", Arrays.asList("ACCT")),
+            Map.entry("ECONOMICS", Arrays.asList("ECON")),
+            Map.entry("ANTHROPOLOGY", Arrays.asList("ANTH")),
+            Map.entry("ART HISTORY", Arrays.asList("ARTH")),
+            Map.entry("ASL", Arrays.asList("ASLI")),
+            Map.entry("MICROBIOLOGY", Arrays.asList("BSC")),
+            Map.entry("CRIMINAL JUSTICE", Arrays.asList("CRJU")),
+            Map.entry("PSYCH", Arrays.asList("PSYC")),
+            Map.entry("BUSINESS", Arrays.asList("BSED", "BUSE")),
+            Map.entry("ENGINEERING", Arrays.asList("ENGT")),
+            Map.entry("EXCERCISE SCIENCE", Arrays.asList("EXER")),
+            Map.entry("FINANCE", Arrays.asList("FIN")),
+            Map.entry("GRAPHIC DESIGN", Arrays.asList("GRDS")),
+            Map.entry("STATS", Arrays.asList("STAT"))
+    );
+
     public List<Tutor> getTutorsForCourse(String courseSearch) {
         if (courseSearch == null || courseSearch.trim().isEmpty()) {
             return List.of();
         }
 
-        String searchTrimmed = courseSearch.trim();
-        String[] searchParts = searchTrimmed.split(" ");
+        String input = courseSearch.trim();
 
-        String subject = "";
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^([a-zA-Z\\s]+?)\\s*(\\d+).*$");
+        java.util.regex.Matcher matcher = pattern.matcher(input);
+
+        String subjectKey;
         int number = -1;
 
-        if (searchParts.length >= 2) {
+        if (matcher.find()) {
+            subjectKey = matcher.group(1).trim().toUpperCase();
             try {
-                subject = searchParts[0].toUpperCase();
-                number = Integer.parseInt(searchParts[1]);
+                number = Integer.parseInt(matcher.group(2));
             } catch (NumberFormatException e) {
+                number = -1;
             }
+        } else {
+            subjectKey = input.toUpperCase();
         }
 
-        return tutorRepo.findTutorsByCourse(subject, number, searchTrimmed);
+        List<String> normalizedSubjects = SUBJECT_ALIASES.getOrDefault(
+                subjectKey,
+                Collections.singletonList(subjectKey)
+        );
+
+        return tutorRepo.findTutorsByCourse(normalizedSubjects, number, input);
     }
 
 
