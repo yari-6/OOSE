@@ -33,7 +33,7 @@
                 <input type="text" id="tutorSearchInput" list="tutorOptions" class="editor-search-input" placeholder="Individual Editor...">
                 <datalist id="tutorOptions">
                     <option th:each="t : ${tutors}"
-                            th:value="${t.firstName + ' ' + t.lastName}"
+                            th:value="${t.firstName + ' ' + t.lastName + ' (' + t.type + ')'}"
                             th:data-id="${t.tutorID}"></option>
                 </datalist>
                 <button type="button" onclick="goToTutor()" class="btn-filter active">Go</button>
