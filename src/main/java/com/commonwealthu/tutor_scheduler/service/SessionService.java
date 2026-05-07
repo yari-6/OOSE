@@ -47,7 +47,7 @@ public class SessionService {
     }
 
     @Transactional
-    public void replaceSchedule(Tutor tutor, Set<Session> newSessions) {
+    public void replaceSchedule(Tutor tutor, Set<Session> newSessions, boolean isAdminOverride) {
         if (!isSubmissionWindowOpen() && !tutor.isAdmin()) {
             throw new IllegalStateException("The submission window is currently closed. Changes cannot be saved.");
         }
@@ -58,7 +58,7 @@ public class SessionService {
         sessionRepo.deleteAll(currentSchedule);
 
         for (Session newSess : newSessions) {
-            validateDropInConstraints(newSess);
+            validateDropInConstraints(newSess, isAdminOverride);
 
             sessionRepo.findById(newSess.getSessionID()).ifPresent(existing -> {
                 if (existing.getLocation() != null && !existing.getLocation().contains("PENDING")) {
@@ -160,21 +160,26 @@ public class SessionService {
     }
 
     @Transactional
-    public void saveSession(Session session) {
-        validateDropInConstraints(session);
+    public void saveSession(Session session, boolean isAdmin) {
+        if (!isSubmissionWindowOpen() && !isAdmin) {
+            throw new IllegalStateException("The submission window is currently closed.");
+        }
+
+        validateDropInConstraints(session, isAdmin);
+
         sessionRepo.save(session);
     }
 
     @Transactional
-    public void saveAllTimes(Set<Session> addedTimes) {
+    public void saveAllTimes(Set<Session> addedTimes, boolean isAdmin) {
         for (Session s : addedTimes) {
-            saveSession(s);
+            saveSession(s, isAdmin);
         }
     }
 
 
     //Drop in rules for Learning Center
-    public void validateDropInConstraints(Session newSess) {
+    public void validateDropInConstraints(Session newSess, boolean isAdmin) {
         SessionID id = newSess.getSessionID();
         if (id == null || id.getTutor() == null) return;
 
@@ -187,6 +192,8 @@ public class SessionService {
         if (end != null && !end.isAfter(start)) {
             throw new IllegalStateException("End time (" + end + ") must be after start time (" + start + ") on " + day);
         }
+
+        if (isAdmin) return;
 
         //No double sessions
         boolean isTutorOverloaded = sessionRepo.findBySessionID_Tutor(tutor).stream()
@@ -303,9 +310,12 @@ public class SessionService {
         public void setLocation(String location) { this.location = location; }
     }
 
-    public void deleteSession(String tutorId, String day, String startTimeStr) {
-        Tutor tutor = tutorRepo.findById(tutorId).orElse(null);
+    public void deleteSession(String tutorId, String day, String startTimeStr, boolean isAdmin) {
+        if (!isSubmissionWindowOpen() && !isAdmin) {
+            throw new IllegalStateException("Cannot delete sessions while the submission window is closed.");
+        }
 
+        Tutor tutor = tutorRepo.findById(tutorId).orElse(null);
         if (tutor != null) {
             LocalTime startTime = LocalTime.parse(startTimeStr);
             SessionID id = new SessionID(tutor, day, startTime);
@@ -336,7 +346,7 @@ public class SessionService {
         session.setProfessor(professor != null ? professor.trim() : null);
         session.setClassMeetingTimes(meetingTimes != null ? meetingTimes.trim() : null);
 
-        validateDropInConstraints(session);
+        validateDropInConstraints(session, true);
 
         sessionRepo.save(session);
     }

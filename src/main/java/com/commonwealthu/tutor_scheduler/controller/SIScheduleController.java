@@ -51,16 +51,12 @@ public class SIScheduleController {
         Tutor currentUser = tutorService.findTutorByID(currentUserID);
         Set<Session> savedSessions = sessionService.getSessionsByTutor(currentUser);
 
-        // 2. Generate the actual session times/locations via Service
-        // Note: Ensure assignRoomsToSessions exists in your SessionService
         List<SessionService.SessionWithLocation> previewSessions = sessionService.assignRoomsToSessions(request);
 
-        // 3. Store in Model so Thymeleaf shows the table
         model.addAttribute("tutor", currentUser);
         model.addAttribute("sessions", previewSessions);
         model.addAttribute("info", request);
 
-        // 4. Store in Session so the /confirm method can access it later
         session.setAttribute("siPreview", previewSessions);
         session.setAttribute("siClassInfo", request);
 
@@ -90,7 +86,7 @@ public class SIScheduleController {
             sessionsToSave.add(entity);
         }
 
-        sessionService.replaceSchedule(tutor, sessionsToSave);
+        sessionService.replaceSchedule(tutor, sessionsToSave, tutor.isAdmin());
 
         // Clean up
         session.removeAttribute("siPreview");

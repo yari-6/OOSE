@@ -75,33 +75,35 @@ public class TimeSubmissionController {
     public String addTimes(@RequestParam("day") String day,
                            @RequestParam("start") LocalTime start,
                            @RequestParam("end") LocalTime end,
+                           @RequestParam(value = "targetTutorId", required = false) String targetTutorId,
                            HttpSession browserSession,
                            RedirectAttributes ra) {
-        String currentUserID = (String) browserSession.getAttribute("tutorID");
 
-        Tutor currentUser = tutorService.findTutorByID(currentUserID);
+        String loggedInID = (String) browserSession.getAttribute("tutorID");
+        if (loggedInID == null) return "redirect:/sign-in";
 
-        // Security: Admin or self only
-        if (!currentUser.isAdmin() && !currentUserID.equals(currentUserID)) {
-            return "redirect:/";
-        }
+        Tutor loggedInUser = tutorService.findTutorByID(loggedInID);
 
-        // Admin bypasses window lock
-        if (!sessionService.isSubmissionWindowOpen() && !currentUser.isAdmin()) {
+        String finalTutorId = (loggedInUser.isAdmin() && targetTutorId != null) ? targetTutorId : loggedInID;
+        Tutor targetTutor = tutorService.findTutorByID(finalTutorId);
+
+        if (!sessionService.isSubmissionWindowOpen() && !loggedInUser.isAdmin()) {
             ra.addFlashAttribute("error", "The submission window is currently locked.");
             return "redirect:/schedule-builder";
         }
 
         if (Duration.between(start, end).toMinutes() > 300) {
             ra.addFlashAttribute("error", "Error: A single session cannot exceed 5 hours.");
-            return "redirect:/schedule-builder?currentUserID=" + currentUserID;
+            return "redirect:/schedule-builder?currentUserID=" + finalTutorId;
         }
 
         String normalizedDay = day == null ? "" : day.trim();
-        Session stagedSession = new Session(new SessionID(currentUser, normalizedDay, start), end);
+
+        Session stagedSession = new Session(new SessionID(targetTutor, normalizedDay, start), end);
 
         try {
-            sessionService.validateDropInConstraints(stagedSession);
+            sessionService.validateDropInConstraints(stagedSession, loggedInUser.isAdmin());
+
             Set<Session> currentStaged = sessionService.getAddedTimes(browserSession);
 
             currentStaged.removeIf(existing ->
@@ -117,7 +119,7 @@ public class TimeSubmissionController {
             ra.addFlashAttribute("error", e.getMessage());
         }
 
-        return "redirect:/schedule-builder?currentUserID=" + currentUserID;
+        return "redirect:/schedule-builder?currentUserID=" + finalTutorId;
     }
 
     @PostMapping("/confirm-times")
@@ -132,7 +134,7 @@ public class TimeSubmissionController {
         }
 
         Set<Session> addedTimes = sessionService.getAddedTimes(browserSession);
-        sessionService.saveAllTimes(addedTimes);
+        sessionService.saveAllTimes(addedTimes, currentUser.isAdmin());
 
         browserSession.removeAttribute("addedTimes");
 

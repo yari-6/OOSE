@@ -232,6 +232,7 @@ public class AdminController {
                                     @RequestParam(defaultValue = "Drop-in") String currentFilter,
                                     HttpSession session,
                                     RedirectAttributes redirectAttributes) {
+
         if (!isAdmin(session)) return "redirect:/";
 
         try {
@@ -241,13 +242,19 @@ public class AdminController {
             if (tutorChanged || timeChanged) {
                 String targetTutor = (oldTutorId != null) ? oldTutorId : tutorId;
                 String targetTime = (oldStartTime != null) ? oldStartTime : startTime;
-                sessionService.deleteSession(targetTutor, day, targetTime);
+
+                sessionService.deleteSession(targetTutor, day, targetTime, true);
             }
 
-            sessionService.adminSaveSession(tutorId, day, startTime, endTime, location, className, professor, meetingTimes);
-            redirectAttributes.addFlashAttribute("success", "Session saved!");
+            sessionService.adminSaveSession(
+                    tutorId, day, startTime, endTime,
+                    location, className, professor, meetingTimes
+            );
+
+            redirectAttributes.addFlashAttribute("success", "Session updated successfully!");
+
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Failed to save: " + e.getMessage());
         }
 
         return "redirect:/admin/schedule?type=" + URLEncoder.encode(currentFilter, StandardCharsets.UTF_8);
@@ -256,9 +263,14 @@ public class AdminController {
     @PostMapping("/delete-session")
     public String deleteSession(@RequestParam String tutorId,
                                 @RequestParam String day,
-                                @RequestParam String startTime, // Match the HTML name
-                                @RequestParam(defaultValue = "Drop-in") String currentFilter) {
-        sessionService.deleteSession(tutorId, day, startTime);
+                                @RequestParam String startTime,
+                                @RequestParam(defaultValue = "Drop-in") String currentFilter,
+                                HttpSession session) {
+
+        if (!isAdmin(session)) return "redirect:/";
+
+        sessionService.deleteSession(tutorId, day, startTime, true);
+
         return "redirect:/admin/schedule?type=" + URLEncoder.encode(currentFilter, StandardCharsets.UTF_8);
     }
 

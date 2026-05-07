@@ -184,7 +184,7 @@
                     <div th:replace="~{schedule-view :: scheduleView(showLinks=false)}"></div>
                 </div>
 
-                <div th:if="${schedule.isEmpty()} and tutor.type !='Tutor'}" class="empty-schedule-msg">
+                <div th:if="${schedule.isEmpty() and tutor.type != 'Tutor'}" class="empty-schedule-msg">
                     Schedule coming soon.
                 </div>
 
@@ -199,8 +199,9 @@
     const tutorID = [[${tutor.tutorID}]];
 </script>
 
-<script th:src="@{/pfpCode.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script th:src="@{/pfpCode.js}"></script>
 <script th:src="@{/feedback.js}"></script>
 
 </body>
